@@ -10,7 +10,7 @@ import { PasswordInput } from "@/components/ui/passwordInput";
 import Loading from "@/components/Loading/loading";
 
 function LoginForm() {
-  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const router = useRouter();
@@ -19,7 +19,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (session) {
-      router.push("/inicio"); // Asegúrate de que la ruta es correcta
+      router.push("/inicio");
     }
   }, [session, router]);
 
@@ -27,17 +27,10 @@ function LoginForm() {
     event.preventDefault();
     setIsLoading(true);
     setErrors([]);
-
-    // const requestBody = {
-    //   userName: "string",
-    //   email: "string",
-    //   password: "H@laH@la58",
-    // };
-
     const result = await signIn("credentials", {
       redirect: false,
-      login,
-      password,
+      userName: email,
+      password: password,
     });
 
     setIsLoading(false);
@@ -60,13 +53,13 @@ function LoginForm() {
             </h1>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="login">Correo Electrónico o D.N.I.</Label>
+                <Label htmlFor="email">Correo Electrónico o D.N.I.</Label>
                 <Input
                   type="text"
-                  name="login"
-                  id="login"
-                  value={login}
-                  onChange={(e) => setLogin(e.target.value)}
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
@@ -74,11 +67,12 @@ function LoginForm() {
                 <PasswordInput
                   id="password"
                   value={password}
+                  name="password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
-            {/* {errors.length > 0 && (
+            {errors.length > 0 && (
               <div className="alert alert-danger mt-2">
                 <ul className="mb-0 text-red-500">
                   {errors.map((error) => (
@@ -86,7 +80,7 @@ function LoginForm() {
                   ))}
                 </ul>
               </div>
-            )} */}
+            )}
             <div className="flex items-center space-x-2">
               <Checkbox id="terms" className="bg-white" />
               <label
