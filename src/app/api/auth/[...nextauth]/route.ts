@@ -8,19 +8,20 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "email", type: "email", placeholder: "test@test.com" },
+        userName: { label: "UserName", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        const userName = credentials?.userName;
+        const password = credentials?.password;
+
         const res = await fetch(
           `https://ecommerce-net.azurewebsites.net/api/Account/login`,
           {
             method: "POST",
             body: JSON.stringify({
-              // email: credentials?.email,
-              // password: credentials?.password,
-              userName: "112223333",
-              password: "H@laH@la58",
+              userName,
+              password,
             }),
             headers: { "Content-Type": "application/json" },
           }
@@ -36,8 +37,6 @@ const handler = NextAuth({
         if (!decoded) {
           throw new Error("Error al decodificar el token");
         }
-
-        console.log("token", data.token);
 
         return {
           token: data.token,
