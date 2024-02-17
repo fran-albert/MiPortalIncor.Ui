@@ -9,19 +9,14 @@ import { Separator } from "@/components/ui/separator";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import { goBack } from "@/lib/utils";
 import { createPatient } from "@/modules/patients/application/create/createPatient";
+import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
-type Inputs = {
-  firstName: string;
-  lastName: string;
-  userName: string;
-  email: string;
-  photo: string;
-};
+interface Inputs extends Patient {}
 
 function CreatePatientForm() {
   const {
@@ -33,7 +28,7 @@ function CreatePatientForm() {
   const [selectedState, setSelectedState] = useState("");
 
   const { session } = useCustomSession();
-  const token = session?.accessToken;
+  const token = session?.accessToken || "";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
