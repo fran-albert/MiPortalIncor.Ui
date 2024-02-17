@@ -9,18 +9,13 @@ import { Separator } from "@/components/ui/separator";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import { goBack } from "@/lib/utils";
 import { createDoctor } from "@/modules/doctors/application/create/createDoctor";
+import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
-type Inputs = {
-  firstName: string;
-  lastName: string;
-  userName: string;
-  email: string;
-  photo: string;
-};
+interface Inputs extends Doctor {}
 
 function CreateDoctorForm() {
   const {
@@ -31,7 +26,7 @@ function CreateDoctorForm() {
   } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState("");
   const { session } = useCustomSession();
-  const token = session?.accessToken;
+  const token = session?.accessToken || "";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
