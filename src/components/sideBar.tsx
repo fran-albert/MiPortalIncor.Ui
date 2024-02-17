@@ -10,6 +10,7 @@ import DayOfWeek from "./dayOfWeek";
 import { FaUserDoctor } from "react-icons/fa6";
 import Link from "next/link";
 import { Role } from "@/common/enums/role.enum";
+import { useCustomSession } from "@/context/SessionAuthProviders";
 // import { useCustomSession } from "@/context/SessionAuthProviders";
 
 interface MyTokenPayload {
@@ -25,11 +26,11 @@ export default function SideBar() {
   //   const { session, status } = useCustomSession();
   const currentPath = usePathname();
 
-  const { data: session } = useSession();
+  const { session, status } = useCustomSession();
 
   useEffect(() => {
     if (
-      !session &&
+      status === "unauthenticated" &&
       currentPath !== "/restablecer-contrase%C3%B1a" &&
       currentPath !== "/nueva-contrase%C3%B1a"
     ) {

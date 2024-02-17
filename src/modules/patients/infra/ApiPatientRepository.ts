@@ -23,7 +23,7 @@ export function createApiPatientRepository(): PatientRepository {
     // return patients;
 
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}Account/patients`,
+      `${process.env.NEXT_PUBLIC_BACKEND_API}patient/all`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
