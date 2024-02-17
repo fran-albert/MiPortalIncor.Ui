@@ -10,14 +10,6 @@ import { FaUserDoctor } from "react-icons/fa6";
 import Link from "next/link";
 import { Role } from "@/common/enums/role.enum";
 import { useCustomSession } from "@/context/SessionAuthProviders";
-<<<<<<< HEAD
-// import { useCustomSession } from "@/context/SessionAuthProviders";
-=======
->>>>>>> features/UI
-
-interface MyTokenPayload {
-  roles: string[];
-}
 
 export default function SideBar() {
   const router = useRouter();
