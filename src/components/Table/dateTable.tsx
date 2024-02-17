@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Search } from "../ui/search";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -112,7 +113,7 @@ export function DataTable<TData, TValue>({
             }
           />
           <Button className="ml-4" variant="teal">
-            <a href={addLinkPath}>{addLinkText}</a>
+            <Link href={addLinkPath}>{addLinkText}</Link>
           </Button>
         </div>
       )}
