@@ -6,12 +6,14 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 // import { jwtDecode } from "jwt-decode";
 import { FiLogOut } from "react-icons/fi";
-import DayOfWeek from "./dayOfWeek";
 import { FaUserDoctor } from "react-icons/fa6";
 import Link from "next/link";
 import { Role } from "@/common/enums/role.enum";
 import { useCustomSession } from "@/context/SessionAuthProviders";
+<<<<<<< HEAD
 // import { useCustomSession } from "@/context/SessionAuthProviders";
+=======
+>>>>>>> features/UI
 
 interface MyTokenPayload {
   roles: string[];
@@ -23,7 +25,6 @@ export default function SideBar() {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownOpenSecretary, setDropdownOpenSecretary] = useState(false);
   const [userRoles, setUserRoles] = useState<string[]>([]);
-  //   const { session, status } = useCustomSession();
   const currentPath = usePathname();
 
   const { session, status } = useCustomSession();
@@ -161,10 +162,6 @@ export default function SideBar() {
               <li>
                 <a
                   onClick={() => {
-                    console.log(
-                      "Signing out, redirecting to:",
-                      process.env.NEXT_PUBLIC_BASE_URL
-                    );
                     signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
                   }}
                   className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-red-100  group cursor-pointer"

@@ -8,17 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import { goBack } from "@/lib/utils";
-import { createPatient } from "@/modules/patients/application/create/createPatient";
-import { Patient } from "@/modules/patients/domain/Patient";
-import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
-import { useSession } from "next-auth/react";
+import { createDoctor } from "@/modules/doctors/application/create/createDoctor";
+import { Doctor } from "@/modules/doctors/domain/Doctor";
+import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
-interface Inputs extends Patient {}
+interface Inputs extends Doctor {}
 
-function CreatePatientForm() {
+function CreateDoctorForm() {
   const {
     register,
     handleSubmit,
@@ -26,23 +25,22 @@ function CreatePatientForm() {
     formState: { errors },
   } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState("");
-
   const { session } = useCustomSession();
   const token = session?.accessToken || "";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const patientRepository = createApiPatientRepository();
-      const createPatientFn = createPatient(patientRepository);
-      const patientCreatetionPromise = createPatientFn(token, data);
-      toast.promise(patientCreatetionPromise, {
-        loading: "Creando paciente...",
-        success: "Paciente creado con éxito!",
-        error: "Error al crear el Paciente",
+      const doctorRepository = createApiDoctorRepository();
+      const createDoctorFn = createDoctor(doctorRepository);
+      const doctorCreationPromise = createDoctorFn(token, data);
+      toast.promise(doctorCreationPromise, {
+        loading: "Creando doctor...",
+        success: "Doctor creado con éxito!",
+        error: "Error al crear el doctor",
         duration: 3000,
       });
     } catch (error) {
-      console.error("Error al crear el paciente", error);
+      console.error("Error al crear el doctor", error);
     }
   };
 
@@ -52,7 +50,7 @@ function CreatePatientForm() {
         <div className="relative p-8 rounded-xl w-full max-w-2xl">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-grow">
-              <p className="text-xl font-bold text-center">Agregar Paciente</p>
+              <p className="text-xl font-bold text-center">Agregar Médico</p>
             </div>
           </div>
           <Separator />
@@ -78,6 +76,8 @@ function CreatePatientForm() {
                   <Input
                     {...register("photo", { required: true })}
                     className="bg-gray-200 text-gray-700"
+                    placeholder="Foto"
+                    defaultValue={"Foto"}
                   />
                 </div>
               </div>
@@ -108,7 +108,6 @@ function CreatePatientForm() {
                     className="bg-gray-200 text-gray-700"
                     id="userName"
                     {...register("userName", { required: true })}
-                    //  defaultValue={user?.dni ? formatearDNI(user.dni) : ""}
                   />
                 </div>
               </div>
@@ -170,4 +169,4 @@ function CreatePatientForm() {
   );
 }
 
-export default CreatePatientForm;
+export default CreateDoctorForm;

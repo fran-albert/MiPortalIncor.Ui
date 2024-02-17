@@ -18,6 +18,7 @@ export function createApiPatientRepository(): PatientRepository {
   }
 
   async function getAll(token: string): Promise<Patient[]> {
+<<<<<<< HEAD
     // const response = await axiosInstance.get(`users/patients`);
     // const patients = response.data as Patient[];
     // return patients;
@@ -30,12 +31,33 @@ export function createApiPatientRepository(): PatientRepository {
         },
       }
     );
+=======
+    const response = await axiosInstance.get(`Patient/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+>>>>>>> features/UI
     const patient = response.data as Patient[];
+    return patient;
+  }
+
+  async function createPatient(
+    token: string,
+    newPatient: Patient
+  ): Promise<Patient> {
+    const response = await axiosInstance.post("patient/create", newPatient, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const patient = response.data as Patient;
     return patient;
   }
 
   return {
     getPatient,
     getAll,
+    createPatient,
   };
 }
