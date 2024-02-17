@@ -9,14 +9,32 @@ export function createApiDoctorRepository(): DoctorRepository {
     return doctor;
   }
 
-  async function getAll(): Promise<Doctor[]> {
-    const response = await axiosInstance.get(`users/doctors`);
+  async function getAllDoctors(token: string): Promise<Doctor[]> {
+    const response = await axiosInstance.get(`doctor/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const doctors = response.data as Doctor[];
     return doctors;
   }
 
+  async function createDoctor(
+    token: string,
+    newDoctor: Doctor
+  ): Promise<Doctor> {
+    const response = await axiosInstance.post("doctor/create", newDoctor, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const doctor = response.data as Doctor;
+    return doctor;
+  }
+
   return {
     getDoctor,
-    getAll,
+    getAllDoctors,
+    createDoctor,
   };
 }
