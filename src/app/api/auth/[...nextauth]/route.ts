@@ -53,7 +53,6 @@ const handler = NextAuth({
   callbacks: {
     // Personaliza el token JWT
     jwt: async ({ token, user }) => {
-      // Si el usuario ha iniciado sesión, añade el ID y el email al token
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -62,9 +61,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    // Personaliza la sesión
     session: async ({ session, token }) => {
-      // Añade el ID y el email a la sesión
       session.user.id = token.id;
       session.user.email = token.email;
       session.user.roles = token.roles;
