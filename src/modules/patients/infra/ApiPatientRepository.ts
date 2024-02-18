@@ -1,7 +1,6 @@
 import axiosInstance from "@/services/axiosConfig";
 import { Patient } from "../domain/Patient";
 import { PatientRepository } from "../domain/PatientRepository";
-import axios from "axios";
 
 export function createApiPatientRepository(): PatientRepository {
   async function getPatient(
@@ -17,40 +16,27 @@ export function createApiPatientRepository(): PatientRepository {
     return patient;
   }
 
-  async function getAll(token: string): Promise<Patient[]> {
-<<<<<<< HEAD
-    // const response = await axiosInstance.get(`users/patients`);
-    // const patients = response.data as Patient[];
-    // return patients;
-
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}patient/all`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-=======
-    const response = await axiosInstance.get(`Patient/all`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
->>>>>>> features/UI
+  async function getAll(): Promise<Patient[]> {
+    const response = await axiosInstance.get(`Patient/all`, {});
     const patient = response.data as Patient[];
     return patient;
   }
 
-  async function createPatient(
-    token: string,
-    newPatient: Patient
-  ): Promise<Patient> {
-    const response = await axiosInstance.post("patient/create", newPatient, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  async function getTotalPatients(): Promise<number> {
+      const response = await axiosInstance.get(`Patient/all`, {});
+      const patient = response.data as Patient[];
+      const totalPatient = patient.length;
+      return totalPatient;
+  }
+
+  async function createPatient(newPatient: Patient): Promise<Patient> {
+    const response = await axiosInstance.post("patient/create", newPatient);
+    const patient = response.data as Patient;
+    return patient;
+  }
+
+  async function deletePatient(idPatient: number): Promise<Patient> {
+    const response = await axiosInstance.delete(`Patient/${idPatient}`);
     const patient = response.data as Patient;
     return patient;
   }
@@ -59,5 +45,7 @@ export function createApiPatientRepository(): PatientRepository {
     getPatient,
     getAll,
     createPatient,
+    deletePatient,
+    getTotalPatients,
   };
 }

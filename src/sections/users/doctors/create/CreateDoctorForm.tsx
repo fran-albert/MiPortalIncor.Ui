@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useCustomSession } from "@/context/SessionAuthProviders";
 import { goBack } from "@/lib/utils";
 import { createDoctor } from "@/modules/doctors/application/create/createDoctor";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
@@ -21,24 +20,28 @@ function CreateDoctorForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState("");
-  const { session } = useCustomSession();
-  const token = session?.accessToken || "";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const doctorRepository = createApiDoctorRepository();
       const createDoctorFn = createDoctor(doctorRepository);
-      const doctorCreationPromise = createDoctorFn(token, data);
+      const doctorCreationPromise = createDoctorFn(data);
       toast.promise(doctorCreationPromise, {
-        loading: "Creando doctor...",
-        success: "Doctor creado con éxito!",
-        error: "Error al crear el doctor",
-        duration: 3000,
+        loading: "Creando médico...",
+        success: "Médico creado con éxito!",
+        error: "Error al crear el Médico",
       });
+
+      doctorCreationPromise
+        .then(() => {
+          goBack();
+        })
+        .catch((error) => {
+          console.error("Error al crear el médico", error);
+        });
     } catch (error) {
       console.error("Error al crear el doctor", error);
     }

@@ -3,13 +3,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditButton } from "@/components/Button/Edit/button";
-import DeleteCategoryDialog from "@/components/Button/Delete/button";
 import AddLabDialog from "@/components/Button/Add/Lab/button";
 import { formatDni } from "@/common/helpers/helpers";
 import { User } from "@/modules/users/domain/User";
 import { FaRegEye } from "react-icons/fa";
+import DeletePatientDialog from "../delete/DeletePatientDialog";
 
-export const columns: ColumnDef<User>[] = [
+export const getColumns = (fetchPatients: () => void): ColumnDef<User>[] => [
   {
     accessorKey: "#",
     header: "#",
@@ -32,7 +32,11 @@ export const columns: ColumnDef<User>[] = [
             }
             alt="@username"
           />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            {`${row.original.firstName.charAt(0)}${row.original.lastName.charAt(
+              0
+            )}`}
+          </AvatarFallback>
         </Avatar>
         <div className="flex flex-col ml-2">
           {" "}
@@ -55,7 +59,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => <div>{formatDni(row.original.userName)}</div>,
   },
   {
-    accessorKey: "phone",
+    accessorKey: "phoneNumber",
     header: "Teléfono",
   },
   {
@@ -80,7 +84,10 @@ export const columns: ColumnDef<User>[] = [
         <FaRegEye className="text-gray-500 cursor-pointer" size={25} />
         <AddLabDialog idPatient={row.original.id} />
         <EditButton id={row.original.id} path="usuarios/pacientes" />
-        <DeleteCategoryDialog idCategory={row.original.id} />
+        <DeletePatientDialog
+          idPatient={row.original.id}
+          onPatientDeleted={fetchPatients}
+        />
       </div>
     ),
   },

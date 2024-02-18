@@ -4,7 +4,7 @@ import "../styles/globals.css";
 import SideBar from "@/components/sideBar";
 import { Toaster } from "sonner";
 import SessionAuthProvider from "@/context/SessionAuthProviders";
-
+import MainContainer from "@/components/mainContainer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={inter.className}>
         <SessionAuthProvider>
-          <SideBar />
           <Toaster richColors position="top-center" />
-          {children}
+          <MainContainer>{children}</MainContainer>
         </SessionAuthProvider>
       </body>
     </html>
