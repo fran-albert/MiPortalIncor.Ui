@@ -9,25 +9,27 @@ export function createApiDoctorRepository(): DoctorRepository {
     return doctor;
   }
 
-  async function getAllDoctors(token: string): Promise<Doctor[]> {
-    const response = await axiosInstance.get(`doctor/all`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  async function getAllDoctors(): Promise<Doctor[]> {
+    const response = await axiosInstance.get(`doctor/all`);
     const doctors = response.data as Doctor[];
     return doctors;
   }
 
-  async function createDoctor(
-    token: string,
-    newDoctor: Doctor
-  ): Promise<Doctor> {
-    const response = await axiosInstance.post("doctor/create", newDoctor, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  async function getTotalDoctors(): Promise<number> {
+    const response = await axiosInstance.get(`doctor/all`, {});
+    const doctor = response.data as Doctor[];
+    const totalDoctor = doctor.length;
+    return totalDoctor;
+}
+
+  async function createDoctor(newDoctor: Doctor): Promise<Doctor> {
+    const response = await axiosInstance.post("doctor/create", newDoctor);
+    const doctor = response.data as Doctor;
+    return doctor;
+  }
+
+  async function deleteDoctor(idDoctor: number): Promise<Doctor> {
+    const response = await axiosInstance.delete(`doctor/${idDoctor}`);
     const doctor = response.data as Doctor;
     return doctor;
   }
@@ -36,5 +38,7 @@ export function createApiDoctorRepository(): DoctorRepository {
     getDoctor,
     getAllDoctors,
     createDoctor,
+    getTotalDoctors,
+    deleteDoctor,
   };
 }

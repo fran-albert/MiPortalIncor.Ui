@@ -1,3 +1,4 @@
+import axiosInstance from "@/services/axiosConfig";
 import { User } from "../domain/User";
 import { UserRepository } from "../domain/UserRepository";
 import axios from "axios";
@@ -16,16 +17,22 @@ export function createApiUserRepositroy(): UserRepository {
     return user;
   }
 
-  async function getAll(): Promise<User[]> {
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/users"
-    );
+  async function getAllUsers(): Promise<User[]> {
+    const response = await axiosInstance.get(`account/all`, {});
     const users = response.data as User[];
     return users;
   }
 
+  async function getTotalUsers(): Promise<number> {
+    const response = await axiosInstance.get(`account/all`, {});
+    const user = response.data as User[];
+    const totalUser = user.length;
+    return totalUser;
+  }
+
   return {
     getUser,
-    getAll,
+    getTotalUsers,
+    getAllUsers,
   };
 }
