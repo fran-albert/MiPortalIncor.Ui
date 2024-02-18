@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useCustomSession } from "@/context/SessionAuthProviders";
 import { goBack } from "@/lib/utils";
 import { createPatient } from "@/modules/patients/application/create/createPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
-import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
@@ -27,20 +25,25 @@ function CreatePatientForm() {
   } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState("");
 
-  const { session } = useCustomSession();
-  const token = session?.accessToken || "";
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const patientRepository = createApiPatientRepository();
       const createPatientFn = createPatient(patientRepository);
-      const patientCreatetionPromise = createPatientFn(token, data);
-      toast.promise(patientCreatetionPromise, {
+      const patientCreationPromise = createPatientFn(data);
+
+      toast.promise(patientCreationPromise, {
         loading: "Creando paciente...",
         success: "Paciente creado con éxito!",
         error: "Error al crear el Paciente",
-        duration: 3000,
       });
+
+      patientCreationPromise
+        .then(() => {
+          goBack();
+        })
+        .catch((error) => {
+          console.error("Error al crear el paciente", error);
+        });
     } catch (error) {
       console.error("Error al crear el paciente", error);
     }
@@ -78,6 +81,7 @@ function CreatePatientForm() {
                   <Input
                     {...register("photo", { required: true })}
                     className="bg-gray-200 text-gray-700"
+                    defaultValue="photo"
                   />
                 </div>
               </div>
@@ -147,7 +151,7 @@ function CreatePatientForm() {
                 <Input
                   id="email"
                   className="bg-gray-200 text-gray-700"
-                  {...register("email", { required: true })}
+                  {...register("email")}
                 />
               </div>
             </div>
