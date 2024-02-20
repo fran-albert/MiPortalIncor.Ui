@@ -8,3 +8,4 @@ export function cn(...inputs: ClassValue[]) {
 export const goBack = () => {
   window.history.back();
 };
+
