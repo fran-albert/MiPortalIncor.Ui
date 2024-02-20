@@ -7,9 +7,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { FiLogOut } from "react-icons/fi";
 import { FaUserDoctor } from "react-icons/fa6";
 import Link from "next/link";
-import { Role } from "@/common/enums/role.enum";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import { GiHospitalCross } from "react-icons/gi";
+import useRoles from "@/hooks/useRoles";
 
 export default function SideBar() {
   const router = useRouter();
@@ -17,12 +17,8 @@ export default function SideBar() {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownOpenSecretary, setDropdownOpenSecretary] = useState(false);
   const currentPath = usePathname();
-
   const { session, status } = useCustomSession();
-  const isPatient = session?.user.roles.includes(Role.PACIENTE);
-  const isSecretary = session?.user.roles.includes(Role.SECRETARIA);
-  const isDoctor = session?.user.roles.includes(Role.MEDICO);
-
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   useEffect(() => {
     if (
       status === "unauthenticated" &&

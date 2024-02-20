@@ -32,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   addLinkPath?: string;
   addLinkText?: string;
   searchColumn?: string;
+  canAddUser?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,6 +43,7 @@ export function DataTable<TData, TValue>({
   addLinkPath = "/",
   addLinkText = "Agregar",
   searchColumn = "name",
+  canAddUser = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -112,21 +114,23 @@ export function DataTable<TData, TValue>({
               table.getColumn(searchColumn)?.setFilterValue(event.target.value)
             }
           />
-          <Button className="ml-4" variant="teal">
-            <Link href={addLinkPath}>{addLinkText}</Link>
-          </Button>
+          {canAddUser && (
+            <Button className="ml-4" variant="teal">
+              <Link href={addLinkPath}>{addLinkText}</Link>
+            </Button>
+          )}
         </div>
       )}
-      <div className="rounded-md border">
+      <div className="rounded-lg overflow-hidden shadow-xl border border-gray-200">
         <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
+          <table className="min-w-full bg-white">
+            <thead className="bg-teal-500">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead
+                    <th
                       key={header.id}
-                      className="py-2  px-4 text-left text-gray-700 font-semibold"
+                      className="py-3 px-6 text-left text-sm font-semibold text-white uppercase tracking-wider"
                     >
                       {header.isPlaceholder
                         ? null
@@ -134,42 +138,48 @@ export function DataTable<TData, TValue>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                    </TableHead>
+                    </th>
                   ))}
-                </TableRow>
+                </tr>
               ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
+            </thead>
+            <tbody className="text-gray-700">
+              {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
+                  <tr
                     key={row.id}
-                    className={row.getIsSelected() ? "bg-blue-100" : ""}
+                    className={`${
+                      row.getIsSelected() ? "bg-teal-100" : "hover:bg-gray-50"
+                    } transition duration-150 ease-in-out`}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-3 px-4">
+                      <td
+                        key={cell.id}
+                        className="py-4 px-6 border-b border-gray-200"
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </TableCell>
+                      </td>
                     ))}
-                  </TableRow>
+                  </tr>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell
+                <tr>
+                  <td
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="py-10 text-center text-gray-500"
                   >
                     No se encuentran resultados con ese criterio de búsqueda.
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
       </div>
+
       <div className="flex items-center justify-center space-x-2 py-4">
         {renderPageNumbers()}
       </div>

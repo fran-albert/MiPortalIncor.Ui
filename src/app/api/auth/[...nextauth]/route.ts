@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { User } from "@/modules/users/domain/User";
 var jwt = require("jsonwebtoken");
 
 const handler = NextAuth({
