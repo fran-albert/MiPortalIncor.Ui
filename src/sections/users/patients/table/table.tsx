@@ -5,12 +5,14 @@ import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientR
 import { getAllPatients } from "@/modules/patients/application/get-all/getAllPatients";
 import { Patient } from "@/modules/patients/domain/Patient";
 import Loading from "@/components/Loading/loading";
+import useRoles from "@/hooks/useRoles";
 
 export const PatientTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [patients, setPatients] = useState<Patient[]>([]);
   const patientRepository = createApiPatientRepository();
   const loadAllPatients = getAllPatients(patientRepository);
+  const { isSecretary, isDoctor } = useRoles();
 
   const fetchPatients = async () => {
     try {
@@ -23,7 +25,7 @@ export const PatientTable = () => {
       setIsLoading(false);
     }
   };
-  const patientColumns = getColumns(fetchPatients);
+  const patientColumns = getColumns(fetchPatients, { isSecretary, isDoctor });
 
   useEffect(() => {
     fetchPatients();
@@ -47,6 +49,7 @@ export const PatientTable = () => {
         addLinkPath="pacientes/agregar"
         searchColumn="firstName"
         addLinkText="Agregar Paciente"
+        canAddUser={isSecretary}
       />
     </>
   );
