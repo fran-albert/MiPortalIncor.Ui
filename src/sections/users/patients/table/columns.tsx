@@ -25,7 +25,7 @@ export const getColumns = (
     },
     {
       accessorKey: "firstName",
-      header: "Paciente",
+      header: "Patient",
       cell: ({ row }) => (
         <div className="flex items-center">
           <Avatar>
@@ -60,19 +60,19 @@ export const getColumns = (
     },
     {
       accessorKey: "dni",
-      header: "DNI",
+      header: "Identification",
       cell: ({ row }) => <div>{formatDni(row.original.userName)}</div>,
     },
     {
       accessorKey: "phoneNumber",
-      header: "Teléfono",
+      header: "Phone Number",
     },
     {
       accessorKey: "healthInsurance",
-      header: "Obra Social",
+      header: "Health Insurance",
     },
     {
-      header: "Domicilio",
+      header: "Address",
       cell: ({ row }) => (
         <div className="flex items-center">
           <div className="flex flex-col ml-2">
