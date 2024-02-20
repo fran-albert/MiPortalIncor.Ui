@@ -55,7 +55,7 @@ export default function AddLabDialog({ idPatient }: AddLabDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Agregar Laboratorio</DialogTitle>
+          <DialogTitle>Add Lab</DialogTitle>
         </DialogHeader>
         <DialogDescription>
           <div className="w-full max-w-md mx-auto">
@@ -64,7 +64,7 @@ export default function AddLabDialog({ idPatient }: AddLabDialogProps) {
                 htmlFor="name"
                 className="text-black font-medium mb-2 block"
               >
-                Análisis
+                Name
               </Label>
               <Input
                 name="name"
@@ -77,7 +77,7 @@ export default function AddLabDialog({ idPatient }: AddLabDialogProps) {
                 htmlFor="date"
                 className="text-black font-medium mb-2 block"
               >
-                Fecha
+                Date
               </Label>
               <DatePicker />
             </div>
@@ -86,22 +86,27 @@ export default function AddLabDialog({ idPatient }: AddLabDialogProps) {
                 htmlFor="picture"
                 className="text-black font-medium mb-2 block"
               >
-                Archivo PDF
+                PDF File
               </Label>
-              <Input
+              <Button variant="outline" className="mb-2">
+                <FaCamera size={20} className="mr-2" />
+                Select File
+              </Button>
+              {/* <Input
                 id="picture"
                 type="file"
+                placeholder="Select a file"
                 className="w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
+              /> */}
             </div>
           </div>
         </DialogDescription>
         <DialogFooter>
           <Button variant="outline" onClick={toggleDialog}>
-            Cancelar
+            Cancel
           </Button>
           <Button variant="teal" onClick={handleConfirmDelete}>
-            Confirmar
+            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>

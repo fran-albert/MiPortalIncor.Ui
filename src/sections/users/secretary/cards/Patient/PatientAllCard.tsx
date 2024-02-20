@@ -23,7 +23,7 @@ export const PatientCount = () => {
         <div className="w-2 bg-teal-500 rounded-l-xl"></div>
         <div className="flex-grow p-4">
           <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">
-            Total de pacientes
+            Total patients
           </div>
           <div className="flex items-center justify-between">
             <p className="mt-2 text-4xl font-bold text-gray-900">{totalPatients}</p>

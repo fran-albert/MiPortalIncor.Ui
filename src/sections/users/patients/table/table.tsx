@@ -39,16 +39,16 @@ export const PatientTable = () => {
     <>
       {" "}
       <h1 className="text-2xl text-start font-medium mb-4">
-        Lista de Pacientes
+        Patients
       </h1>
       <DataTable
         columns={patientColumns}
         data={patients}
-        searchPlaceholder="Buscar pacientes..."
+        searchPlaceholder="Search patients..."
         showSearch={true}
         addLinkPath="pacientes/agregar"
         searchColumn="firstName"
-        addLinkText="Agregar Paciente"
+        addLinkText="Add Patient"
         canAddUser={isSecretary}
       />
     </>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaHome, FaUser, FaFileMedicalAlt } from "react-icons/fa";
+import { FaUsers, FaHome, FaUser, FaFileMedicalAlt, FaFilePdf } from "react-icons/fa";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
@@ -93,8 +93,8 @@ export default function SideBar() {
                   className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100  group cursor-pointer"
                   href="/inicio"
                 >
-                  <FaHome size={25} color="#14b8a6" />
-                  <span className="flex-1 ml-3 whitespace-nowrap">Inicio</span>
+                  <FaHome size={25} color="#0d9488" />
+                  <span className="flex-1 ml-3 whitespace-nowrap">Home</span>
                 </Link>
               </li>
               <li>
@@ -102,9 +102,9 @@ export default function SideBar() {
                   className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100  group cursor-pointer"
                   onClick={() => router.push("/mi-perfil")}
                 >
-                  <FaUser size={25} color="#14b8a6" />
+                  <FaUser size={25} color="#0d9488" />
                   <span className="flex-1 ml-3 whitespace-nowrap">
-                    Mi Perfil
+                    My Profile
                   </span>
                 </a>
               </li>
@@ -116,7 +116,7 @@ export default function SideBar() {
                       href="/mis-laboratorios"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaFileMedicalAlt size={25} color="#14b8a6" />
+                      <FaFileMedicalAlt size={25} color="#0d9488" />
                       <span className="ml-3">Mis Laboratorios</span>
                     </Link>
                   </li>
@@ -126,15 +126,15 @@ export default function SideBar() {
               {isSecretary && (
                 <>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Gestión de Usuarios
+                    Uses Management
                   </li>
                   <li className="pl-5">
                     <Link
                       href="/usuarios/pacientes"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaUsers size={25} color="#14b8a6" />
-                      <span className="ml-3">Pacientes</span>
+                      <FaUsers size={25} color="#0d9488" />
+                      <span className="ml-3">Patients</span>
                     </Link>
                   </li>
                   <li className="pl-5">
@@ -142,17 +142,29 @@ export default function SideBar() {
                       href="/usuarios/medicos"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaUserDoctor size={25} color="#14b8a6" />
-                      <span className="ml-3">Médicos</span>
+                      <FaUserDoctor size={25} color="#0d9488" />
+                      <span className="ml-3">Doctors</span>
                     </Link>
+                  </li>
+                  {/* <li className="pl-5">
+                    <Link
+                      href="/especialidades"
+                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
+                    >
+                      <GiHospitalCross size={25} color="#0d9488" />
+                      <span className="ml-3">Especialidades</span>
+                    </Link>
+                  </li> */}
+                  <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
+                    Reports
                   </li>
                   <li className="pl-5">
                     <Link
                       href="/especialidades"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <GiHospitalCross size={25} color="#14b8a6" />
-                      <span className="ml-3">Especialidades</span>
+                      <FaFilePdf size={25} color="#0d9488" />
+                      <span className="ml-3">Studies</span>
                     </Link>
                   </li>
                 </>
@@ -161,15 +173,15 @@ export default function SideBar() {
               {isDoctor && !isSecretary && (
                 <>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Usuarios
+                    Users
                   </li>
                   <li className="pl-5">
                     <Link
                       href="/usuarios/pacientes"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaUsers size={25} color="#14b8a6" />
-                      <span className="ml-3">Pacientes</span>
+                      <FaUsers size={25} color="#0d9488" />
+                      <span className="ml-3">Patients</span>
                     </Link>
                   </li>
                 </>
@@ -185,7 +197,7 @@ export default function SideBar() {
                 >
                   <FiLogOut size={25} />
                   <span className="flex-1 ml-3 whitespace-nowrap">
-                    Cerrar Sesión
+                    Log Out
                   </span>
                 </a>
               </li>

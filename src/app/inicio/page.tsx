@@ -17,7 +17,7 @@ function HomePage() {
         {isSecretary && (
           <div className="w-full px-4">
             <h2 className="text-2xl font-semibold text-center mb-6">
-              Panel Administrativo
+              Admin Dashboard
             </h2>
             <div className="flex flex-wrap justify-center gap-20">
               <PatientCount />
