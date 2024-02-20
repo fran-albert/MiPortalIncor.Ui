@@ -2,16 +2,14 @@
 import { Role } from "@/common/enums/role.enum";
 import withSessionTimeout from "@/components/withSessionTimeout";
 import { useCustomSession } from "@/context/SessionAuthProviders";
+import useRoles from "@/hooks/useRoles";
 import WelcomeCardComponent from "@/sections/Profile/WelcomeCard";
 import { DoctorsCount } from "@/sections/users/secretary/cards/Doctor/DoctorAllCards";
 import { PatientCount } from "@/sections/users/secretary/cards/Patient/PatientAllCard";
 import { UserCount } from "@/sections/users/secretary/cards/User/UserAllCard";
 
 function HomePage() {
-  const { session } = useCustomSession();
-  const isPatient = session?.user.roles.includes(Role.PACIENTE);
-  const isSecretary = session?.user.roles.includes(Role.SECRETARIA);
-
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
     <div className="flex justify-center items-center">
       <div className="md:w-64 w-full"></div>
