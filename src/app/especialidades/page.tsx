@@ -1,16 +1,16 @@
-"use client"
-import WelcomeCardComponent from "@/sections/Profile/WelcomeCard";
+"use client";
+import { SpecialityTable } from "@/sections/users/secretary/Especiality/table/table";
 import React from "react";
 
-function Especialidaesapgeeee() {
+function SpecialityPage() {
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col md:flex-row ">
       <div className="md:w-64 w-full"></div>
-      <div className="flex justify-center items-start mt-32">
-        <WelcomeCardComponent />
+      <div className="flex-grow mt-24 p-10">
+        <SpecialityTable />
       </div>
     </div>
   );
 }
 
-export default Especialidaesapgeeee;
+export default SpecialityPage;

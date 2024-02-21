@@ -23,6 +23,7 @@ function HomePage() {
               <PatientCount />
               <DoctorsCount />
               <UserCount />
+              <UserCount />
             </div>
           </div>
         )}

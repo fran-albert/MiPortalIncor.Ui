@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaHome, FaUser, FaFileMedicalAlt, FaFilePdf } from "react-icons/fa";
+import {
+  FaUsers,
+  FaHome,
+  FaUser,
+  FaFileMedicalAlt,
+  FaFilePdf,
+} from "react-icons/fa";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
@@ -81,8 +87,8 @@ export default function SideBar() {
       {session && (
         <aside
           id="logo-sidebar"
-          className={`fixed top-10 left-0 z-40 sm:w-64 h-screen pt-16 transition-transform duration-300 ease-in-out border-r border-gray-200 sm:translate-x-0 ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          className={`fixed top-10 left-0 z-1000 sm:w-64 h-screen pt-16 transition-transform duration-300 ease-in-out border-r border-gray-200 sm:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0 z-1000" : "-translate-x-full z-1000"
           }`}
           aria-label="Sidebar"
         >
@@ -126,7 +132,7 @@ export default function SideBar() {
               {isSecretary && (
                 <>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Uses Management
+                    Users Management
                   </li>
                   <li className="pl-5">
                     <Link
@@ -146,7 +152,7 @@ export default function SideBar() {
                       <span className="ml-3">Doctors</span>
                     </Link>
                   </li>
-                  {/* <li className="pl-5">
+                  <li className="pl-5">
                     <Link
                       href="/especialidades"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
@@ -154,7 +160,7 @@ export default function SideBar() {
                       <GiHospitalCross size={25} color="#0d9488" />
                       <span className="ml-3">Especialidades</span>
                     </Link>
-                  </li> */}
+                  </li>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
                     Reports
                   </li>
@@ -196,9 +202,7 @@ export default function SideBar() {
                   className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-red-100  group cursor-pointer"
                 >
                   <FiLogOut size={25} />
-                  <span className="flex-1 ml-3 whitespace-nowrap">
-                    Log Out
-                  </span>
+                  <span className="flex-1 ml-3 whitespace-nowrap">Log Out</span>
                 </a>
               </li>
             </ul>

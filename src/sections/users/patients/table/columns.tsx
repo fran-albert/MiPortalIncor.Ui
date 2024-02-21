@@ -9,6 +9,7 @@ import { User } from "@/modules/users/domain/User";
 import { FaRegEye } from "react-icons/fa";
 import DeletePatientDialog from "../delete/DeletePatientDialog";
 import { Button } from "@/components/ui/button";
+import { ViewButton } from "@/components/Button/View/button";
 
 export const getColumns = (
   fetchPatients: () => void,
@@ -88,9 +89,9 @@ export const getColumns = (
         <div className="flex items-center justify-end">
           {roles.isSecretary && (
             <>
-              <AddLabDialog idPatient={row.original.id} />
-              <FaRegEye className="text-gray-500 cursor-pointer" size={25} />
-              <EditButton id={row.original.id} path="usuarios/pacientes" />
+              {/* <AddLabDialog idPatient={row.original.id} /> */}
+              {/* <EditButton id={row.original.id} path="usuarios/pacientes" /> */}
+              <ViewButton id={row.original.id} text="Ver Paciente" />
               <DeletePatientDialog
                 idPatient={row.original.id}
                 onPatientDeleted={fetchPatients}
