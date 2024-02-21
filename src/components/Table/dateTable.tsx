@@ -12,14 +12,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Search } from "../ui/search";
 import Link from "next/link";
@@ -33,6 +25,7 @@ interface DataTableProps<TData, TValue> {
   addLinkText?: string;
   searchColumn?: string;
   canAddUser?: boolean;
+  onAddClick?: () => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +37,7 @@ export function DataTable<TData, TValue>({
   addLinkText = "Agregar",
   searchColumn = "name",
   canAddUser = true,
+  onAddClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -115,7 +109,11 @@ export function DataTable<TData, TValue>({
             }
           />
           {canAddUser && (
-            <Button className="ml-4" variant="teal">
+            <Button
+              className="ml-4"
+              variant="teal"
+              onClick={onAddClick ? onAddClick : () => {}}
+            >
               <Link href={addLinkPath}>{addLinkText}</Link>
             </Button>
           )}
