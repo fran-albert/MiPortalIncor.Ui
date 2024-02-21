@@ -20,7 +20,6 @@ import { FaCamera } from "react-icons/fa";
 
 function EditPatientForm() {
   const { data: session } = useSession();
-
   const params = useParams();
   const id = params.id;
   const [user, setUser] = useState<User>();
