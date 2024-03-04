@@ -6,8 +6,13 @@ import { Speciality } from "@/modules/speciality/domain/Speciality";
 import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpecialityRepository";
 import { getAllSpecialities } from "@/modules/speciality/application/get-all/getAllSpecialities";
 import AddSpecialityDialog from "@/components/Button/Add/Speciality/button";
+import EditSpecialityDialog from "../edit/EditSpecialityDialog";
 
 export const SpecialityTable = () => {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingSpeciality, setEditingSpeciality] = useState<Speciality | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [specialities, setSpecialities] = useState<Speciality[]>([]);
   const specialityRepository = createApiSpecialityRepository();
@@ -27,6 +32,11 @@ export const SpecialityTable = () => {
     }
   };
 
+  const handleEditSpeciality = (speciality: Speciality) => {
+    setEditingSpeciality(speciality);
+    setIsEditDialogOpen(true);
+  };
+
   useEffect(() => {
     fetchSpecialities();
   }, []);
@@ -38,11 +48,7 @@ export const SpecialityTable = () => {
     ]);
   };
 
-  const onSpecialityUpdated = (updatedSpeciality: Speciality) => {
-    console.log(
-      "Actualizando listado de especialidades con: ",
-      updatedSpeciality
-    );
+  const updateSpecialityInList = (updatedSpeciality: Speciality) => {
     setSpecialities((currentSpecialities) =>
       currentSpecialities.map((speciality) =>
         speciality.id === updatedSpeciality.id ? updatedSpeciality : speciality
@@ -58,7 +64,7 @@ export const SpecialityTable = () => {
 
   const specialityColumns = getColumns(
     removeSpecialityFromList,
-    onSpecialityUpdated
+    handleEditSpeciality
   );
 
   if (isLoading) {
@@ -85,6 +91,14 @@ export const SpecialityTable = () => {
         setIsOpen={setIsAddSpecialityDialogOpen}
         onSpecialityAdded={addSpecialityToList}
       />
+      {isEditDialogOpen && editingSpeciality && (
+        <EditSpecialityDialog
+          isOpen={isEditDialogOpen}
+          setIsOpen={setIsEditDialogOpen}
+          speciality={editingSpeciality}
+          updateSpecialityInList={updateSpecialityInList}
+        />
+      )}
     </>
   );
 };

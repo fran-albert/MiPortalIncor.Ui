@@ -6,7 +6,7 @@ import EditSpecialityDialog from "../edit/EditSpecialityDialog";
 
 export const getColumns = (
   removeSpecialityFromList: (idSpeciality: number) => void,
-  onSpecialityUpdated?: (updatedSpeciality: Speciality) => void
+  onEditSpeciality: (speciality: Speciality) => void
 ): ColumnDef<Speciality>[] => {
   const columns: ColumnDef<Speciality>[] = [
     {
@@ -27,10 +27,12 @@ export const getColumns = (
       cell: ({ row }) => (
         <div className="flex items-center justify-end">
           <>
-            <EditSpecialityDialog
-              idSpeciality={row.original.id}
-              onSpecialityUpdated={onSpecialityUpdated}
-            />
+            <button
+              onClick={() => onEditSpeciality(row.original)}
+              className="text-sm text-blue-500 hover:text-blue-700 mr-2"
+            >
+              Editar
+            </button>
             <DeleteSpecialityDialog
               idSpeciality={row.original.id}
               removeSpecialityFromList={removeSpecialityFromList}

@@ -8,7 +8,7 @@ const MainContainer = ({ children }: MainContainerProps) => {
   return (
     <div className="flex">
       <SideBar />
-      <div className="flex-grow">{children}</div>
+      <div className="flex-grow ">{children}</div>
     </div>
   );
 };

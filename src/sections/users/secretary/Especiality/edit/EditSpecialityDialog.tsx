@@ -20,17 +20,20 @@ import ActionIcon from "@/components/ui/actionIcon";
 import { FaPencil } from "react-icons/fa6";
 
 interface EditSpecialityDialogProps {
-  onSpecialityUpdated?: (updatedSpeciality: Speciality) => void;
-  idSpeciality: number;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  speciality: Speciality;
+  updateSpecialityInList: (updatedSpeciality: Speciality) => void | undefined;
 }
 
 interface Inputs extends Speciality {}
 
 export default function EditSpecialityDialog({
-  idSpeciality,
-  onSpecialityUpdated,
+  isOpen,
+  setIsOpen,
+  speciality,
+  updateSpecialityInList,
 }: EditSpecialityDialogProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleDialog = () => setIsOpen(!isOpen);
   const {
     register,
@@ -39,11 +42,17 @@ export default function EditSpecialityDialog({
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  useEffect(() => {
+    if (isOpen && speciality) {
+      reset(speciality);
+    }
+  }, [isOpen, speciality, reset]);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data: Speciality) => {
     try {
       const specialityRepository = createApiSpecialityRepository();
       const updateSpecialityFn = updateSpeciality(specialityRepository);
-      const specialityCreationPromise = updateSpecialityFn(idSpeciality, data);
+      const specialityCreationPromise = updateSpecialityFn(speciality.id, data);
 
       toast.promise(specialityCreationPromise, {
         loading: "Editando especialidad...",
@@ -54,7 +63,7 @@ export default function EditSpecialityDialog({
       specialityCreationPromise
         .then(() => {
           setIsOpen(false);
-          if (onSpecialityUpdated) onSpecialityUpdated(data);
+          if (updateSpecialityInList) updateSpecialityInList(data);
           console.log("Especialidad editada con éxito!", data);
         })
         .catch((error) => {
