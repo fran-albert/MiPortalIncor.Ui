@@ -15,7 +15,7 @@ const handler = NextAuth({
         const password = credentials?.password;
 
         const res = await fetch(
-          `https://ecommerce-net.azurewebsites.net/api/Account/login`,
+          `${process.env.NEXT_PUBLIC_BACKEND_API}account/login`,
           {
             method: "POST",
             body: JSON.stringify({
