@@ -32,28 +32,28 @@ export const getColumns = (
           <Avatar>
             <AvatarImage
               src={
-                row.original.photo
-                  ? `https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/${row.original.photo}`
+                row.original.user.photo
+                  ? `https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/${row.original.user.photo}`
                   : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
               }
               alt="@username"
             />
             <AvatarFallback>
-              {`${row.original.firstName.charAt(
+              {`${row.original.user.firstName.charAt(
                 0
-              )}${row.original.lastName.charAt(0)}`}
+              )}${row.original.user.lastName.charAt(0)}`}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col ml-2">
             {" "}
             <p className="text-sm font-medium">
-              {row.original.lastName}, {row.original.firstName}
+              {row.original.user.lastName}, {row.original.user.firstName}
             </p>
             <span
               style={{ fontSize: "0.75rem" }}
               className="text-teal-800 font-bold"
             >
-              {row.original.email}
+              {row.original.user.email}
             </span>{" "}
           </div>
         </div>
@@ -62,7 +62,7 @@ export const getColumns = (
     {
       accessorKey: "dni",
       header: "Identification",
-      cell: ({ row }) => <div>{formatDni(row.original.userName)}</div>,
+      cell: ({ row }) => <div>{formatDni(row.original.user.userName)}</div>,
     },
     {
       accessorKey: "phoneNumber",
