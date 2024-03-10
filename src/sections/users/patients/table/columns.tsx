@@ -5,17 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditButton } from "@/components/Button/Edit/button";
 import AddLabDialog from "@/components/Button/Add/Lab/button";
 import { formatDni } from "@/common/helpers/helpers";
-import { User } from "@/modules/users/domain/User";
 import { FaRegEye } from "react-icons/fa";
 import DeletePatientDialog from "../delete/DeletePatientDialog";
 import { Button } from "@/components/ui/button";
 import { ViewButton } from "@/components/Button/View/button";
+import { Patient } from "@/modules/patients/domain/Patient";
 
 export const getColumns = (
   fetchPatients: () => void,
   roles: { isSecretary: boolean; isDoctor: boolean }
-): ColumnDef<User>[] => {
-  const columns: ColumnDef<User>[] = [
+): ColumnDef<Patient>[] => {
+  const columns: ColumnDef<Patient>[] = [
     {
       accessorKey: "#",
       header: "#",
@@ -62,23 +62,44 @@ export const getColumns = (
     {
       accessorKey: "dni",
       header: "Identification",
-      cell: ({ row }) => <div>{formatDni(row.original.userName)}</div>,
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <p className="text-sm font-medium">{formatDni(row.original.dni)}</p>
+        </div>
+      ),
     },
     {
-      accessorKey: "phoneNumber",
       header: "Phone Number",
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <p className="text-sm font-medium">{row.original.phoneNumber}</p>
+        </div>
+      ),
     },
     {
       accessorKey: "healthInsurance",
       header: "Health Insurance",
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <p className="text-sm font-medium">
+            {row.original.healthPlans
+              .map(
+                (healthPlan) =>
+                  ` 
+                  ${healthPlan.healthInsurance.name} - ${healthPlan.name}`
+              )
+              .join(", ")}
+          </p>
+        </div>
+      ),
     },
     {
       header: "Address",
       cell: ({ row }) => (
         <div className="flex items-center">
           <div className="flex flex-col ml-2">
-            {/* {row.original.city.idState}, {""} {`${row.original.city.city}`} */}
-            Santa fe , rosario
+            {row.original.address?.city?.state?.name}, {""}{" "}
+            {`${row.original.address?.city?.name}`}
           </div>
         </div>
       ),

@@ -1,24 +1,16 @@
+import { Address } from "@/modules/address/domain/Address";
+
 export interface User {
   id: number;
-  userName: string;
-  normalizedUserName: string;
-  email: string;
-  normalizedEmail: string;
-  emailConfirmed: boolean;
-  passwordHash: string;
-  securityStamp: string;
-  concurrencyStamp: string;
-  phoneNumber: string;
-  phoneNumberConfirmed: boolean;
-  twoFactorEnabled: boolean;
-  lockoutEnd: string;
-  lockoutEnabled: boolean;
-  accessFailedCount: number;
+  dni: string;
   firstName: string;
   lastName: string;
-  birthDate: string;
+  email: string;
+  birthDate: boolean;
+  phoneNumber: string;
   photo: string;
-  lastActivityDate: string;
-  lastLoginDate: string;
   token?: string;
+  address: Address;
+  userName: string;
+  // healthPlans: HealthPlan[];
 }

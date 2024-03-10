@@ -35,6 +35,7 @@ const Profile = () => {
   const { data: session } = useSession();
   const id = session?.user.id;
   const token = session?.accessToken;
+  console.log(id, token);
 
   return (
     <>
@@ -43,7 +44,6 @@ const Profile = () => {
         <div className="flex-grow mt-40 flex justify-center items-center">
           <ProfileCardComponent
             id={id}
-            token={token}
             // user={user}
             // states={provincias}
             // updateUser={updateUser}

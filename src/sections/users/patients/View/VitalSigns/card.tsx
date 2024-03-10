@@ -35,10 +35,7 @@ const VitalSignCard = () => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const userData = await loadUser(
-          session?.user?.id,
-          session?.accessToken || ""
-        );
+        const userData = await loadUser(session?.user?.id);
         setProfile(userData ?? null);
       } catch (error) {
         console.log(error);
@@ -72,9 +69,7 @@ const VitalSignCard = () => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />
                   <span className="text-sm font-medium">Estatura</span>
                 </div>
-                <div className="text-xs text-gray-500">
-                  1,80 m
-                </div>
+                <div className="text-xs text-gray-500">1,80 m</div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">

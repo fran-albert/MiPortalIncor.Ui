@@ -50,10 +50,7 @@ const AppointmentCardComponent = () => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const userData = await loadUser(
-          session?.user?.id,
-          session?.accessToken || ""
-        );
+        const userData = await loadUser(session?.user?.id);
         setProfile(userData ?? null);
       } catch (error) {
         console.log(error);
