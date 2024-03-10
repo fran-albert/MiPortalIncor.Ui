@@ -7,9 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
+import { City } from "@/modules/city/domain/City";
 import { createPatient } from "@/modules/patients/application/create/createPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
+import { State } from "@/modules/state/domain/State";
+import { User } from "@/modules/users/domain/User";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,14 +25,47 @@ function CreatePatientForm() {
     handleSubmit,
     watch,
     formState: { errors },
+    setValue,
   } = useForm<Inputs>();
-  const [selectedState, setSelectedState] = useState("");
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    undefined
+  );
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
+
+  const handleCityChange = (city: City) => {
+    setSelectedCity(city);
+    console.log("handleCityChange - selectedCity:", selectedCity);
+    setValue("address.city", city);
+  };
+
+  const handleStateChange = (state: State) => {
+    setSelectedState(state);
+    console.log("handleStateChange - selectedState:", selectedState);
+    setValue("address.city.state", state);
+  };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    console.log("onSubmit - selectedCity antes de enviar:", selectedCity);
+    const { address, ...rest } = data;
+    const addressToSend = {
+      ...address,
+      city: {
+        ...selectedCity,
+        state: selectedState,
+      },
+    };
+
+    const dataToSend: any = {
+      ...rest,
+      address: addressToSend,
+    };
+
+    console.log("dataToSend:", dataToSend);
+
     try {
       const patientRepository = createApiPatientRepository();
       const createPatientFn = createPatient(patientRepository);
-      const patientCreationPromise = createPatientFn(data);
+      const patientCreationPromise = createPatientFn(dataToSend);
 
       toast.promise(patientCreationPromise, {
         loading: "Creando paciente...",
@@ -49,126 +85,141 @@ function CreatePatientForm() {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setValue("photo", reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
-      <div className="flex items-center justify-center bg-white border shadow-2xl rounded-lg p-4 w-1/2">
-        <div className="relative p-8 rounded-xl w-full max-w-2xl">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-grow">
-              <p className="text-xl font-bold text-center">Agregar Paciente</p>
-            </div>
+      <div className="flex items-center justify-center border shadow-xl rounded-lg p-6 w-full max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <div className="text-2xl font-bold text-center mb-6">
+            Agregar Paciente
           </div>
-          <Separator />
-          <hr />
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-row mt-2">
-              <div className="flex-1 pr-1">
-                <div className="mb-2 block ">
-                  <Label htmlFor="firstName">Nombre</Label>
-                  <Input
-                    {...register("firstName", { required: true })}
-                    className="bg-gray-200 text-gray-700"
-                  />
-                </div>
-              </div>
-              <div className="flex-1 pl-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="lastName">Apellido</Label>
-                  <Input
-                    {...register("lastName", { required: true })}
-                    className="bg-gray-200 text-gray-700"
-                  />
-                  <Input
-                    {...register("photo", { required: true })}
-                    className="bg-gray-200 text-gray-700"
-                    defaultValue="photo"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row">
-              <div className="flex-1 pr-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="phone">Teléfono</Label>
-                  <Input
-                    name="phone"
-                    className="bg-gray-200 text-gray-700"
-                    id="phone"
-                  />
-                </div>
-              </div>
-              <div className="flex-1 pl-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="healthInsurance">Obra Social</Label>
-                  <HealthInsuranceSelect />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row">
-              <div className="flex-1 pr-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="userName">D.N.I.</Label>
-                  <Input
-                    className="bg-gray-200 text-gray-700"
-                    id="userName"
-                    {...register("userName", { required: true })}
-                    //  defaultValue={user?.dni ? formatearDNI(user.dni) : ""}
-                  />
-                </div>
-              </div>
-              <div className="flex-1 pl-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="birthdate">Fecha de Nacimiento</Label>
-                  <Input
-                    name="birthdate"
-                    id="birthdate"
-                    className="bg-gray-200 text-gray-700"
-                    //  value={user?.birthDate ? formatDate(user.birthDate) : ""}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row">
-              <div className="flex-1 pr-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="state">Provincia</Label>
-                  <StateSelect
-                    selected={selectedState}
-                    onStateChange={setSelectedState}
-                  />
-                </div>
-              </div>
-              <div className="flex-1 pl-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="city">Localidad</Label>
-                  <CitySelect idState={selectedState} />
-                </div>
-              </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <Label htmlFor="firstName">Nombre</Label>
+              <Input
+                {...register("firstName", { required: true })}
+                type="text"
+                className="bg-gray-200"
+              />
             </div>
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input
-                  id="email"
-                  className="bg-gray-200 text-gray-700"
-                  {...register("email")}
-                />
-              </div>
+              <Label htmlFor="lastName">Apellido</Label>
+              <Input
+                {...register("lastName", { required: true })}
+                className="bg-gray-200"
+              />
             </div>
-            <div className="flex justify-center">
-              <Button
-                className="mt-10 m-2"
-                variant="destructive"
-                onClick={goBack}
-              >
-                Cancelar
-              </Button>
-              <Button className="mt-10 m-2" variant="teal" type="submit">
-                Agregar
-              </Button>
+            <div>
+              <Label htmlFor="userName">D.N.I.</Label>
+              <Input
+                {...register("userName", { required: true })}
+                className="bg-gray-200"
+              />
             </div>
-          </form>
-        </div>
+            <div>
+              <Label htmlFor="photo">Imagen</Label>
+              <Input
+                type="file"
+                onChange={handleImageChange}
+                className="bg-gray-200"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <Label htmlFor="healthInsurance">Obra Social</Label>
+              <HealthInsuranceSelect />
+            </div>
+
+            <div>
+              <Label htmlFor="phoneNumber">Télefono</Label>
+              <Input {...register("phoneNumber")} className="bg-gray-200" />
+            </div>
+            <div>
+              <Label htmlFor="birthDate">Fecha de Nacimiento</Label>
+              <Input {...register("birthDate")} className="bg-gray-200" />
+            </div>
+            <div>
+              <Label htmlFor="email">Correo Electrónico</Label>
+              <Input
+                {...register("email", { required: true })}
+                className="bg-gray-200"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <Label htmlFor="state">Provincia</Label>
+              <StateSelect
+                selected={selectedState}
+                onStateChange={handleStateChange}
+              />
+            </div>
+            <div>
+              <Label htmlFor="city">Localidad</Label>
+              <CitySelect
+                idState={selectedState?.id}
+                onCityChange={handleCityChange}
+                selected={selectedCity}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <Label htmlFor="street">Calle</Label>
+              <Input {...register("address.street")} className="bg-gray-200" />
+            </div>
+
+            <div>
+              <Label htmlFor="number">N°</Label>
+              <Input {...register("address.number")} className="bg-gray-200" />
+            </div>
+            <div>
+              <Label htmlFor="street">Descripción</Label>
+              <Input
+                {...register("address.description")}
+                className="bg-gray-200"
+              />
+            </div>
+            <div>
+              <Label htmlFor="number">Phone Number 2 </Label>
+              <Input
+                {...register("address.phoneNumber")}
+                className="bg-gray-200"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              onClick={goBack}
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Cancelar
+            </button>
+            <Button
+              type="submit"
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              Agregar
+            </Button>
+          </div>
+        </form>
       </div>
     </>
   );

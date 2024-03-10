@@ -35,6 +35,8 @@ export const PatientTable = () => {
     return <Loading isLoading />;
   }
 
+  console.log(patients)
+
   return (
     <>
       {" "}

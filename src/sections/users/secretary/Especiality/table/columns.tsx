@@ -34,7 +34,7 @@ export const getColumns = (
               Editar
             </button>
             <DeleteSpecialityDialog
-              idSpeciality={row.original.id}
+              idSpeciality={Number(row.original.id)}
               removeSpecialityFromList={removeSpecialityFromList}
             />
           </>

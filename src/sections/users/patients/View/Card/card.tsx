@@ -32,7 +32,6 @@ const UserCardComponent = () => {
         setIsLoading(true);
         const userData = await loadUser(
           session?.user?.id,
-          session?.accessToken || ""
         );
         setProfile(userData ?? null);
       } catch (error) {

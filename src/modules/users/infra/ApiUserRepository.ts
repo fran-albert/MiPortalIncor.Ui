@@ -4,15 +4,8 @@ import { UserRepository } from "../domain/UserRepository";
 import axios from "axios";
 
 export function createApiUserRepositroy(): UserRepository {
-  async function getUser(id: number, token: string): Promise<User | undefined> {
-    const response = await axios.get(
-      `https://ecommerce-net.azurewebsites.net/api/Account/user?id=${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  async function getUser(id: number): Promise<User | undefined> {
+    const response = await axiosInstance.get(`Account/user?id=${id}`, {});
     const user = response.data as User;
     return user;
   }
