@@ -77,22 +77,21 @@ export const getColumns = (
       ),
     },
     {
-      accessorKey: "healthInsurance",
-      header: "Health Insurance",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <p className="text-sm font-medium">
-            {row.original.healthPlans
-              .map(
-                (healthPlan) =>
-                  ` 
-                  ${healthPlan.healthInsurance.name} - ${healthPlan.name}`
-              )
-              .join(", ")}
-          </p>
-        </div>
-      ),
+      accessorKey: "healthPlans",
+      header: "Obra Social - Plan",
+      cell: ({ row }) => {
+        // Asume que el paciente tiene al menos un plan de salud y solo se muestra el primero
+        const firstHealthPlan = row.original.healthPlans[0];
+        const healthPlanDisplay = `${firstHealthPlan.healthInsurance.name} - ${firstHealthPlan.name}`;
+
+        return (
+          <div className="flex items-center">
+            <p className="text-sm font-medium">{healthPlanDisplay}</p>
+          </div>
+        );
+      },
     },
+
     {
       header: "Address",
       cell: ({ row }) => (

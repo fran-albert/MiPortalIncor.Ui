@@ -20,56 +20,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const AppointmentCardComponent = () => {
-  const { data: session } = useSession();
-  const [profile, setProfile] = useState<User | null>(null);
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const userRepository = createApiUserRepositroy();
-  const loadUser = getUser(userRepository);
-
-  const antecedentes = [
-    {
-      nombre: "Antecedente 1",
-      fecha: "01/01/2021",
-    },
-    {
-      nombre: "Antecedente 2",
-      fecha: "01/01/2021",
-    },
-    {
-      nombre: "Antecedente 3",
-      fecha: "01/01/2021",
-    },
-  ];
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadUser(session?.user?.id);
-        setProfile(userData ?? null);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-
-  if (!profile) {
-    return null;
-  }
-
   return (
     <>
       <div className="bg-white shadow rounded-lg p-6">

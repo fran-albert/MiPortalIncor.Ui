@@ -90,25 +90,6 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       ),
     },
     {
-      header: "Obra Social",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <div className="flex flex-col ml-2">
-            <p className="text-sm font-medium">
-              {row.original.healthPlans
-                .map(
-                  (healthPlan) =>
-                    ` 
-                  ${healthPlan.healthInsurance.name} `
-                )
-                .join(", ")}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-
-    {
       header: " ",
       cell: ({ row }) => (
         <div className="flex items-center">

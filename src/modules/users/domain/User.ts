@@ -1,4 +1,6 @@
 import { Address } from "@/modules/address/domain/Address";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
 
 export interface User {
   id: number;
@@ -12,5 +14,6 @@ export interface User {
   token?: string;
   address: Address;
   userName: string;
-  // healthPlans: HealthPlan[];
+  // healthPlans: HealthPlans[]
+  // healtInsurace: HealthInsurance[];
 }

@@ -5,23 +5,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { createApiHealthInsuranceRepository } from "@/modules/healthInsurance/infra/ApiHealthInsuranceRepository";
+import { useEffect, useState } from "react";
 
 interface HealthInsuranceSelectProps {
-  selected?: string;
-  onHIChange?: (value: string) => void;
+  selected?: HealthInsurance;
+  onHealthInsuranceChange?: (value: HealthInsurance) => void;
 }
 
 export const HealthInsuranceSelect = ({
   selected,
-  onHIChange,
+  onHealthInsuranceChange,
 }: HealthInsuranceSelectProps) => {
+  const [healthInsurance, setHealthInsurance] = useState<HealthInsurance[]>([]);
+  const healthInsuranceRepository = createApiHealthInsuranceRepository();
+
+  useEffect(() => {
+    const loadHealthInsurance = async () => {
+      try {
+        const loadedHealthInsurance = await healthInsuranceRepository.getAll();
+        setHealthInsurance(loadedHealthInsurance || []);
+      } catch (error) {
+        console.error("Error al obtener las obras sociales:", error);
+      }
+    };
+
+    loadHealthInsurance();
+  }, []);
+
+  const handleValueChange = (selectedId: string) => {
+    const selectedHealthInsurance = healthInsurance.find(
+      (healthInsurance) => String(healthInsurance.id) === selectedId
+    );
+    if (onHealthInsuranceChange && selectedHealthInsurance) {
+      onHealthInsuranceChange(selectedHealthInsurance);
+    }
+  };
+
   return (
-    <Select value={selected} onValueChange={onHIChange}>
+    <Select value={selected?.id.toString()} onValueChange={handleValueChange}>
       <SelectTrigger className="w-full bg-gray-200 text-gray-700">
-        <SelectValue placeholder="Seleccione la obra social..." />
+        <SelectValue placeholder="Seleccionar la obra..." />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="OSDE">OSDE</SelectItem>
+        {healthInsurance.map((hi) => (
+          <SelectItem key={String(hi.id)} value={String(hi.id)}>
+            {hi.name}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
