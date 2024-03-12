@@ -6,7 +6,7 @@ function AddPatientPage() {
     <>
       <div className="flex flex-col md:flex-row">
         <div className="md:w-64 w-full"></div>
-        <div className="flex-grow mt-20 p-10 flex justify-center items-center w-full">
+        <div className="flex-grow flex justify-center items-center bg-slate-50 min-h-screen">
           <CreatePatientForm />
         </div>
       </div>

@@ -115,7 +115,7 @@ function CreatePatientForm() {
 
   return (
     <>
-      <div className="flex items-center justify-center border shadow-xl rounded-lg p-6 w-full max-w-4xl mx-auto">
+      <div className="flex items-center justify-center border shadow-xl rounded-lg p-6 w-full max-w-4xl mx-auto bg-white">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="text-2xl font-bold text-center mb-6">
             Agregar Paciente
