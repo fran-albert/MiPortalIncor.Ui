@@ -20,41 +20,6 @@ import { AiOutlineFileJpg } from "react-icons/ai";
 import { IoIosBody } from "react-icons/io";
 import { MdHeight } from "react-icons/md";
 const VitalSignCard = () => {
-  const { data: session } = useSession();
-  const [profile, setProfile] = useState<User | null>(null);
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const userRepository = createApiUserRepositroy();
-  const loadUser = getUser(userRepository);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadUser(session?.user?.id);
-        setProfile(userData ?? null);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-
-  if (!profile) {
-    return null;
-  }
-
   return (
     <>
       <div className="flex sm:mx-auto">

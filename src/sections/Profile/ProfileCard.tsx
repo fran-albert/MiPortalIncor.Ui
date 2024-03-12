@@ -171,7 +171,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
             <div className="flex-1 pl-1">
               <div className="mb-2 block">
                 <Label htmlFor="healthInsurance">Obra Social</Label>
-                <HealthInsuranceSelect />
+                {/* <HealthInsuranceSelect /> */}
               </div>
             </div>
           </div>

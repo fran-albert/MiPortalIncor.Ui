@@ -15,16 +15,12 @@ import { Listbox, Transition } from "@headlessui/react";
 interface CitySelectProps {
   selected?: City;
   onCityChange?: (value: City) => void;
-  specialities?: string[];
-  onSpecialitiesChange?: (value: string[]) => void;
   idState?: number;
 }
 
 export const CitySelect = ({
   selected,
   onCityChange,
-  specialities,
-  onSpecialitiesChange,
   idState,
 }: CitySelectProps) => {
   const [cities, setCities] = useState<City[]>([]);
@@ -35,18 +31,18 @@ export const CitySelect = ({
 
   useEffect(() => {
     if (idState) {
-    const loadCities = async () => {
-      try {
-        const loadedCities = await cityRepository.getAllByState(idState);
-        setCities(loadedCities || []);
-      } catch (error) {
-        console.error("Error al obtener las localidades:", error);
-      }
-    };
+      const loadCities = async () => {
+        try {
+          const loadedCities = await cityRepository.getAllByState(idState);
+          setCities(loadedCities || []);
+        } catch (error) {
+          console.error("Error al obtener las localidades:", error);
+        }
+      };
 
-    loadCities();
+      loadCities();
     } else {
-    setCities([]);
+      setCities([]);
     }
   }, [idState]);
 

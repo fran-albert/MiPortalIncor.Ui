@@ -13,44 +13,45 @@ import { Check, ChevronDown } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { PiSelectionBackground } from "react-icons/pi";
-interface SpecialitySelectProps {
-  selected?: Speciality[];
-  onSpecialityChange?: (value: Speciality[]) => void;
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { createApiHealthInsuranceRepository } from "@/modules/healthInsurance/infra/ApiHealthInsuranceRepository";
+
+interface HealthInsuranceDoctorProps {
+  selected?: HealthInsurance[];
+  onHealthInsuranceChange?: (value: HealthInsurance[]) => void;
 }
 
-export const SpecialitySelect = ({
+export const HealthInsuranceDoctorSelect = ({
   selected = [],
-  onSpecialityChange,
-}: SpecialitySelectProps) => {
-  const [specialities, setSpecialities] = useState<Speciality[]>([]);
-  const specialityRepository: SpecialityRepository =
-    createApiSpecialityRepository();
-  const [selectedSpecialities, setSelectedSpecialities] = useState<
-    Speciality[]
+  onHealthInsuranceChange,
+}: HealthInsuranceDoctorProps) => {
+  const [healthInsurances, setHealthInsurances] = useState<HealthInsurance[]>(
+    []
+  );
+  const healthInsuranceRepository = createApiHealthInsuranceRepository();
+  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
+    HealthInsurance[]
   >([]);
 
   useEffect(() => {
-    const loadSpecialities = async () => {
+    const loadHealthInsurances = async () => {
       try {
-        const loadedSpecialities =
-          await specialityRepository.getAllSpecialities();
-        setSpecialities(loadedSpecialities || []);
+        const loadedHealthInsurances = await healthInsuranceRepository.getAll();
+        setHealthInsurances(loadedHealthInsurances || []);
       } catch (error) {
         console.error("Error al obtener las localidades:", error);
       }
     };
 
-    loadSpecialities();
-    setSpecialities([]);
+    loadHealthInsurances();
+    setHealthInsurances([]);
   }, []);
 
-  const handleValueChange = (selectedItems: Speciality[]) => {
-    // Actualiza el estado local con las nuevas especialidades seleccionadas
-    setSelectedSpecialities(selectedItems);
+  const handleValueChange = (selectedItems: HealthInsurance[]) => {
+    setSelectedHealthInsurances(selectedItems);
 
-    // Si hay una función prop para manejar el cambio, llámala
-    if (onSpecialityChange) {
-      onSpecialityChange(selectedItems);
+    if (onHealthInsuranceChange) {
+      onHealthInsuranceChange(selectedItems);
     }
   };
 
@@ -81,9 +82,9 @@ export const SpecialitySelect = ({
                 leaveTo="opacity-0"
               >
                 <Listbox.Options className="absolute z-50 mt-1 py-1 w-full  max-h-96 overflow-hidden rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  {specialities.map((speciality) => (
+                  {healthInsurances.map((healthInsurance) => (
                     <Listbox.Option
-                      key={speciality.id}
+                      key={healthInsurance.id}
                       className={({ active }) =>
                         `relative cursor-default select-none py-1.5 pl-8 pr-2 text-sm ${
                           active
@@ -91,7 +92,7 @@ export const SpecialitySelect = ({
                             : "text-popover-foreground"
                         }`
                       }
-                      value={speciality}
+                      value={healthInsurance}
                     >
                       {({ selected, active }) => (
                         <>
@@ -100,16 +101,16 @@ export const SpecialitySelect = ({
                               selected ? "font-medium" : "font-normal"
                             }`}
                           >
-                            {speciality.name}
+                            {healthInsurance.name}
                           </span>
                           {selected ? (
                             <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active
-                                ? "text-accent-foreground"
-                                : "text-popover-foreground"
-                            }`}
-                          >
+                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                active
+                                  ? "text-accent-foreground"
+                                  : "text-popover-foreground"
+                              }`}
+                            >
                               <Check className="h-5 w-5" aria-hidden="true" />
                             </span>
                           ) : null}

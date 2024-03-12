@@ -5,13 +5,8 @@ import { PatientRepository } from "../domain/PatientRepository";
 export function createApiPatientRepository(): PatientRepository {
   async function getPatient(
     id: number,
-    token: string
   ): Promise<Patient | undefined> {
-    const response = await axiosInstance.get(`Account/user?id=${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get(`Patient/${id}`);
     const patient = response.data as Patient;
     return patient;
   }

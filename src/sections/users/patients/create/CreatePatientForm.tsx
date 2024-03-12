@@ -1,6 +1,7 @@
 "use client";
 import { CitySelect } from "@/components/Select/City/select";
 import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
+import { HealthPlanSelect } from "@/components/Select/HealthPlan/select";
 import { StateSelect } from "@/components/Select/State/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
 import { City } from "@/modules/city/domain/City";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
 import { createPatient } from "@/modules/patients/application/create/createPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
-import { User } from "@/modules/users/domain/User";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,22 +33,37 @@ function CreatePatientForm() {
     undefined
   );
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
+    undefined
+  );
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
+    HealthPlans | undefined
+  >(undefined);
+
+  const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
+    setSelectedHealthInsurance(healthInsurance);
+  };
 
   const handleCityChange = (city: City) => {
     setSelectedCity(city);
-    console.log("handleCityChange - selectedCity:", selectedCity);
     setValue("address.city", city);
+  };
+
+  const handlePlanChange = (plan: HealthPlans) => {
+    setSelectedPlan(plan);
   };
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
-    console.log("handleStateChange - selectedState:", selectedState);
     setValue("address.city.state", state);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log("onSubmit - selectedCity antes de enviar:", selectedCity);
+    const healthPlansToSend = selectedPlan
+      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
+      : [];
     const { address, ...rest } = data;
+
     const addressToSend = {
       ...address,
       city: {
@@ -55,12 +72,12 @@ function CreatePatientForm() {
       },
     };
 
+
     const dataToSend: any = {
       ...rest,
       address: addressToSend,
+      healthPlans: healthPlansToSend,
     };
-
-    console.log("dataToSend:", dataToSend);
 
     try {
       const patientRepository = createApiPatientRepository();
@@ -103,7 +120,8 @@ function CreatePatientForm() {
           <div className="text-2xl font-bold text-center mb-6">
             Agregar Paciente
           </div>
-
+          <Separator />
+          <div className="text-xl font-bold text-center mt-6 mb-6"></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
             <div>
               <Label htmlFor="firstName">Nombre</Label>
@@ -130,7 +148,8 @@ function CreatePatientForm() {
             <div>
               <Label htmlFor="photo">Imagen</Label>
               <Input
-                type="file"
+                // type="file"
+                {...register("photo")}
                 onChange={handleImageChange}
                 className="bg-gray-200"
               />
@@ -140,23 +159,26 @@ function CreatePatientForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
             <div>
               <Label htmlFor="healthInsurance">Obra Social</Label>
-              <HealthInsuranceSelect />
+              <HealthInsuranceSelect
+                onHealthInsuranceChange={handleHealthInsuranceChange}
+                selected={selectedHealthInsurance}
+              />
             </div>
-
             <div>
-              <Label htmlFor="phoneNumber">Télefono</Label>
-              <Input {...register("phoneNumber")} className="bg-gray-200" />
+              <Label htmlFor="healthPlan">Plan</Label>
+              <HealthPlanSelect
+                idHealthInsurance={Number(selectedHealthInsurance?.id)}
+                selected={selectedHealthInsurance}
+                onPlanChange={handlePlanChange}
+              />
             </div>
             <div>
               <Label htmlFor="birthDate">Fecha de Nacimiento</Label>
               <Input {...register("birthDate")} className="bg-gray-200" />
             </div>
             <div>
-              <Label htmlFor="email">Correo Electrónico</Label>
-              <Input
-                {...register("email", { required: true })}
-                className="bg-gray-200"
-              />
+              <Label htmlFor="phoneNumber">Télefono</Label>
+              <Input {...register("phoneNumber")} className="bg-gray-200" />
             </div>
           </div>
 
@@ -203,8 +225,12 @@ function CreatePatientForm() {
               />
             </div>
           </div>
-
-          <div className="flex justify-center gap-4">
+          <Label htmlFor="email">Correo Electrónico</Label>
+          <Input
+            {...register("email", { required: true })}
+            className="bg-gray-200"
+          />
+          <div className="flex justify-center gap-4 mt-4">
             <button
               type="button"
               onClick={goBack}
