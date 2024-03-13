@@ -20,44 +20,6 @@ import { AiOutlineFileJpg } from "react-icons/ai";
 import { IoIosBody } from "react-icons/io";
 import { MdHeight } from "react-icons/md";
 const VitalSignCard = () => {
-  const { data: session } = useSession();
-  const [profile, setProfile] = useState<User | null>(null);
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const userRepository = createApiUserRepositroy();
-  const loadUser = getUser(userRepository);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadUser(
-          session?.user?.id,
-          session?.accessToken || ""
-        );
-        setProfile(userData ?? null);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-
-  if (!profile) {
-    return null;
-  }
-
   return (
     <>
       <div className="flex sm:mx-auto">
@@ -72,9 +34,7 @@ const VitalSignCard = () => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />
                   <span className="text-sm font-medium">Estatura</span>
                 </div>
-                <div className="text-xs text-gray-500">
-                  1,80 m
-                </div>
+                <div className="text-xs text-gray-500">1,80 m</div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">

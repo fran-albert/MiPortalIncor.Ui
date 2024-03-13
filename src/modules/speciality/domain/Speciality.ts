@@ -1,5 +1,4 @@
 export interface Speciality {
-  id: number;
+  id: string;
   name: string;
-  doctorSpecialities: any;
 }

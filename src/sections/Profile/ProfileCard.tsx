@@ -20,13 +20,9 @@ import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import { formatDni } from "@/common/helpers/helpers";
 
-interface UserCardProps {
-  id: number;
-  token: string | undefined;
-}
-
-export default function ProfileCardComponent({ id, token }: UserCardProps) {
+export default function ProfileCardComponent({ id }: { id: number }) {
   const [profile, setProfile] = useState<User | undefined>({} as User);
+  console.log(id, "id");
 
   useEffect(() => {
     const userRepository = createApiUserRepositroy();
@@ -34,7 +30,7 @@ export default function ProfileCardComponent({ id, token }: UserCardProps) {
 
     const fetchUsers = async () => {
       try {
-        const userData = await loadUser(id, token || "");
+        const userData = await loadUser(id);
         setProfile(userData);
       } catch (error) {
         console.log(error);
@@ -43,6 +39,7 @@ export default function ProfileCardComponent({ id, token }: UserCardProps) {
 
     fetchUsers();
   }, []);
+
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -174,7 +171,7 @@ export default function ProfileCardComponent({ id, token }: UserCardProps) {
             <div className="flex-1 pl-1">
               <div className="mb-2 block">
                 <Label htmlFor="healthInsurance">Obra Social</Label>
-                <HealthInsuranceSelect />
+                {/* <HealthInsuranceSelect /> */}
               </div>
             </div>
           </div>
@@ -187,7 +184,9 @@ export default function ProfileCardComponent({ id, token }: UserCardProps) {
                   className="bg-gray-200 text-gray-700"
                   id="dni"
                   defaultValue={
-                    profile?.userName ? formatDni(profile.userName) : ""
+                    profile?.userName
+                      ? formatDni(profile?.userName)
+                      : ""
                   }
                 />
               </div>

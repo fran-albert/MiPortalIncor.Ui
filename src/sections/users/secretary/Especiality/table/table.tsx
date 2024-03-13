@@ -58,7 +58,9 @@ export const SpecialityTable = () => {
 
   const removeSpecialityFromList = (idSpeciality: number) => {
     setSpecialities((currentSpecialities) =>
-      currentSpecialities.filter((speciality) => speciality.id !== idSpeciality)
+      currentSpecialities.filter(
+        (speciality) => Number(speciality.id) !== idSpeciality
+      )
     );
   };
 
@@ -72,7 +74,7 @@ export const SpecialityTable = () => {
   }
 
   return (
-    <>
+    <div>
       <h1 className="text-2xl text-start font-medium mb-4">
         Lista de Especialidades
       </h1>
@@ -99,6 +101,6 @@ export const SpecialityTable = () => {
           updateSpecialityInList={updateSpecialityInList}
         />
       )}
-    </>
+    </div>
   );
 };

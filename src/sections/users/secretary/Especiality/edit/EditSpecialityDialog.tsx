@@ -52,7 +52,7 @@ export default function EditSpecialityDialog({
     try {
       const specialityRepository = createApiSpecialityRepository();
       const updateSpecialityFn = updateSpeciality(specialityRepository);
-      const specialityCreationPromise = updateSpecialityFn(speciality.id, data);
+      const specialityCreationPromise = updateSpecialityFn(Number(speciality.id), data);
 
       toast.promise(specialityCreationPromise, {
         loading: "Editando especialidad...",

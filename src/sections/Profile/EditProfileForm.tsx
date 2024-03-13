@@ -129,19 +129,19 @@ function EditProfileForm() {
           </div>
           <div className="flex flex-row">
             <div className="flex-1 pr-1">
-              <div className="mb-2 block">
+              {/* <div className="mb-2 block">
                 <Label htmlFor="state">Provincia</Label>
                 <StateSelect
                   selected={selectedState}
                   onStateChange={setSelectedState}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="flex-1 pl-1">
-              <div className="mb-2 block">
+              {/* <div className="mb-2 block">
                 <Label htmlFor="city">Localidad</Label>
                 <CitySelect idState={selectedState} />
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex flex-row mt-2">

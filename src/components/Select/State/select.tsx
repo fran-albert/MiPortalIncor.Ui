@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { IState } from "@/common/interfaces/state.interface";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -7,21 +6,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getStates } from "@/services/stateService";
+import { State } from "@/modules/state/domain/State";
+import { createApiStateRepository } from "@/modules/state/infra/ApiStateRepository";
 
 interface StateSelectProps {
-  selected?: string;
-  onStateChange?: (value: string) => void;
+  selected?: State;
+  onStateChange?: (value: State) => void;
 }
 
 export const StateSelect = ({ selected, onStateChange }: StateSelectProps) => {
-  const [states, setStates] = useState<IState[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+  const stateRepository = createApiStateRepository();
 
   useEffect(() => {
     const loadStates = async () => {
       try {
-        const states = await getStates();
-        setStates(states); // Almacena los estados en el estado del componente
+        const states = await stateRepository.getAll();
+        setStates(states);
       } catch (error) {
         console.error("Error al obtener los estados:", error);
       }
@@ -30,15 +31,24 @@ export const StateSelect = ({ selected, onStateChange }: StateSelectProps) => {
     loadStates();
   }, []);
 
+  const handleValueChange = (selectedId: string) => {
+    const selectedState = states.find(
+      (state) => String(state.id) === selectedId
+    );
+    if (onStateChange && selectedState) {
+      onStateChange(selectedState);
+    }
+  };
+
   return (
-    <Select value={selected} onValueChange={onStateChange}>
+    <Select value={selected?.id.toString()} onValueChange={handleValueChange}>
       <SelectTrigger className="w-full bg-gray-200 text-gray-700">
         <SelectValue placeholder="Seleccione la provincia..." />
       </SelectTrigger>
       <SelectContent>
         {states.map((state) => (
-          <SelectItem key={state.id} value={state.id}>
-            {state.state}
+          <SelectItem key={String(state.id)} value={String(state.id)}>
+            {state.name}, {state.country.name}
           </SelectItem>
         ))}
       </SelectContent>

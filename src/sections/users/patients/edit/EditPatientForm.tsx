@@ -31,7 +31,7 @@ function EditPatientForm() {
     const fetchUsers = async () => {
       try {
         const userId = Number(id);
-        const userData = await loadPatient(userId, session?.accessToken || "");
+        const userData = await loadPatient(userId);
         setUser(userData);
       } catch (error) {
         console.log(error);

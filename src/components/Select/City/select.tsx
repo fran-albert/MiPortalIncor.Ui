@@ -5,15 +5,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Address } from "@/modules/address/domain/Address";
 import { City } from "@/modules/city/domain/City";
 import { CityRepository } from "@/modules/city/domain/CityRepository";
-import { createApiCityRepository } from "@/modules/city/infra/ApiUserRepository";
-import { useEffect, useState } from "react";
+import { createApiCityRepository } from "@/modules/city/infra/ApiCityRepository";
+import { useEffect, useState, Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
 
 interface CitySelectProps {
-  selected?: string;
-  onCityChange?: (value: string) => void;
-  idState?: string;
+  selected?: City;
+  onCityChange?: (value: City) => void;
+  idState?: number;
 }
 
 export const CitySelect = ({
@@ -23,14 +25,15 @@ export const CitySelect = ({
 }: CitySelectProps) => {
   const [cities, setCities] = useState<City[]>([]);
   const cityRepository: CityRepository = createApiCityRepository();
+  const [selectedCityId, setSelectedCityId] = useState<string | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (idState) {
       const loadCities = async () => {
         try {
-          const loadedCities = await cityRepository.getAllByState(
-            parseInt(idState, 10)
-          );
+          const loadedCities = await cityRepository.getAllByState(idState);
           setCities(loadedCities || []);
         } catch (error) {
           console.error("Error al obtener las localidades:", error);
@@ -43,15 +46,24 @@ export const CitySelect = ({
     }
   }, [idState]);
 
+  const handleValueChange = (cityId: string) => {
+    const city = cities.find((c) => c.id === cityId);
+    console.log("Seleccionando ciudad:", city);
+    if (city) {
+      onCityChange && onCityChange(city);
+      setSelectedCityId(cityId);
+    }
+  };
+
   return (
-    <Select>
+    <Select onValueChange={handleValueChange} value={selectedCityId}>
       <SelectTrigger className="w-full bg-gray-200 text-gray-700">
         <SelectValue placeholder="Seleccione la localidad..." />
       </SelectTrigger>
       <SelectContent>
         {cities?.map((city) => (
           <SelectItem key={city.id} value={city.id}>
-            {city.city}
+            {city.name}
           </SelectItem>
         ))}
       </SelectContent>

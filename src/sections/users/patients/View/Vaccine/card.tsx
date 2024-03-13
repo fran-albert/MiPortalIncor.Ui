@@ -20,15 +20,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const VaccineComponent = () => {
-  const { data: session } = useSession();
-  const [profile, setProfile] = useState<User | null>(null);
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const userRepository = createApiUserRepositroy();
-  const loadUser = getUser(userRepository);
-
   const antecedentes = [
     {
       nombre: "COVID 19 - Pfizer",
@@ -43,35 +34,6 @@ const VaccineComponent = () => {
       fecha: "01/01/2021",
     },
   ];
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadUser(
-          session?.user?.id,
-          session?.accessToken || ""
-        );
-        setProfile(userData ?? null);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
-
-  if (!profile) {
-    return null;
-  }
 
   return (
     <>
