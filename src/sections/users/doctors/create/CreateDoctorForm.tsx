@@ -64,7 +64,7 @@ function CreateDoctorForm() {
                 <div className="mb-2 block ">
                   <Label htmlFor="firstName">Nombre</Label>
                   <Input
-                    {...register("firstName", { required: true })}
+                    {...register("user.firstName", { required: true })}
                     className="bg-gray-200 text-gray-700"
                   />
                 </div>
@@ -73,11 +73,11 @@ function CreateDoctorForm() {
                 <div className="mb-2 block">
                   <Label htmlFor="lastName">Apellido</Label>
                   <Input
-                    {...register("lastName", { required: true })}
+                    {...register("user.lastName", { required: true })}
                     className="bg-gray-200 text-gray-700"
                   />
                   <Input
-                    {...register("photo", { required: true })}
+                    {...register("user.photo", { required: true })}
                     className="bg-gray-200 text-gray-700"
                     placeholder="Foto"
                     defaultValue={"Foto"}
@@ -110,7 +110,7 @@ function CreateDoctorForm() {
                   <Input
                     className="bg-gray-200 text-gray-700"
                     id="userName"
-                    {...register("userName", { required: true })}
+                    {...register("user.userName", { required: true })}
                   />
                 </div>
               </div>
@@ -149,7 +149,7 @@ function CreateDoctorForm() {
                 <Input
                   id="email"
                   className="bg-gray-200 text-gray-700"
-                  {...register("email", { required: true })}
+                  {...register("user.email", { required: true })}
                 />
               </div>
             </div>
