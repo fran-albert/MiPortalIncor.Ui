@@ -25,6 +25,7 @@ import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientR
 import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { State } from "@/modules/state/domain/State";
 import { City } from "@/modules/city/domain/City";
+import { ChangePassword } from "../changePassword/dialog";
 
 export default function ProfileCardComponent({ id }: { id: number }) {
   const [profile, setProfile] = useState<Patient | undefined>();
@@ -252,13 +253,16 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
-                  <Button
+                  <ChangePassword>
+                      
+                  </ChangePassword>
+                  {/* <Button
                     className="font-medium"
                     variant="outline"
                     onClick={handleEditPassword}
                   >
                     Cambiar Contraseña
-                  </Button>
+                  </Button> */}
                   <Button
                     className="w-full sm:w-auto"
                     variant="outline"
