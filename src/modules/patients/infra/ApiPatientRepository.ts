@@ -28,6 +28,12 @@ export function createApiPatientRepository(): PatientRepository {
     return patient;
   }
 
+  async function updatePatient(updatePatient: Patient): Promise<Patient> {
+    const response = await axiosInstance.put("patient/create", updatePatient);
+    const patient = response.data as Patient;
+    return patient;
+  }
+
   async function deletePatient(idPatient: number): Promise<Patient> {
     const response = await axiosInstance.delete(`Patient/${idPatient}`);
     const patient = response.data as Patient;
@@ -38,6 +44,7 @@ export function createApiPatientRepository(): PatientRepository {
     getPatient,
     getAll,
     createPatient,
+    updatePatient,
     deletePatient,
     getTotalPatients,
   };

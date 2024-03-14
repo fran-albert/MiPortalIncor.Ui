@@ -6,7 +6,7 @@ import { FaRegEye } from "react-icons/fa";
 export const ViewButton = ({ id, text }: { id: number; text: string }) => {
   const router = useRouter();
   const handleEdit = () => {
-    router.push(`/usuarios/${id}`);
+    router.push(`/usuarios/pacientes/${id}`);
   };
 
   return (

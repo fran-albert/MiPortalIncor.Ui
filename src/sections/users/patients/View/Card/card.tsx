@@ -16,7 +16,10 @@ import { useParams } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-const UserCardComponent = ({ user }: { user: User | null }) => {
+import EditPatientDialog from "../Dialog/dialog";
+import { Patient } from "@/modules/patients/domain/Patient";
+import { EditButton } from "@/components/Button/Edit/button";
+const UserCardComponent = ({ patient }: { patient: Patient | null }) => {
   return (
     <>
       <Card className="w-full max-w-lg shadow-md rounded-lg overflow-hidden">
@@ -31,11 +34,11 @@ const UserCardComponent = ({ user }: { user: User | null }) => {
           </div>
           <div className="flex-grow sm:pl-4">
             <CardTitle className="text-teal-700 text-lg font-bold">
-              {user?.firstName} {user?.lastName}
+              {patient?.firstName} {patient?.lastName}
             </CardTitle>
             <p className="text-gray-600">Agosto 22, 1985 - 32 años</p>
             <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
-              <button>Editar Datos</button>
+              <EditButton id={Number(patient?.id)} path="usuarios/pacientes" />
             </div>
           </div>
         </CardHeader>
