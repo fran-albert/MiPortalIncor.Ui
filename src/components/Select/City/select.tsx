@@ -56,13 +56,13 @@ export const CitySelect = ({
   };
 
   return (
-    <Select onValueChange={handleValueChange} value={selectedCityId}>
+    <Select onValueChange={handleValueChange} value={selected?.id.toString()}>
       <SelectTrigger className="w-full bg-gray-200 text-gray-700">
         <SelectValue placeholder="Seleccione la localidad..." />
       </SelectTrigger>
       <SelectContent>
         {cities?.map((city) => (
-          <SelectItem key={city.id} value={city.id}>
+          <SelectItem key={String(city.id)} value={String(city.id)}>
             {city.name}
           </SelectItem>
         ))}

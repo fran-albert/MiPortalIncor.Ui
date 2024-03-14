@@ -14,14 +14,14 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (session) {
+    if (status === "authenticated") {
       router.push("/inicio");
     }
-  }, [session, router]);
+  }, [session, router, status]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,6 +38,7 @@ function LoginForm() {
     if (result?.error) {
       setErrors([result.error]);
     } else {
+      setIsLoading(true);
       router.push("/inicio");
     }
   };

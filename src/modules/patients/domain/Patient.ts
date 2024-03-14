@@ -3,6 +3,7 @@ import { User } from "@/modules/users/domain/User";
 
 export interface Patient extends User {
   cuil: string;
+  dni: string;
   healthPlans: {
     id: number;
     name: string;

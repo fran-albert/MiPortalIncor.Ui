@@ -4,7 +4,7 @@ import { DoctorRepository } from "../domain/DoctorRepository";
 
 export function createApiDoctorRepository(): DoctorRepository {
   async function getDoctor(id: number): Promise<Doctor> {
-    const response = await axiosInstance.get(`users/${id}`);
+    const response = await axiosInstance.get(`doctor/${id}`);
     const doctor = response.data as Doctor;
     return doctor;
   }

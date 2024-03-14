@@ -191,7 +191,7 @@ function CreatePatientForm() {
               />
             </div>
             <div>
-              <Label htmlFor="city">Localidad</Label>
+              <Label htmlFor="city">Ciudad</Label>
               <CitySelect
                 idState={selectedState?.id}
                 onCityChange={handleCityChange}

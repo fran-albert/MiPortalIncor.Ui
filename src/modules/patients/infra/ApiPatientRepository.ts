@@ -3,9 +3,7 @@ import { Patient } from "../domain/Patient";
 import { PatientRepository } from "../domain/PatientRepository";
 
 export function createApiPatientRepository(): PatientRepository {
-  async function getPatient(
-    id: number,
-  ): Promise<Patient | undefined> {
+  async function getPatient(id: number): Promise<Patient | undefined> {
     const response = await axiosInstance.get(`Patient/${id}`);
     const patient = response.data as Patient;
     return patient;
@@ -18,10 +16,10 @@ export function createApiPatientRepository(): PatientRepository {
   }
 
   async function getTotalPatients(): Promise<number> {
-      const response = await axiosInstance.get(`Patient/all`, {});
-      const patient = response.data as Patient[];
-      const totalPatient = patient.length;
-      return totalPatient;
+    const response = await axiosInstance.get(`Patient/all`, {});
+    const patient = response.data as Patient[];
+    const totalPatient = patient.length;
+    return totalPatient;
   }
 
   async function createPatient(newPatient: Patient): Promise<Patient> {

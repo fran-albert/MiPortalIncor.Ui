@@ -14,6 +14,7 @@ export interface User {
   token?: string;
   address: Address;
   userName: string;
+  roles: string[];
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

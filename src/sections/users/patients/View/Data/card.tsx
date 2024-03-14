@@ -30,7 +30,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">D.N.I.</span>
                 </div>
-                <div className="text-xs text-gray-500">{patient?.userName}</div>
+                <div className="text-xs text-gray-500">{patient?.dni}</div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
