@@ -16,7 +16,7 @@ function HomePage() {
       <div className="flex justify-center items-start mt-32">
         {isSecretary && (
           <div className="w-full px-4">
-            <h2 className="text-2xl font-semibold text-center mb-6">
+            <h2 className="text-2xl font-semibold text-center mb-6 md:ml-32">
               Admin Dashboard
             </h2>
             <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12"> 
