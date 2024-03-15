@@ -17,7 +17,7 @@ export const PatientCount = () => {
   return (
     <>
       <div
-        className="bg-white rounded-xl shadow-md overflow-hidden flex transition duration-300 ease-in-out transform hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
+        className="bg-white rounded-xl shadow-md overflow-hidden flex sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
         style={{ width: "250px", height: "120px", overflow: "auto" }}
       >
         <div className="w-2 bg-teal-500 rounded-l-xl"></div>
