@@ -12,7 +12,7 @@ import VitalSignCard from "@/sections/users/patients/View/VitalSigns/card";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
-function UserPage() {
+function PatientPage() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const params = useParams();
   const id = params.id;
@@ -80,4 +80,4 @@ function UserPage() {
   );
 }
 
-export default UserPage;
+export default PatientPage;

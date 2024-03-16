@@ -14,9 +14,9 @@ import { GiWeightLiftingUp } from "react-icons/gi";
 import { AiOutlineFileJpg } from "react-icons/ai";
 import { IoIosBody } from "react-icons/io";
 import { MdHeight } from "react-icons/md";
-import { Patient } from "@/modules/patients/domain/Patient";
+import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { formatDni } from "@/common/helpers/helpers";
-const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
+const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
   return (
     <>
       <div className="flex sm:mx-auto">
@@ -31,7 +31,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">D.N.I.</span>
                 </div>
-                <div className="text-xs text-gray-500">{formatDni(String(patient?.dni))}</div>
+                <div className="text-xs text-gray-500">{formatDni(String(doctor?.dni))}</div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
@@ -39,11 +39,11 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   <span className="text-sm font-medium">Obra Social</span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {patient?.healthPlans.map((healthPlan) => (
+                  {/* {doctor?.healthPlans.map((healthPlan) => (
                     <div key={healthPlan.id}>
                       {healthPlan.healthInsurance.name} - {healthPlan.name}
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
@@ -55,7 +55,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   </span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {patient?.birthDate}
+                  {doctor?.birthDate}
                 </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
@@ -65,7 +65,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   <span className="text-sm font-medium">Teléfono</span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {patient?.phoneNumber}
+                  {doctor?.phoneNumber}
                 </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
@@ -76,7 +76,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                     Correo Electrónico
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">{patient?.email}</div>
+                <div className="text-xs text-gray-500">{doctor?.email}</div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
@@ -85,8 +85,8 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   <span className="text-sm font-medium">Domicilio</span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {patient?.address?.street}, {patient?.address?.number},{" "}
-                  {patient?.address?.city?.name}
+                  {doctor?.address?.street}, {doctor?.address?.number},{" "}
+                  {doctor?.address?.city?.name}
                 </div>
               </li>
             </ul>

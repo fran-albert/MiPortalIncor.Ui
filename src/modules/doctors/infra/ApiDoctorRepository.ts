@@ -20,10 +20,22 @@ export function createApiDoctorRepository(): DoctorRepository {
     const doctor = response.data as Doctor[];
     const totalDoctor = doctor.length;
     return totalDoctor;
-}
+  }
 
   async function createDoctor(newDoctor: Doctor): Promise<Doctor> {
     const response = await axiosInstance.post("doctor/create", newDoctor);
+    const doctor = response.data as Doctor;
+    return doctor;
+  }
+
+  async function updateDoctor(
+    updateDoctor: Doctor,
+    idDoctor: number
+  ): Promise<Doctor> {
+    const response = await axiosInstance.put(
+      `Doctor/${idDoctor}`,
+      updateDoctor
+    );
     const doctor = response.data as Doctor;
     return doctor;
   }
@@ -38,6 +50,7 @@ export function createApiDoctorRepository(): DoctorRepository {
     getDoctor,
     getAllDoctors,
     createDoctor,
+    updateDoctor,
     getTotalDoctors,
     deleteDoctor,
   };

@@ -1,43 +1,44 @@
 "use client";
 import { formatDni } from "@/common/helpers/helpers";
 import { CitySelect } from "@/components/Select/City/select";
-import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
-import { HealthPlanSelect } from "@/components/Select/HealthPlan/select";
 import { StateSelect } from "@/components/Select/State/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { goBack } from "@/lib/utils";
+import { SpecialitySelect } from "@/components/Select/Specialty/select";
 import { City } from "@/modules/city/domain/City";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
-import { getPatient } from "@/modules/patients/application/get/getPatient";
-import { Patient } from "@/modules/patients/domain/Patient";
-import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
+import { User } from "@/modules/users/domain/User";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { updatePatient } from "@/modules/patients/application/update/updatePatient";
+import { updateDoctor } from "@/modules/doctors/application/update/updateDoctor";
 import { toast } from "sonner";
+import { Doctor } from "@/modules/doctors/domain/Doctor";
+import { Speciality } from "@/modules/speciality/domain/Speciality";
+import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
+import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
+import { HealthInsuranceDoctorSelect } from "@/components/Select/Health Insurance/selectDoctor";
+import { goBack } from "@/lib/utils";
 
-interface Inputs extends Patient {}
+interface Inputs extends Doctor {}
 
-function EditPatientForm({ patient }: { patient: Patient | null }) {
+function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
   const params = useParams();
   const id = params.id;
-  const [user, setUser] = useState<Patient>();
+  const [user, setUser] = useState<Doctor>();
   const [selectedState, setSelectedState] = useState<State>();
   const [selectedCity, setSelectedCity] = useState<City>();
-  const [selectedHealthInsurance, setSelectedHealthInsurance] =
-    useState<HealthInsurance>();
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
-    undefined
-  );
-  const patientRepository = createApiPatientRepository();
-  const loadPatient = getPatient(patientRepository);
+  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
+    HealthInsurance[]
+  >([]);
+
+  const doctorRepository = createApiDoctorRepository();
+  const loadDoctor = getDoctor(doctorRepository);
   const {
     register,
     handleSubmit,
@@ -46,16 +47,20 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     setValue,
   } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-
+  const [selectedSpecialities, setSelectedSpecialities] = useState<
+    Speciality[]
+  >([]);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const userId = Number(id);
-        const userData = await loadPatient(userId);
+        const userData = await loadDoctor(userId);
         setSelectedState(userData?.address?.city.state);
         setSelectedCity(userData?.address?.city);
-        setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
-        setSelectedPlan(userData?.healthPlans[0]);
+        setSelectedSpecialities(
+          userData?.specialities.map((s) => s.speciality)
+        );
+        setSelectedHealthInsurances(userData?.healthInsurances || []);
         setUser(userData);
       } catch (error) {
         console.log(error);
@@ -65,9 +70,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     fetchUsers();
   }, []);
 
-
-  console.log(user)
-
   const handleStateChange = (state: State) => {
     setSelectedState(state);
   };
@@ -76,18 +78,16 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     setSelectedCity(city);
   };
 
-  const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
-    setSelectedHealthInsurance(healthInsurance);
-  };
-
-  const handleHealthPlanChange = (healthPlan: HealthPlans) => {
-    setSelectedPlan(healthPlan);
-  };
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const healthPlansToSend = selectedPlan
-      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
-      : [];
+    const specialitiesToSend = selectedSpecialities.map((s) => ({
+      id: s.id,
+      name: s.name,
+    }));
+    const healthInsuranceToSend = selectedHealthInsurances.map((h) => ({
+      id: h.id,
+      name: h.name,
+    }));
+
     const { address, ...rest } = data;
     const formattedUserName = removeDotsFromDni(data.userName);
     const addressToSend = {
@@ -103,32 +103,31 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
       ...rest,
       userName: formattedUserName,
       address: addressToSend,
-      healthPlans: healthPlansToSend,
+      specialities: specialitiesToSend,
+      healthInsurances: healthInsuranceToSend,
       photo: "photo",
     };
 
-    console.log(dataToSend, "datatonsened");
-
     try {
-      const patientRepository = createApiPatientRepository();
-      const updatePatientFn = updatePatient(patientRepository);
-      const patientCreationPromise = updatePatientFn(dataToSend, Number(id));
+      const doctorRepository = createApiDoctorRepository();
+      const updateDoctorFn = updateDoctor(doctorRepository);
+      const doctorCreationPromise = updateDoctorFn(dataToSend, Number(id));
 
-      toast.promise(patientCreationPromise, {
-        loading: "Actualizando paciente...",
-        success: "Paciente actualizado con éxito!",
-        error: "Error al actualizar el Paciente",
+      toast.promise(doctorCreationPromise, {
+        loading: "Actualizando médico...",
+        success: "Médico actualizado con éxito!",
+        error: "Error al actualizar el médico",
       });
 
-      patientCreationPromise
+      doctorCreationPromise
         .then(() => {
           goBack();
         })
         .catch((error) => {
-          console.error("Error al actualizar el paciente", error);
+          console.error("Error al actualizar el médico", error);
         });
     } catch (error) {
-      console.error("Error al actualizar el paciente", error);
+      console.error("Error al actualizar el médico", error);
     }
   };
 
@@ -142,7 +141,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
               onClick={() => window.history.back()}
             >
               <IoMdArrowRoundBack className="text-black mr-2" size={24} />
-              Editar Paciente
+              Editar Médico
             </button>
           </div>
         </div>
@@ -169,7 +168,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
             </div>
           </div>
           <h3 className="text-xl font-medium">
-            {patient?.firstName} {patient?.lastName}
+            {doctor?.firstName} {doctor?.lastName}
           </h3>
         </div>
         <div className="flex flex-wrap items-center justify-center rounded-lg">
@@ -188,7 +187,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("firstName", { required: true })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.firstName}
+                    defaultValue={doctor?.firstName}
                   />
                 </div>
 
@@ -202,7 +201,20 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("lastName", { required: true })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.lastName}
+                    defaultValue={doctor?.lastName}
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="lastname"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Matrícula
+                  </Label>
+                  <Input
+                    {...register("matricula", { required: true })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                    defaultValue={doctor?.matricula}
                   />
                 </div>
 
@@ -210,7 +222,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Label htmlFor="dni">D.N.I.</Label>
                   <Input
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.dni ? formatDni(patient?.dni) : ""}
+                    defaultValue={doctor?.dni ? formatDni(doctor?.dni) : ""}
                     {...register("userName", { required: true })}
                   />
                 </div>
@@ -219,7 +231,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
                   <Input
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.birthDate.toString()}
+                    defaultValue={doctor?.birthDate.toString()}
                     {...register("birthDate")}
                   />
                 </div>
@@ -232,7 +244,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
                     {...register("email")}
-                    defaultValue={patient?.email}
+                    defaultValue={doctor?.email}
                   />
                 </div>
 
@@ -241,7 +253,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("phoneNumber", { required: true })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.phoneNumber}
+                    defaultValue={doctor?.phoneNumber}
                   />
                 </div>
               </div>
@@ -272,7 +284,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("address.street")}
                     className="bg-gray-200"
-                    defaultValue={patient?.address.street}
+                    defaultValue={doctor?.address.street}
                   />
                 </div>
 
@@ -281,7 +293,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("address.number")}
                     className="bg-gray-200"
-                    defaultValue={patient?.address.number}
+                    defaultValue={doctor?.address.number}
                   />
                 </div>
                 <div>
@@ -289,7 +301,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("address.description")}
                     className="bg-gray-200"
-                    defaultValue={patient?.address.description}
+                    defaultValue={doctor?.address.description}
                   />
                 </div>
                 <div>
@@ -297,7 +309,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   <Input
                     {...register("address.phoneNumber")}
                     className="bg-gray-200"
-                    defaultValue={patient?.address.phoneNumber}
+                    defaultValue={doctor?.address.phoneNumber}
                   />
                 </div>
               </div>
@@ -306,17 +318,20 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="email">Obra Social</Label>
-                  <HealthInsuranceSelect
-                    selected={selectedHealthInsurance}
-                    onHealthInsuranceChange={handleHealthInsuranceChange}
+                  <HealthInsuranceDoctorSelect
+                    selected={selectedHealthInsurances}
+                    onHealthInsuranceChange={(newSelection) =>
+                      setSelectedHealthInsurances(newSelection)
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Plan</Label>
-                  <HealthPlanSelect
-                    selected={selectedPlan}
-                    idHealthInsurance={Number(selectedHealthInsurance?.id)}
-                    onPlanChange={handleHealthPlanChange}
+                  <Label htmlFor="specialities">Especialidades</Label>
+                  <SpecialitySelect
+                    selected={selectedSpecialities}
+                    onSpecialityChange={(newSelection) =>
+                      setSelectedSpecialities(newSelection)
+                    }
                   />
                 </div>
               </div>
@@ -324,7 +339,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 <Button
                   className="mt-10 m-2"
                   variant="destructive"
-                  onClick={goBack}
+                  // onClick={goBack}
                 >
                   Cancelar
                 </Button>
@@ -340,4 +355,4 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   );
 }
 
-export default EditPatientForm;
+export default EditDoctorForm;

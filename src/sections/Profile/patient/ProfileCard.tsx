@@ -16,6 +16,8 @@ import { CitySelect } from "@/components/Select/City/select";
 import { StateSelect } from "@/components/Select/State/select";
 import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
 import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
 import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import { formatDni } from "@/common/helpers/helpers";
@@ -26,12 +28,16 @@ import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { State } from "@/modules/state/domain/State";
 import { City } from "@/modules/city/domain/City";
 import { HealthPlanSelect } from "@/components/Select/HealthPlan/select";
+import Loading from "@/components/Loading/loading";
 
 export default function ProfileCardComponent({ id }: { id: number }) {
   const [profile, setProfile] = useState<Patient | undefined>();
-  const { isPatient, isSecretary, isDoctor } = useRoles();
   const [selectedState, setSelectedState] = useState<State>();
+  const [selectedHealthInsurance, setSelectedHealthInsurance] =
+    useState<HealthInsurance>();
+  const [selectedHealthPlan, setSelectedHealthPlan] = useState<HealthPlans>();
   const [selectedCity, setSelectedCity] = useState<City>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const userRepository = createApiPatientRepository();
@@ -39,19 +45,38 @@ export default function ProfileCardComponent({ id }: { id: number }) {
 
     const fetchUsers = async () => {
       try {
+        setIsLoading(true);
         const userData = await loadPatient(id);
         setProfile(userData);
         setSelectedState(userData?.address.city.state);
         setSelectedCity(userData?.address.city);
+        setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
+        setSelectedHealthPlan(userData?.healthPlans[0]);
       } catch (error) {
-        console.log(error);
+        console.error("Error al cargar los datos del perfil:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchUsers();
   }, []);
 
-  console.log(profile);
+  const handleStateChange = (state: State) => {
+    setSelectedState(state);
+  };
+
+  const handleCityChange = (city: City) => {
+    setSelectedCity(city);
+  };
+
+  const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
+    setSelectedHealthInsurance(healthInsurance);
+  };
+
+  const handleHealthPlanChange = (healthPlan: HealthPlans) => {
+    setSelectedHealthPlan(healthPlan);
+  };
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -64,6 +89,10 @@ export default function ProfileCardComponent({ id }: { id: number }) {
   //   if (!user || !states) {
   //     return <LoadingPage props="Cargando tu perfil..." />;
   //   }
+
+  if (isLoading) {
+    return <Loading isLoading={true} />;
+  }
 
   return (
     <>
@@ -175,16 +204,16 @@ export default function ProfileCardComponent({ id }: { id: number }) {
               <div>
                 <Label htmlFor="state">Provincia</Label>
                 <StateSelect
-                // selected={selectedState}
-                // onStateChange={handleStateChange}
+                  selected={selectedState}
+                  onStateChange={handleStateChange}
                 />
               </div>
               <div>
                 <Label htmlFor="city">Ciudad</Label>
                 <CitySelect
-                // idState={selectedState?.id}
-                // selected={selectedCity}
-                //   onCityChange={handleCityChange}
+                  idState={selectedState?.id}
+                  selected={selectedCity}
+                  onCityChange={handleCityChange}
                 />
               </div>
             </div>
@@ -231,15 +260,16 @@ export default function ProfileCardComponent({ id }: { id: number }) {
               <div>
                 <Label htmlFor="email">Obra Social</Label>
                 <HealthInsuranceSelect
-                // selected={selectedHealthInsurance}
-                // onHealthInsuranceChange={handleHealthInsuranceChange}
+                  selected={selectedHealthInsurance}
+                  onHealthInsuranceChange={handleHealthInsuranceChange}
                 />
               </div>
               <div>
                 <Label htmlFor="phone">Plan</Label>
                 <HealthPlanSelect
-                // selected={selectedHealthPlan}
-                // onHealthPlanChange={handleHealthPlanChange}
+                  selected={selectedHealthPlan}
+                  idHealthInsurance={Number(selectedHealthInsurance?.id)}
+                  onPlanChange={handleHealthPlanChange}
                 />
               </div>
             </div>

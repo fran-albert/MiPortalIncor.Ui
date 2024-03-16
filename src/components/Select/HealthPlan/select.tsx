@@ -13,7 +13,7 @@ import { createApiHealthPlansRepository } from "@/modules/healthPlans/infra/ApiH
 import { useEffect, useState } from "react";
 
 interface HealthPlanSelectProps {
-  selected?: HealthPlans;
+  selected?: HealthPlans; 
   onPlanChange?: (value: HealthPlans) => void;
   idHealthInsurance: number;
 }
@@ -26,9 +26,8 @@ export const HealthPlanSelect = ({
   const [healthPlans, setHealthPlans] = useState<HealthPlans[]>([]);
   const healthPlansRepository = createApiHealthPlansRepository();
   const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>(
-    undefined
+    selected?.id.toString()
   );
-
   useEffect(() => {
     if (idHealthInsurance) {
       const loadHealthPlans = async () => {
@@ -44,7 +43,13 @@ export const HealthPlanSelect = ({
     } else {
       setHealthPlans([]);
     }
-  }, [idHealthInsurance]);
+  }, [idHealthInsurance, selected]);
+
+  useEffect(() => {
+    if (selected) {
+      setSelectedPlanId(selected.id.toString());
+    }
+  }, [selected]);
 
   const handleValueChange = (idHI: string) => {
     const healthPlan = healthPlans.find((c) => c.id === Number(idHI));

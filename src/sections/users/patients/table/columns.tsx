@@ -111,7 +111,7 @@ export const getColumns = (
             <>
               {/* <AddLabDialog idPatient={row.original.id} /> */}
               {/* <EditButton id={row.original.id} path="usuarios/pacientes" /> */}
-              <ViewButton id={row.original.id} text="Ver Paciente" />
+              <ViewButton id={row.original.id} text="Ver Paciente" path="pacientes"/>
               <DeletePatientDialog
                 idPatient={row.original.id}
                 onPatientDeleted={fetchPatients}

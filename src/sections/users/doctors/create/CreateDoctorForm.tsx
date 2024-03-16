@@ -53,7 +53,7 @@ function CreateDoctorForm() {
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { address, specialities, healthInsurance, ...rest } = data;
+    const { address, specialities, healthInsurances, ...rest } = data;
     console.log(selectedState, "state");
 
     const addressToSend = {
@@ -89,7 +89,7 @@ function CreateDoctorForm() {
       ...rest,
       address: addressToSend,
       specialities: specialitiesToSend,
-      healthInsurance: healthInsuranceToSend,
+      healthInsurances: healthInsuranceToSend,
     };
 
     console.log(payload);
@@ -121,7 +121,6 @@ function CreateDoctorForm() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Usamos setValue de react-hook-form para actualizar el campo
         setValue("photo", reader.result as string);
       };
       reader.readAsDataURL(file);

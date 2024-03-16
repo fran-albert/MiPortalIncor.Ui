@@ -3,10 +3,18 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { FaRegEye } from "react-icons/fa";
 
-export const ViewButton = ({ id, text }: { id: number; text: string }) => {
+export const ViewButton = ({
+  id,
+  text,
+  path,
+}: {
+  id: number;
+  text: string;
+  path: string;
+}) => {
   const router = useRouter();
   const handleEdit = () => {
-    router.push(`/usuarios/pacientes/${id}`);
+    router.push(`/usuarios/${path}/${id}`);
   };
 
   return (
