@@ -12,7 +12,7 @@ import VitalSignCard from "@/sections/users/patients/View/VitalSigns/card";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
-function UserPage() {
+function PatientPage() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const params = useParams();
   const id = params.id;
@@ -48,7 +48,7 @@ function UserPage() {
           <div className="flex flex-col md:flex-row">
             <div className="md:flex-1 md:mr-3">
               <div className="m-4">
-                <UserCardComponent user={patient} />
+                <UserCardComponent patient={patient} />
               </div>
               <div className="m-4">
                 <DataProfileCard patient={patient} />
@@ -80,4 +80,4 @@ function UserPage() {
   );
 }
 
-export default UserPage;
+export default PatientPage;

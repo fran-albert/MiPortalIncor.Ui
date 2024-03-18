@@ -1,6 +1,7 @@
 import axiosInstance from "@/services/axiosConfig";
 import { Patient } from "../domain/Patient";
 import { PatientRepository } from "../domain/PatientRepository";
+import axios from "axios";
 
 export function createApiPatientRepository(): PatientRepository {
   async function getPatient(id: number): Promise<Patient | undefined> {
@@ -22,8 +23,28 @@ export function createApiPatientRepository(): PatientRepository {
     return totalPatient;
   }
 
-  async function createPatient(newPatient: Patient): Promise<Patient> {
-    const response = await axiosInstance.post("patient/create", newPatient);
+  async function createPatient(newPatient: FormData): Promise<Patient> {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}Patient/create`,
+      newPatient,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    const patient = response.data as Patient;
+    return patient;
+  }
+
+  async function updatePatient(
+    updatePatient: Patient,
+    idPatient: number
+  ): Promise<Patient> {
+    const response = await axiosInstance.put(
+      `Patient/${idPatient}`,
+      updatePatient
+    );
     const patient = response.data as Patient;
     return patient;
   }
@@ -38,6 +59,7 @@ export function createApiPatientRepository(): PatientRepository {
     getPatient,
     getAll,
     createPatient,
+    updatePatient,
     deletePatient,
     getTotalPatients,
   };

@@ -33,7 +33,7 @@ export const getColumns = (
             <AvatarImage
               src={
                 row.original.photo
-                  ? `https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/${row.original.photo}`
+                  ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${row.original.photo}`
                   : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
               }
               alt="@username"
@@ -82,8 +82,8 @@ export const getColumns = (
       cell: ({ row }) => {
         // Asume que el paciente tiene al menos un plan de salud y solo se muestra el primero
         const firstHealthPlan = row.original.healthPlans[0];
-        const healthPlanDisplay = `${firstHealthPlan.healthInsurance.name} - ${firstHealthPlan.name}`;
-
+        const healthPlanDisplay = `${firstHealthPlan?.healthInsurance.name} - ${firstHealthPlan?.name}`;
+       
         return (
           <div className="flex items-center">
             <p className="text-sm font-medium">{healthPlanDisplay}</p>
@@ -111,7 +111,7 @@ export const getColumns = (
             <>
               {/* <AddLabDialog idPatient={row.original.id} /> */}
               {/* <EditButton id={row.original.id} path="usuarios/pacientes" /> */}
-              <ViewButton id={row.original.id} text="Ver Paciente" />
+              <ViewButton id={row.original.id} text="Ver Paciente" path="pacientes"/>
               <DeletePatientDialog
                 idPatient={row.original.id}
                 onPatientDeleted={fetchPatients}

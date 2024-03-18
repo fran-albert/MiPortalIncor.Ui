@@ -1,18 +1,9 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Speciality } from "@/modules/speciality/domain/Speciality";
 import { SpecialityRepository } from "@/modules/speciality/domain/SpecialityRepository";
 import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpecialityRepository";
 import { Listbox, Transition } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
-import { MdCheckCircleOutline } from "react-icons/md";
-import { PiSelectionBackground } from "react-icons/pi";
 interface SpecialitySelectProps {
   selected?: Speciality[];
   onSpecialityChange?: (value: Speciality[]) => void;
@@ -44,19 +35,29 @@ export const SpecialitySelect = ({
     setSpecialities([]);
   }, []);
 
-  const handleValueChange = (selectedItems: Speciality[]) => {
-    // Actualiza el estado local con las nuevas especialidades seleccionadas
-    setSelectedSpecialities(selectedItems);
+  useEffect(() => {
+    setSelectedSpecialities(selected);
+  }, [selected]);
 
-    // Si hay una función prop para manejar el cambio, llámala
+  const handleValueChange = (selectedItems: Speciality[]) => {
+    const newSelectedSpecialities = specialities.filter((sp) =>
+      selectedItems.includes(sp)
+    );
+
+    setSelectedSpecialities(newSelectedSpecialities);
+
     if (onSpecialityChange) {
-      onSpecialityChange(selectedItems);
+      onSpecialityChange(newSelectedSpecialities);
     }
   };
 
   return (
     <div className="w-full">
-      <Listbox value={selected} onChange={handleValueChange} multiple>
+      <Listbox
+        value={selectedSpecialities}
+        onChange={handleValueChange}
+        multiple
+      >
         {({ open }) => (
           <>
             <div className="mt-1 relative">
@@ -80,7 +81,7 @@ export const SpecialitySelect = ({
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute z-50 mt-1 py-1 w-full  max-h-96 overflow-hidden rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Listbox.Options className="absolute z-50 mt-1 w-full max-h-60 overflow-auto py-1 rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
                   {specialities.map((speciality) => (
                     <Listbox.Option
                       key={speciality.id}
@@ -93,28 +94,33 @@ export const SpecialitySelect = ({
                       }
                       value={speciality}
                     >
-                      {({ selected, active }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? "font-medium" : "font-normal"
-                            }`}
-                          >
-                            {speciality.name}
-                          </span>
-                          {selected ? (
+                      {({ active }) => {
+                        const isSelected = selectedSpecialities.some(
+                          (si) => si.id === speciality.id
+                        );
+                        return (
+                          <>
                             <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active
-                                ? "text-accent-foreground"
-                                : "text-popover-foreground"
-                            }`}
-                          >
-                              <Check className="h-5 w-5" aria-hidden="true" />
+                              className={`block truncate ${
+                                isSelected ? "font-medium" : "font-normal"
+                              }`}
+                            >
+                              {speciality.name}
                             </span>
-                          ) : null}
-                        </>
-                      )}
+                            {isSelected && (
+                              <span
+                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                  active
+                                    ? "text-accent-foreground"
+                                    : "text-popover-foreground"
+                                }`}
+                              >
+                                <Check className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            )}
+                          </>
+                        );
+                      }}
                     </Listbox.Option>
                   ))}
                 </Listbox.Options>

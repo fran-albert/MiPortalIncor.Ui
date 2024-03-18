@@ -6,6 +6,7 @@ import { EditButton } from "@/components/Button/Edit/button";
 import DeleteDoctorDialog from "../delete/DeleteDoctorDialog";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { formatDni } from "@/common/helpers/helpers";
+import { ViewButton } from "@/components/Button/View/button";
 
 export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
   const columns: ColumnDef<Doctor>[] = [
@@ -93,7 +94,7 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       header: " ",
       cell: ({ row }) => (
         <div className="flex items-center">
-          <EditButton id={row.original.id} path="usuarios/medicos" />
+          <ViewButton id={row.original.id} text="Ver Medico" path="medicos"/>
           <DeleteDoctorDialog
             idDoctor={row.original.id}
             onDoctorDeleted={fetchDoctors}

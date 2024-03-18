@@ -59,30 +59,22 @@ function CreatePatientForm() {
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const healthPlansToSend = selectedPlan
-      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
-      : [];
-    const { address, ...rest } = data;
+    const formData = new FormData();
 
-    const addressToSend = {
-      ...address,
-      city: {
-        ...selectedCity,
-        state: selectedState,
-      },
-    };
+    // Agregar foto
+    if (data.photo) {
+      formData.append("Photo", data.photo);
+    }
 
-
-    const dataToSend: any = {
-      ...rest,
-      address: addressToSend,
-      healthPlans: healthPlansToSend,
-    };
+    // Agregar planes de salud (Asumiendo que selectedPlan contiene IDs de los planes seleccionados)
+    if (selectedPlan) {
+      formData.append("HealthPlans", selectedPlan.id.toString()); // Modificar según sea necesario
+    }
 
     try {
       const patientRepository = createApiPatientRepository();
       const createPatientFn = createPatient(patientRepository);
-      const patientCreationPromise = createPatientFn(dataToSend);
+      const patientCreationPromise = createPatientFn(formData);
 
       toast.promise(patientCreationPromise, {
         loading: "Creando paciente...",
@@ -148,8 +140,7 @@ function CreatePatientForm() {
             <div>
               <Label htmlFor="photo">Imagen</Label>
               <Input
-                // type="file"
-                {...register("photo")}
+                type="file"
                 onChange={handleImageChange}
                 className="bg-gray-200"
               />

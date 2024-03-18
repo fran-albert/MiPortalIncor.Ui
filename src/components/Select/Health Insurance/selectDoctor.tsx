@@ -47,17 +47,31 @@ export const HealthInsuranceDoctorSelect = ({
     setHealthInsurances([]);
   }, []);
 
+  useEffect(() => {
+    setSelectedHealthInsurances(selected);
+  }, [selected]);
+
   const handleValueChange = (selectedItems: HealthInsurance[]) => {
-    setSelectedHealthInsurances(selectedItems);
+    // Encuentra las diferencias entre las aseguradoras de salud seleccionadas actualmente
+    // y las que se acaban de seleccionar/deseleccionar.
+    const newSelectedHealthInsurances = healthInsurances.filter(
+      (healthInsurance) => selectedItems.includes(healthInsurance)
+    );
+
+    setSelectedHealthInsurances(newSelectedHealthInsurances);
 
     if (onHealthInsuranceChange) {
-      onHealthInsuranceChange(selectedItems);
+      onHealthInsuranceChange(newSelectedHealthInsurances);
     }
   };
 
   return (
     <div className="w-full">
-      <Listbox value={selected} onChange={handleValueChange} multiple>
+      <Listbox
+        value={selectedHealthInsurances}
+        onChange={handleValueChange}
+        multiple
+      >
         {({ open }) => (
           <>
             <div className="mt-1 relative">
@@ -81,7 +95,7 @@ export const HealthInsuranceDoctorSelect = ({
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute z-50 mt-1 py-1 w-full  max-h-96 overflow-hidden rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Listbox.Options className="absolute z-50 mt-1 w-full max-h-60 overflow-auto py-1 rounded-md bg-popover text-popover-foreground shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
                   {healthInsurances.map((healthInsurance) => (
                     <Listbox.Option
                       key={healthInsurance.id}
@@ -94,28 +108,34 @@ export const HealthInsuranceDoctorSelect = ({
                       }
                       value={healthInsurance}
                     >
-                      {({ selected, active }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? "font-medium" : "font-normal"
-                            }`}
-                          >
-                            {healthInsurance.name}
-                          </span>
-                          {selected ? (
+                      {({ active }) => {
+                        // Revisa si la opción actual está seleccionada.
+                        const isSelected = selectedHealthInsurances.some(
+                          (si) => si.id === healthInsurance.id
+                        );
+                        return (
+                          <>
                             <span
-                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                active
-                                  ? "text-accent-foreground"
-                                  : "text-popover-foreground"
+                              className={`block truncate ${
+                                isSelected ? "font-medium" : "font-normal"
                               }`}
                             >
-                              <Check className="h-5 w-5" aria-hidden="true" />
+                              {healthInsurance.name}
                             </span>
-                          ) : null}
-                        </>
-                      )}
+                            {isSelected && (
+                              <span
+                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                  active
+                                    ? "text-accent-foreground"
+                                    : "text-popover-foreground"
+                                }`}
+                              >
+                                <Check className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            )}
+                          </>
+                        );
+                      }}
                     </Listbox.Option>
                   ))}
                 </Listbox.Options>

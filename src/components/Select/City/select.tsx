@@ -47,7 +47,8 @@ export const CitySelect = ({
   }, [idState]);
 
   const handleValueChange = (cityId: string) => {
-    const city = cities.find((c) => c.id === cityId);
+    const city = cities.find((c) => String(c.id) === cityId);
+
     console.log("Seleccionando ciudad:", city);
     if (city) {
       onCityChange && onCityChange(city);
