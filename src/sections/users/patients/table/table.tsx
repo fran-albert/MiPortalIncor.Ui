@@ -39,6 +39,7 @@ export const PatientTable = () => {
 
   return (
     <>
+    <div className="md:ml-[40px] w-11/12">
       {" "}
       <h1 className="text-2xl text-start font-medium mb-4">
         Patients
@@ -53,6 +54,7 @@ export const PatientTable = () => {
         addLinkText="Add Patient"
         canAddUser={isSecretary}
       />
+    </div>  
     </>
   );
 };

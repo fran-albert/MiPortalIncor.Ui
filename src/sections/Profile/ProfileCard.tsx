@@ -56,7 +56,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
   return (
     <>
       <div className="flex items-center justify-center bg-white border shadow-2xl rounded-lg p-4 w-1/2">
-        <div className="relative p-8 rounded-xl w-full max-w-2xl">
+        <div className="p-8 rounded-xl w-full max-w-2xl">
           <div className="flex justify-between items-center mb-4">
             <Avatar>
               <AvatarImage

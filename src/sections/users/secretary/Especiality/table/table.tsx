@@ -74,7 +74,7 @@ export const SpecialityTable = () => {
   }
 
   return (
-    <div>
+    <div className="md:ml-[40px] w-11/12">
       <h1 className="text-2xl text-start font-medium mb-4">
         Lista de Especialidades
       </h1>
