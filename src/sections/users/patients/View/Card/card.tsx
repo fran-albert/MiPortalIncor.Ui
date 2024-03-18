@@ -19,18 +19,24 @@ import Link from "next/link";
 import EditPatientDialog from "../Dialog/dialog";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { EditButton } from "@/components/Button/Edit/button";
+import Image from "next/image";
 const UserCardComponent = ({ patient }: { patient: Patient | null }) => {
   return (
     <>
       <Card className="w-full max-w-lg shadow-md rounded-lg overflow-hidden">
         <CardHeader className="flex flex-col sm:flex-row p-4 items-start sm:items-center">
           <div className="flex-shrink-0 pb-4 sm:pb-0">
-            {/* <img
-              className="w-24 h-24 rounded-full"
-              src="https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-              alt="Imagen del Usuario"
-            /> */}
-            <FaUser className="w-24 h-24 rounded-full" />
+            <Image
+              src={
+                patient?.photo
+                  ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${patient.photo}`
+                  : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
+              }
+              className="rounded-full"
+              width={96}
+              height={96}
+              alt="Incor Logo"
+            />
           </div>
           <div className="flex-grow sm:pl-4">
             <CardTitle className="text-teal-700 text-lg font-bold">
