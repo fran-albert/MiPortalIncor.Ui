@@ -15,7 +15,7 @@ import { createPatient } from "@/modules/patients/application/create/createPatie
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -33,43 +33,77 @@ function CreatePatientForm() {
     undefined
   );
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans[] | undefined>(
     undefined
   );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthPlans | undefined
   >(undefined);
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
+    console.log("Obra social seleccionada:", healthInsurance);
     setSelectedHealthInsurance(healthInsurance);
+    setSelectedPlan(undefined);
   };
 
   const handleCityChange = (city: City) => {
-    setSelectedCity(city);
-    setValue("address.city", city);
-  };
-
-  const handlePlanChange = (plan: HealthPlans) => {
-    setSelectedPlan(plan);
+    if (selectedState) {
+      const cityWithState = { ...city, state: selectedState };
+      setSelectedCity(cityWithState);
+      setValue("address.city", cityWithState);
+    }
   };
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
     setValue("address.city.state", state);
+    console.log("address.city.state set to:", state);
+  };
+
+  const handlePlanChange = (plan: HealthPlans) => {
+    console.log("Plan de salud seleccionado (handlePlanChange):", plan);
+    setSelectedPlan([plan]);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const formData = new FormData();
+    console.log("Datos del formulario antes de enviar:", data);
+    console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
+    formData.append("UserName", data.userName);
+    formData.append("FirstName", data.firstName);
+    formData.append("LastName", data.lastName);
+    formData.append("Email", data.email);
+    formData.append("PhoneNumber", data.phoneNumber);
+    formData.append("BirthDate", data.birthDate.toString());
 
-    // Agregar foto
-    if (data.photo) {
-      formData.append("Photo", data.photo);
+    if (selectedFile) {
+      formData.append("Photo", selectedFile);
     }
 
-    // Agregar planes de salud (Asumiendo que selectedPlan contiene IDs de los planes seleccionados)
-    if (selectedPlan) {
-      formData.append("HealthPlans", selectedPlan.id.toString()); // Modificar según sea necesario
-    }
+    formData.append("Address.Street", data.address?.street);
+    formData.append("Address.Number", data.address?.number);
+    formData.append("Address.Description", data.address?.description);
+    formData.append("Address.PhoneNumber", data.address?.phoneNumber);
+    formData.append("Address.City.Id", data.address?.city?.id.toString());
+    formData.append("Address.City.Name", data.address?.city?.name);
+    formData.append(
+      "Address.City.State.Id",
+      data.address?.city?.state?.id.toString()
+    );
+    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
+    formData.append(
+      "Address.City.State.Country.Id",
+      data.address?.city?.state?.country?.id.toString()
+    );
+    formData.append(
+      "Address.City.State.Country.Name",
+      data.address?.city?.state?.country?.name
+    );
+    selectedPlan?.forEach((plan, index) => {
+      formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
+      formData.append(`HealthPlans[${index}][name]`, plan.name);
+    });
 
     try {
       const patientRepository = createApiPatientRepository();
@@ -94,15 +128,14 @@ function CreatePatientForm() {
     }
   };
 
+  useEffect(() => {
+    console.log("Obra social cambiada, reseteando el plan seleccionado");
+    setSelectedPlan(undefined);
+  }, [selectedHealthInsurance]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setValue("photo", reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
   };
 
   return (
