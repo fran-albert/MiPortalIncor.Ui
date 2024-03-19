@@ -38,6 +38,7 @@ export const DoctorsTable = () => {
 
   return (
     <>
+    <div className="md:ml-[40px] w-11/12">
       {" "}
       <h1 className="text-2xl text-start font-medium mb-4">Lista de Médicos</h1>
       <DataTable
@@ -49,6 +50,7 @@ export const DoctorsTable = () => {
         addLinkPath="medicos/agregar"
         addLinkText="Agregar Médico"
       />
+    </div>
     </>
   );
 };

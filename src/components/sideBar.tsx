@@ -51,7 +51,7 @@ export default function SideBar() {
                 data-drawer-toggle="logo-sidebar"
                 aria-controls="logo-sidebar"
                 type="button"
-                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
               >
                 <span className="sr-only">Abrir sidebar</span>
                 <svg
@@ -87,7 +87,7 @@ export default function SideBar() {
       {session && (
         <aside
           id="logo-sidebar"
-          className={`fixed top-10 left-0 z-1000 sm:w-64 h-screen pt-16 transition-transform duration-300 ease-in-out border-r border-gray-200 sm:translate-x-0 ${
+          className={`fixed top-10 left-0 z-1000 bg-white md:w-64 h-screen pt-16 transition-transform duration-300 ease-in-out border-r border-gray-200 md:translate-x-0 ${
             isSidebarOpen ? "translate-x-0 z-1000" : "-translate-x-full z-1000"
           }`}
           aria-label="Sidebar"

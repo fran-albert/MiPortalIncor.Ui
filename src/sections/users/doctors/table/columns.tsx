@@ -22,21 +22,22 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       header: "Médico",
       cell: ({ row }) => (
         <div className="flex items-center">
-          <Avatar>
-            <AvatarImage
-              src={
-                row.original.photo
-                  ? `https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/${row.original.photo}`
-                  : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-              }
-              alt="@username"
-            />
-            <AvatarFallback>
-              {`${row.original.firstName.charAt(
-                0
-              )}${row.original.lastName.charAt(0)}`}
-            </AvatarFallback>
-          </Avatar>
+            <Avatar>
+              <AvatarImage
+                src={
+                  row.original.photo
+                    ? `https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/${row.original.photo}`
+                    : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
+                }
+                alt="@username"
+              />
+              <AvatarFallback>
+                {`${row.original.firstName.charAt(
+                  0
+                )}${row.original.lastName.charAt(0)}`}
+              </AvatarFallback>
+            </Avatar>
+        
           <div className="flex flex-col ml-2">
             {" "}
             <p className="text-sm font-medium">
