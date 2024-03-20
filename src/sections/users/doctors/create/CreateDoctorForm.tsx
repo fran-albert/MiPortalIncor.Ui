@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { es } from "date-fns/locale/es";
 registerLocale("es", es);
 import moment from "moment-timezone";
+import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
