@@ -15,9 +15,14 @@ import { createPatient } from "@/modules/patients/application/create/createPatie
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { FaCamera } from "react-icons/fa";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { toast } from "sonner";
+import { es } from "date-fns/locale/es";
+registerLocale("es", es);
 
 interface Inputs extends Patient {}
 
@@ -40,7 +45,9 @@ function CreatePatientForm() {
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthPlans | undefined
   >(undefined);
-
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     console.log("Obra social seleccionada:", healthInsurance);
     setSelectedHealthInsurance(healthInsurance);
@@ -136,140 +143,225 @@ function CreatePatientForm() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setSelectedFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl(null);
+    }
+  };
+
+  const handleDateChange = (date: any) => {
+    const dateInISOFormat = date.toISOString();
+    setStartDate(dateInISOFormat);
+    setValue("birthDate", dateInISOFormat);
   };
 
   return (
     <>
-      <div className="flex items-center justify-center border shadow-xl rounded-lg p-6 w-full max-w-4xl mx-auto bg-white">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <div className="text-2xl font-bold text-center mb-6">
-            Agregar Paciente
-          </div>
-          <Separator />
-          <div className="text-xl font-bold text-center mt-6 mb-6"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-            <div>
-              <Label htmlFor="firstName">Nombre</Label>
-              <Input
-                {...register("firstName", { required: true })}
-                type="text"
-                className="bg-gray-200"
-              />
-            </div>
-            <div>
-              <Label htmlFor="lastName">Apellido</Label>
-              <Input
-                {...register("lastName", { required: true })}
-                className="bg-gray-200"
-              />
-            </div>
-            <div>
-              <Label htmlFor="userName">D.N.I.</Label>
-              <Input
-                {...register("userName", { required: true })}
-                className="bg-gray-200"
-              />
-            </div>
-            <div>
-              <Label htmlFor="photo">Imagen</Label>
-              <Input
-                type="file"
-                onChange={handleImageChange}
-                className="bg-gray-200"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-            <div>
-              <Label htmlFor="healthInsurance">Obra Social</Label>
-              <HealthInsuranceSelect
-                onHealthInsuranceChange={handleHealthInsuranceChange}
-                selected={selectedHealthInsurance}
-              />
-            </div>
-            <div>
-              <Label htmlFor="healthPlan">Plan</Label>
-              <HealthPlanSelect
-                idHealthInsurance={Number(selectedHealthInsurance?.id)}
-                selected={selectedHealthInsurance}
-                onPlanChange={handlePlanChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="birthDate">Fecha de Nacimiento</Label>
-              <Input {...register("birthDate")} className="bg-gray-200" />
-            </div>
-            <div>
-              <Label htmlFor="phoneNumber">Télefono</Label>
-              <Input {...register("phoneNumber")} className="bg-gray-200" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <Label htmlFor="state">Provincia</Label>
-              <StateSelect
-                selected={selectedState}
-                onStateChange={handleStateChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="city">Ciudad</Label>
-              <CitySelect
-                idState={selectedState?.id}
-                onCityChange={handleCityChange}
-                selected={selectedCity}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-            <div>
-              <Label htmlFor="street">Calle</Label>
-              <Input {...register("address.street")} className="bg-gray-200" />
-            </div>
-
-            <div>
-              <Label htmlFor="number">N°</Label>
-              <Input {...register("address.number")} className="bg-gray-200" />
-            </div>
-            <div>
-              <Label htmlFor="street">Descripción</Label>
-              <Input
-                {...register("address.description")}
-                className="bg-gray-200"
-              />
-            </div>
-            <div>
-              <Label htmlFor="number">Phone Number 2 </Label>
-              <Input
-                {...register("address.phoneNumber")}
-                className="bg-gray-200"
-              />
-            </div>
-          </div>
-          <Label htmlFor="email">Correo Electrónico</Label>
-          <Input
-            {...register("email", { required: true })}
-            className="bg-gray-200"
-          />
-          <div className="flex justify-center gap-4 mt-4">
+      <div className="w-1/2 p-6 mt-28 items-center justify-center border shadow-xl rounded-lg max-w-4xl mx-auto bg-white">
+        <div className="my-4">
+          <div className="flex items-center justify-center text-black font-bold text-xl">
             <button
-              type="button"
-              onClick={goBack}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="flex items-center justify-start py-2 px-4 w-full"
+              onClick={() => window.history.back()}
             >
-              Cancelar
+              <IoMdArrowRoundBack className="text-black mr-2" size={24} />
+              Agregar Paciente
             </button>
-            <Button
-              type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Agregar
-            </Button>
           </div>
-        </form>
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <div className="relative mb-3">
+            <div className="group rounded-2xl overflow-hidden">
+              <img
+                src={
+                  imagePreviewUrl ||
+                  "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
+                }
+                alt="Imagen del Paciente"
+                width={100}
+                height={100}
+                className="rounded-2xl"
+              />
+              <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
+                <div
+                  className="bg-black p-2 rounded-full cursor-pointer"
+                  onClick={() => inputFileRef?.current?.click()}
+                >
+                  <FaCamera className="text-white" />
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    ref={inputFileRef}
+                    onChange={handleImageChange}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-center rounded-lg">
+          <div className="w-full p-4">
+            <h1 className="text-xl font-semibold mb-4">Datos Personales</h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <Label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Nombre *
+                  </Label>
+                  <Input
+                    {...register("firstName", { required: true })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="lastname"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Apellido *
+                  </Label>
+                  <Input
+                    {...register("lastName", { required: true })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="dni">D.N.I. *</Label>
+                  <Input
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                    {...register("userName", { required: true })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="healthCare">Fecha de Nacimiento *</Label>
+                  <DatePicker
+                    showIcon
+                    selected={startDate}
+                    className="max-w-full"
+                    onChange={handleDateChange}
+                    locale="es"
+                    customInput={
+                      <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                    }
+                    dateFormat="d MMMM yyyy"
+                  />
+                </div>
+              </div>
+
+              <h1 className="text-xl font-semibold mb-4">Contacto</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="email">Correo Electrónico *</Label>
+                  <Input
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                    {...register("email")}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Teléfono *</Label>
+                  <Input
+                    {...register("phoneNumber", { required: true })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                  />
+                </div>
+              </div>
+
+              <h1 className="text-xl font-semibold mb-4">Ubicación</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="state">Provincia *</Label>
+                  <StateSelect
+                    selected={selectedState}
+                    onStateChange={handleStateChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="city">Ciudad *</Label>
+                  <CitySelect
+                    idState={selectedState?.id}
+                    onCityChange={handleCityChange}
+                    selected={selectedCity}
+                  />
+                </div>
+              </div>
+
+              <h1 className="text-xl font-semibold mb-4">Dirección</h1>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                <div>
+                  <Label htmlFor="street">Calle</Label>
+                  <Input
+                    {...register("address.street")}
+                    className="bg-gray-200"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="number">Número</Label>
+                  <Input
+                    {...register("address.number")}
+                    className="bg-gray-200"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="street">Piso</Label>
+                  <Input
+                    {...register("address.description")}
+                    className="bg-gray-200"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="street">Departamento</Label>
+                  <Input
+                    {...register("address.phoneNumber")}
+                    className="bg-gray-200"
+                  />
+                </div>
+              </div>
+
+              <h1 className="text-xl font-semibold mb-4">Seguro Médico</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="email">Obra Social *</Label>
+                  <HealthInsuranceSelect
+                    onHealthInsuranceChange={handleHealthInsuranceChange}
+                    selected={selectedHealthInsurance}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Plan *</Label>
+                  <HealthPlanSelect
+                    idHealthInsurance={Number(selectedHealthInsurance?.id)}
+                    selected={selectedHealthInsurance}
+                    onPlanChange={handlePlanChange}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-center mt-10">
+                <Button
+                  className="mt-10 m-2"
+                  variant="destructive"
+                  onClick={goBack}
+                >
+                  Cancelar
+                </Button>
+                <Button className=" m-2" variant="teal">
+                  Confirmar
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </>
   );

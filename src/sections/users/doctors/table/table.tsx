@@ -34,8 +34,6 @@ export const DoctorsTable = () => {
     return <Loading isLoading />;
   }
 
-  console.log(doctors)
-
   return (
     <>
     <div className="md:ml-[40px] w-11/12">

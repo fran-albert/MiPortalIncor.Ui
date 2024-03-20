@@ -79,7 +79,7 @@ export const HealthInsuranceDoctorSelect = ({
                 <span className="block truncate">
                   {selected.length > 0
                     ? selected.map((s) => s.name).join(", ")
-                    : "Seleccione las especialidades..."}
+                    : "Seleccione las obra sociales..."}
                 </span>
                 <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                   <ChevronDown

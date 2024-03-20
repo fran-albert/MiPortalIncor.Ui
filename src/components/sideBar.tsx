@@ -100,7 +100,7 @@ export default function SideBar() {
                   href="/inicio"
                 >
                   <FaHome size={25} color="#0d9488" />
-                  <span className="flex-1 ml-3 whitespace-nowrap">Home</span>
+                  <span className="flex-1 ml-3 whitespace-nowrap">Inicio</span>
                 </Link>
               </li>
               <li>
@@ -110,7 +110,7 @@ export default function SideBar() {
                 >
                   <FaUser size={25} color="#0d9488" />
                   <span className="flex-1 ml-3 whitespace-nowrap">
-                    My Profile
+                    Mi Perfil
                   </span>
                 </a>
               </li>
@@ -132,7 +132,7 @@ export default function SideBar() {
               {isSecretary && (
                 <>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Users Management
+                    Gestionar
                   </li>
                   <li className="pl-5">
                     <Link
@@ -140,7 +140,7 @@ export default function SideBar() {
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
                       <FaUsers size={25} color="#0d9488" />
-                      <span className="ml-3">Patients</span>
+                      <span className="ml-3">Pacientes</span>
                     </Link>
                   </li>
                   <li className="pl-5">
@@ -149,7 +149,7 @@ export default function SideBar() {
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
                       <FaUserDoctor size={25} color="#0d9488" />
-                      <span className="ml-3">Doctors</span>
+                      <span className="ml-3">Médicos</span>
                     </Link>
                   </li>
                   <li className="pl-5">
@@ -162,7 +162,7 @@ export default function SideBar() {
                     </Link>
                   </li>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Reports
+                    Reportes
                   </li>
                   <li className="pl-5">
                     <Link
@@ -170,7 +170,7 @@ export default function SideBar() {
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
                       <FaFilePdf size={25} color="#0d9488" />
-                      <span className="ml-3">Studies</span>
+                      <span className="ml-3 line-through">Estudios</span>
                     </Link>
                   </li>
                 </>
@@ -179,7 +179,7 @@ export default function SideBar() {
               {isDoctor && !isSecretary && (
                 <>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
-                    Users
+                    Usuarios
                   </li>
                   <li className="pl-5">
                     <Link
@@ -187,7 +187,7 @@ export default function SideBar() {
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
                       <FaUsers size={25} color="#0d9488" />
-                      <span className="ml-3">Patients</span>
+                      <span className="ml-3">Pacientes</span>
                     </Link>
                   </li>
                 </>
@@ -202,7 +202,7 @@ export default function SideBar() {
                   className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-red-100  group cursor-pointer"
                 >
                   <FiLogOut size={25} />
-                  <span className="flex-1 ml-3 whitespace-nowrap">Log Out</span>
+                  <span className="flex-1 ml-3 whitespace-nowrap">Cerrar Sesión</span>
                 </a>
               </li>
             </ul>

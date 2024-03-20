@@ -26,7 +26,7 @@ export const getColumns = (
     },
     {
       accessorKey: "firstName",
-      header: "Patient",
+      header: "Paciente",
       cell: ({ row }) => (
         <div className="flex items-center">
           <Avatar>
@@ -61,7 +61,7 @@ export const getColumns = (
     },
     {
       accessorKey: "dni",
-      header: "Identification",
+      header: "D.N.I.",
       cell: ({ row }) => (
         <div className="flex items-center">
           <p className="text-sm font-medium">{formatDni(row.original.dni)}</p>
@@ -69,7 +69,7 @@ export const getColumns = (
       ),
     },
     {
-      header: "Phone Number",
+      header: "Teléfono",
       cell: ({ row }) => (
         <div className="flex items-center">
           <p className="text-sm font-medium">{row.original.phoneNumber}</p>
@@ -80,10 +80,9 @@ export const getColumns = (
       accessorKey: "healthPlans",
       header: "Obra Social - Plan",
       cell: ({ row }) => {
-        // Asume que el paciente tiene al menos un plan de salud y solo se muestra el primero
         const firstHealthPlan = row.original.healthPlans[0];
         const healthPlanDisplay = `${firstHealthPlan?.healthInsurance.name} - ${firstHealthPlan?.name}`;
-       
+
         return (
           <div className="flex items-center">
             <p className="text-sm font-medium">{healthPlanDisplay}</p>
@@ -93,7 +92,7 @@ export const getColumns = (
     },
 
     {
-      header: "Address",
+      header: "Domicilio",
       cell: ({ row }) => (
         <div className="flex items-center">
           <div className="flex flex-col ml-2">
@@ -109,9 +108,11 @@ export const getColumns = (
         <div className="flex items-center justify-end">
           {roles.isSecretary && (
             <>
-              {/* <AddLabDialog idPatient={row.original.id} /> */}
-              {/* <EditButton id={row.original.id} path="usuarios/pacientes" /> */}
-              <ViewButton id={row.original.id} text="Ver Paciente" path="pacientes"/>
+              <ViewButton
+                id={row.original.id}
+                text="Ver Paciente"
+                path="pacientes"
+              />
               <DeletePatientDialog
                 idPatient={row.original.id}
                 onPatientDeleted={fetchPatients}
@@ -120,7 +121,6 @@ export const getColumns = (
           )}
           {roles.isDoctor && (
             <>
-              {/* <FaRegEye className="text-gray-500 cursor-pointer" size={25} /> */}
               <Button>Ver Paciente</Button>
             </>
           )}

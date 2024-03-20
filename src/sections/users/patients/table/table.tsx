@@ -35,26 +35,24 @@ export const PatientTable = () => {
     return <Loading isLoading />;
   }
 
-  console.log(patients)
-
   return (
     <>
-    <div className="md:ml-[40px] w-11/12">
-      {" "}
-      <h1 className="text-2xl text-start font-medium mb-4">
-        Patients
-      </h1>
-      <DataTable
-        columns={patientColumns}
-        data={patients}
-        searchPlaceholder="Search patients..."
-        showSearch={true}
-        addLinkPath="pacientes/agregar"
-        searchColumn="firstName"
-        addLinkText="Add Patient"
-        canAddUser={isSecretary}
-      />
-    </div>  
+      <div className="md:ml-[40px] w-11/12">
+        {" "}
+        <h1 className="text-2xl text-start font-medium mb-4">
+          Lista de Pacientes
+        </h1>
+        <DataTable
+          columns={patientColumns}
+          data={patients}
+          searchPlaceholder="Buscar pacientes..."
+          showSearch={true}
+          addLinkPath="pacientes/agregar"
+          searchColumn="firstName"
+          addLinkText="Agregar Paciente"
+          canAddUser={isSecretary}
+        />
+      </div>
     </>
   );
 };

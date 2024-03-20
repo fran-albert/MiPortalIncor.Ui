@@ -8,7 +8,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  birthDate: boolean;
+  birthDate: Date | string;
   phoneNumber: string;
   photo: string;
   token?: string;

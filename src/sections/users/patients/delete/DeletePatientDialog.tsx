@@ -31,14 +31,8 @@ export default function DeletePatientDialog({
   const handleConfirmDelete = async () => {
     try {
       const patientRepository = createApiPatientRepository();
-      const deletePatientFn = deletePatient(patientRepository);
-      const patientDeletionPromise = deletePatientFn(idPatient);
-      toast.promise(patientDeletionPromise, {
-        loading: "Eliminando paciente...",
-        success: "Paciente eliminado con éxito!",
-        error: "Error al eliminar el Paciente",
-        duration: 3000,
-      });
+      await deletePatient(patientRepository)(idPatient);
+      toast.success("Paciente eliminado con éxito!");
       if (onPatientDeleted) {
         onPatientDeleted();
       }
