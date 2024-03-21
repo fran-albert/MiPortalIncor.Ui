@@ -1,6 +1,7 @@
 import axiosInstance from "@/services/axiosConfig";
 import { Doctor } from "../domain/Doctor";
 import { DoctorRepository } from "../domain/DoctorRepository";
+import axios from "axios";
 
 export function createApiDoctorRepository(): DoctorRepository {
   async function getDoctor(id: number): Promise<Doctor> {
@@ -22,8 +23,16 @@ export function createApiDoctorRepository(): DoctorRepository {
     return totalDoctor;
   }
 
-  async function createDoctor(newDoctor: Doctor): Promise<Doctor> {
-    const response = await axiosInstance.post("doctor/create", newDoctor);
+  async function createDoctor(newDoctor: FormData): Promise<Doctor> {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}doctor/create`,
+      newDoctor,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     const doctor = response.data as Doctor;
     return doctor;
   }

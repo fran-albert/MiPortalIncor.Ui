@@ -13,7 +13,6 @@ registerLocale("es", es);
 import moment from "moment-timezone";
 import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
 import { City } from "@/modules/city/domain/City";
 import { createDoctor } from "@/modules/doctors/application/create/createDoctor";
@@ -54,8 +53,11 @@ function CreateDoctorForm() {
 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const handleCityChange = (city: City) => {
-    setSelectedCity(city);
-    setValue("address.city", city);
+    if (selectedState) {
+      const cityWithState = { ...city, state: selectedState };
+      setSelectedCity(cityWithState);
+      setValue("address.city", cityWithState);
+    }
   };
 
   const handleStateChange = (state: State) => {
@@ -64,126 +66,72 @@ function CreateDoctorForm() {
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { address, specialities, healthInsurances, ...rest } = data;
-    console.log(data.birthDate);
-    const addressToSend = {
-      ...address,
-      city: selectedCity
-        ? {
-            id: selectedCity.id,
-            name: selectedCity.name,
-            state: selectedState
-              ? {
-                  id: selectedState.id,
-                  name: selectedState.name,
-                  country: {
-                    id: selectedState.country.id,
-                    name: selectedState.country.name,
-                  },
-                }
-              : undefined,
-          }
-        : undefined,
-    };
+    const formData = new FormData();
+    console.log("Datos del formulario antes de enviar:", data);
+    formData.append("UserName", data.userName);
+    formData.append("FirstName", data.firstName);
+    formData.append("LastName", data.lastName);
+    formData.append("Email", data.email);
+    formData.append("PhoneNumber", data.phoneNumber);
+    formData.append("BirthDate", data.birthDate.toString());
 
-    const specialitiesToSend = selectedSpecialities.map((s) => ({
-      id: s.id,
-      name: s.name,
-    }));
-    const healthInsuranceToSend = selectedHealthInsurances.map((h) => ({
-      id: h.id,
-      name: h.name,
-    }));
+    if (selectedFile) {
+      formData.append("Photo", selectedFile);
+    }
 
-    const payload: any = {
-      ...rest,
-      address: addressToSend,
-      specialities: specialitiesToSend,
-      healthInsurances: healthInsuranceToSend,
-    };
+    formData.append("address.street", data.address?.street);
+    formData.append("address.number", data.address?.number);
+    formData.append("address.description", data.address?.description);
+    formData.append("address.phoneNumber", data.address?.phoneNumber);
+    formData.append("address.City.id", data.address?.city?.id.toString());
+    formData.append("address.city.name", data.address?.city?.name);
+    formData.append(
+      "address.city.state.id",
+      data.address?.city?.state?.id.toString()
+    );
+    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
+    formData.append(
+      "Address.City.State.Country.Id",
+      data.address?.city?.state?.country?.id.toString()
+    );
+    formData.append(
+      "Address.City.State.Country.Name",
+      data.address?.city?.state?.country?.name
+    );
+    formData.append("Matricula", data.matricula);
+    selectedHealthInsurances?.forEach((insurance, index) => {
+      formData.append(
+        `HealthInsurances[${index}][id]`,
+        insurance.id.toString()
+      );
+      formData.append(`HealthInsurances[${index}][name]`, insurance.name);
+    });
 
-    // const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    //   const formData = new FormData();
-    //   console.log("Datos del formulario antes de enviar:", data);
-    //   console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
-    //   formData.append("UserName", data.userName);
-    //   formData.append("FirstName", data.firstName);
-    //   formData.append("LastName", data.lastName);
-    //   formData.append("Email", data.email);
-    //   formData.append("PhoneNumber", data.phoneNumber);
-    //   formData.append("BirthDate", data.birthDate.toString());
+    selectedSpecialities?.forEach((speciality, index) => {
+      formData.append(`Specialities[${index}][id]`, speciality.id.toString());
+      formData.append(`Specialities[${index}][name]`, speciality.name);
+    });
 
-    //   if (selectedFile) {
-    //     formData.append("Photo", selectedFile);
-    //   }
+    try {
+      const doctorRepository = createApiDoctorRepository();
+      const createDoctorFn = createDoctor(doctorRepository);
+      const doctorCreationPromise = createDoctorFn(formData);
+      toast.promise(doctorCreationPromise, {
+        loading: "Creando médico...",
+        success: "Médico creado con éxito!",
+        error: "Error al crear el Médico",
+      });
 
-    //   formData.append("Address.Street", data.address?.street);
-    //   formData.append("Address.Number", data.address?.number);
-    //   formData.append("Address.Description", data.address?.description);
-    //   formData.append("Address.PhoneNumber", data.address?.phoneNumber);
-    //   formData.append("Address.City.Id", data.address?.city?.id.toString());
-    //   formData.append("Address.City.Name", data.address?.city?.name);
-    //   formData.append(
-    //     "Address.City.State.Id",
-    //     data.address?.city?.state?.id.toString()
-    //   );
-    //   formData.append("Address.City.State.Name", data.address?.city?.state?.name);
-    //   formData.append(
-    //     "Address.City.State.Country.Id",
-    //     data.address?.city?.state?.country?.id.toString()
-    //   );
-    //   formData.append(
-    //     "Address.City.State.Country.Name",
-    //     data.address?.city?.state?.country?.name
-    //   );
-    //   selectedPlan?.forEach((plan, index) => {
-    //     formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
-    //     formData.append(`HealthPlans[${index}][name]`, plan.name);
-    //   });
-
-    //   try {
-    //     const patientRepository = createApiPatientRepository();
-    //     const createPatientFn = createPatient(patientRepository);
-    //     const patientCreationPromise = createPatientFn(formData);
-
-    //     toast.promise(patientCreationPromise, {
-    //       loading: "Creando paciente...",
-    //       success: "Paciente creado con éxito!",
-    //       error: "Error al crear el Paciente",
-    //     });
-
-    //     patientCreationPromise
-    //       .then(() => {
-    //         goBack();
-    //       })
-    //       .catch((error) => {
-    //         console.error("Error al crear el paciente", error);
-    //       });
-    //   } catch (error) {
-    //     console.error("Error al crear el paciente", error);
-    //   }
-    // };
-
-    // try {
-    //   const doctorRepository = createApiDoctorRepository();
-    //   const createDoctorFn = createDoctor(doctorRepository);
-    //   const doctorCreationPromise = createDoctorFn(payload);
-    //   toast.promise(doctorCreationPromise, {
-    //     loading: "Creando médico...",
-    //     success: "Médico creado con éxito!",
-    //     error: "Error al crear el Médico",
-    //   });
-
-    //   doctorCreationPromise
-    //     .then(() => {
-    //       goBack();
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error al crear el médico", error);
-    //     });
-    // } catch (error) {
-    //   console.error("Error al crear el doctor", error);
-    // }
+      doctorCreationPromise
+        .then(() => {
+          goBack();
+        })
+        .catch((error) => {
+          console.error("Error al crear el médico", error);
+        });
+    } catch (error) {
+      console.error("Error al crear el doctor", error);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,14 +149,10 @@ function CreateDoctorForm() {
   };
 
   const handleDateChange = (date: Date) => {
-    // Convertir la fecha a la zona horaria de Argentina
-    const dateInArgentina = moment(date).tz("America/Buenos_Aires");
-
-    // Formatear la fecha en una cadena que mantiene la zona horaria (sin convertir a UTC)
-    const formattedDate = dateInArgentina.format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-
-    // Ahora `formattedDate` es una cadena que representa la fecha en la zona horaria de Argentina
-    setValue("birthDate", formattedDate);
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
   };
 
   return (
@@ -233,7 +177,7 @@ function CreateDoctorForm() {
                   imagePreviewUrl ||
                   "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
                 }
-                alt="Imagen del Paciente"
+                alt="Imagen del Médico"
                 width={100}
                 height={100}
                 className="rounded-2xl"

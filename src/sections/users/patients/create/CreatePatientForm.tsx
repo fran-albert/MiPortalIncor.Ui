@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
+import moment from "moment-timezone";
 import { City } from "@/modules/city/domain/City";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
@@ -17,6 +18,7 @@ import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientR
 import { State } from "@/modules/state/domain/State";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import "react-datepicker/dist/react-datepicker.css";
 import { FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
@@ -87,7 +89,7 @@ function CreatePatientForm() {
     if (selectedFile) {
       formData.append("Photo", selectedFile);
     }
-
+ 
     formData.append("Address.Street", data.address?.street);
     formData.append("Address.Number", data.address?.number);
     formData.append("Address.Description", data.address?.description);
@@ -111,6 +113,8 @@ function CreatePatientForm() {
       formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
       formData.append(`HealthPlans[${index}][name]`, plan.name);
     });
+
+    console.log(data.birthDate)
 
     try {
       const patientRepository = createApiPatientRepository();
@@ -154,10 +158,11 @@ function CreatePatientForm() {
     }
   };
 
-  const handleDateChange = (date: any) => {
-    const dateInISOFormat = date.toISOString();
-    setStartDate(dateInISOFormat);
-    setValue("birthDate", dateInISOFormat);
+  const handleDateChange = (date: Date) => {
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
   };
 
   return (
