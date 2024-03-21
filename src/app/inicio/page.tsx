@@ -21,8 +21,12 @@ function HomePage() {
               Admin Dashboard
             </h2>
             <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12"> 
-              <PatientCount />
-              <DoctorsCount />
+              <a href="/usuarios/pacientes">
+                <PatientCount />
+              </a>
+              <a href="/usuarios/medicos">
+                <DoctorsCount />
+              </a>  
               <UserCount />
               <UserCount />
             </div>
