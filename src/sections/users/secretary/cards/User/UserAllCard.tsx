@@ -24,7 +24,7 @@ export const UserCount = () => {
         <div className="w-2 bg-amber-500 rounded-l-xl"></div>
         <div className="flex-grow p-4">
           <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">
-            tOTAL users
+            tOTAL usuarios
           </div>
           <div className="flex items-center justify-between">
             <p className="mt-2 text-4xl font-bold text-gray-900">
