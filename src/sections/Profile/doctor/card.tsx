@@ -69,7 +69,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
 
   return (
     <>
-      <div className="flex justify-center w-full px-4 lg:px-0">
+      <div className="flex justify-center w-full px-4 mt-5 md:ml-24 lg:px-0 lg:ml-20">
         <div className="w-full max-w-7xl">
           <div className=" p-6">
             {/* Header */}
