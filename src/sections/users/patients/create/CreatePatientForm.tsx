@@ -24,6 +24,8 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { toast } from "sonner";
 import { es } from "date-fns/locale/es";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
 registerLocale("es", es);
 
 interface Inputs extends Patient {}
@@ -80,16 +82,25 @@ function CreatePatientForm() {
     console.log("Datos del formulario antes de enviar:", data);
     console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
     formData.append("UserName", data.userName);
-    formData.append("FirstName", data.firstName);
-    formData.append("LastName", data.lastName);
-    formData.append("Email", data.email);
+    formData.append(
+      "FirstName",
+      data.firstName.charAt(0).toUpperCase() +
+        data.firstName.slice(1).toLowerCase()
+    );
+    formData.append(
+      "LastName",
+      data.lastName.charAt(0).toUpperCase() +
+        data.lastName.slice(1).toLowerCase()
+    );
+
+    formData.append("Email", data.email.toLowerCase());
     formData.append("PhoneNumber", data.phoneNumber);
     formData.append("BirthDate", data.birthDate.toString());
 
     if (selectedFile) {
       formData.append("Photo", selectedFile);
     }
- 
+
     formData.append("Address.Street", data.address?.street);
     formData.append("Address.Number", data.address?.number);
     formData.append("Address.Description", data.address?.description);
@@ -114,7 +125,7 @@ function CreatePatientForm() {
       formData.append(`HealthPlans[${index}][name]`, plan.name);
     });
 
-    console.log(data.birthDate)
+    console.log(data.birthDate);
 
     try {
       const patientRepository = createApiPatientRepository();
