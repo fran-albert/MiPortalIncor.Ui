@@ -16,7 +16,9 @@ import { FaUpload } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { FaRegFilePdf } from "react-icons/fa";
 import { AiOutlineFileJpg } from "react-icons/ai";
-const StudiesCardComponent = () => {
+import StudyDialog from "./Dialog/dialog";
+import { Patient } from "@/modules/patients/domain/Patient";
+const StudiesCardComponent = ({ patient }: { patient: Patient | null }) => {
   return (
     <>
       <div className="flex sm:mx-auto">
@@ -49,10 +51,7 @@ const StudiesCardComponent = () => {
               </li>
             </ul>
             <div className="mt-4">
-              <button className="flex items-center justify-center w-full p-2 border border-dashed border-gray-300 rounded hover:bg-gray-50">
-                <FaUpload className="w-4 h-4 mr-2 text-teal-600" />
-                <span className="text-teal-600">Adjuntar Archivo</span>
-              </button>
+              <StudyDialog patient={patient} />
             </div>
           </div>
         </div>

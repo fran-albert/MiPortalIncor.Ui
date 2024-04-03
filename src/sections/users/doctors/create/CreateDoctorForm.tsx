@@ -69,8 +69,16 @@ function CreateDoctorForm() {
     const formData = new FormData();
     console.log("Datos del formulario antes de enviar:", data);
     formData.append("UserName", data.userName);
-    formData.append("FirstName", data.firstName.charAt(0).toUpperCase());
-    formData.append("LastName", data.lastName.charAt(0).toUpperCase());
+    formData.append(
+      "FirstName",
+      data.firstName.charAt(0).toUpperCase() +
+        data.firstName.slice(1).toLowerCase()
+    );
+    formData.append(
+      "LastName",
+      data.lastName.charAt(0).toUpperCase() +
+        data.lastName.slice(1).toLowerCase()
+    );
     formData.append("Email", data.email.toLowerCase());
     formData.append("PhoneNumber", data.phoneNumber);
     formData.append("BirthDate", data.birthDate.toString());
