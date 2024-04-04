@@ -13,17 +13,28 @@ import { City } from "@/modules/city/domain/City";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
-import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { updatePatient } from "@/modules/patients/application/update/updatePatient";
 import { toast } from "sonner";
-
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import { es } from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment-timezone";
+registerLocale("es", es);
 interface Inputs extends Patient {}
+
+interface Inputs {
+  [key: string]: any;
+}
+
+interface Patient {
+  [key: string]: any;
+}
 
 function EditPatientForm({ patient }: { patient: Patient | null }) {
   const params = useParams();
@@ -33,11 +44,15 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   const [selectedCity, setSelectedCity] = useState<City>();
   const [selectedHealthInsurance, setSelectedHealthInsurance] =
     useState<HealthInsurance>();
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans[] | undefined>(
     undefined
   );
   const patientRepository = createApiPatientRepository();
-  const loadPatient = getPatient(patientRepository);
+  const loadPatient = useMemo(
+    () => patientRepository.getPatient(Number(id)),
+    [id]
+  );
+
   const {
     register,
     handleSubmit,
@@ -45,77 +60,121 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     formState: { errors },
     setValue,
   } = useForm<Inputs>();
+  const [isPatientLoaded, setIsPatientLoaded] = useState(false);
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState(new Date());
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const userId = Number(id);
-        const userData = await loadPatient(userId);
+        const userData = await loadPatient;
         setSelectedState(userData?.address?.city.state);
         setSelectedCity(userData?.address?.city);
         setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
-        setSelectedPlan(userData?.healthPlans[0]);
+        // setSelectedPlan(userData?.healthPlans[0]);
         setUser(userData);
+        if (!isPatientLoaded) {
+          const birthDate = new Date(String(userData?.birthDate));
+          setStartDate(birthDate);
+          setIsPatientLoaded(true);
+        }
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [id, loadPatient]);
 
-
-  console.log(user)
-
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const handleStateChange = (state: State) => {
     setSelectedState(state);
   };
 
   const handleCityChange = (city: City) => {
-    setSelectedCity(city);
+    if (selectedState) {
+      const cityWithState = { ...city, state: selectedState };
+      setSelectedCity(cityWithState);
+      setValue("address.city", cityWithState, { shouldValidate: true });
+    }
   };
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     setSelectedHealthInsurance(healthInsurance);
   };
 
-  const handleHealthPlanChange = (healthPlan: HealthPlans) => {
-    setSelectedPlan(healthPlan);
+  const handlePlanChange = (plan: HealthPlans) => {
+    setSelectedPlan([plan]);
   };
 
+  console.log(patient);
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const healthPlansToSend = selectedPlan
-      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
-      : [];
-    const { address, ...rest } = data;
-    const formattedUserName = removeDotsFromDni(data.userName);
-    const addressToSend = {
-      ...address,
-      id: user?.address.id,
-      city: {
-        ...selectedCity,
-        state: selectedState,
-      },
-    };
+    const formData = new FormData();
+    console.log("Datos del formulario antes de enviar:", data);
+    console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
+    formData.append("UserName", data.userName);
+    formData.append(
+      "FirstName",
+      data.firstName.charAt(0).toUpperCase() +
+        data.firstName.slice(1).toLowerCase()
+    );
+    formData.append(
+      "LastName",
+      data.lastName.charAt(0).toUpperCase() +
+        data.lastName.slice(1).toLowerCase()
+    );
 
-    const dataToSend: any = {
-      ...rest,
-      userName: formattedUserName,
-      address: addressToSend,
-      healthPlans: healthPlansToSend,
-      photo: "photo",
-    };
+    formData.append("Email", data.email.toLowerCase());
+    formData.append("PhoneNumber", data.phoneNumber);
+    if (data.birthDate && moment(data.birthDate).isValid()) {
+      const formattedBirthDate = moment(data.birthDate).format();
+      formData.append("BirthDate", formattedBirthDate);
+    } else {
+      console.error("birthDate es indefinido o no válido");
+    }
 
-    console.log(dataToSend, "datatonsened");
+    if (selectedFile) {
+      formData.append("Photo", selectedFile);
+    }
+
+    formData.append("Address.Street", data.address?.street);
+    formData.append("Address.Number", data.address?.number);
+    formData.append("Address.Description", data.address?.description);
+    formData.append("Address.PhoneNumber", data.address?.phoneNumber);
+    formData.append(
+      "Address.City.Id",
+      data.address?.city?.id?.toString() ?? patient?.address.city.id.toString()
+    );
+    formData.append("Address.City.Name", data.address?.city?.name);
+    formData.append(
+      "Address.City.State.Id",
+      data.address?.city?.state?.id.toString() ??
+        patient?.address.city.state.id.toString()
+    );
+    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
+    formData.append(
+      "Address.City.State.Country.Id",
+      data.address?.city?.state?.country?.id.toString() ??
+        patient?.address.city.state.country.id.toString()
+    );
+    formData.append(
+      "Address.City.State.Country.Name",
+      data.address?.city?.state?.country?.name
+    );
+    selectedPlan?.forEach((plan, index) => {
+      formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
+      formData.append(`HealthPlans[${index}][name]`, plan.name);
+    });
 
     try {
       const patientRepository = createApiPatientRepository();
       const updatePatientFn = updatePatient(patientRepository);
-      const patientCreationPromise = updatePatientFn(dataToSend, Number(id));
+      const patientCreationPromise = updatePatientFn(formData, Number(id));
 
       toast.promise(patientCreationPromise, {
-        loading: "Actualizando paciente...",
+        loading: "Actualizando datos del paciente...",
         success: "Paciente actualizado con éxito!",
         error: "Error al actualizar el Paciente",
       });
@@ -132,9 +191,30 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl(null);
+    }
+  };
+
+  const handleDateChange = (date: Date) => {
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
+  };
+
   return (
     <>
-      <div className="w-full p-6 mt-20">
+      <div className="w-1/2 p-6 mt-28 items-center justify-center border shadow-xl rounded-lg max-w-4xl mx-auto bg-white">
         <div className="my-4">
           <div className="flex items-center justify-center text-black font-bold text-xl">
             <button
@@ -151,26 +231,32 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
             <div className="group rounded-2xl overflow-hidden">
               <img
                 src={
-                  "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
+                  patient?.photo
+                    ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${patient.photo}`
+                    : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
                 }
                 alt="Imagen del Paciente"
                 width={100}
                 height={100}
                 className="rounded-2xl"
               />
+
               <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
                 <div
                   className="bg-black p-2 rounded-full cursor-pointer"
-                  // onClick={handleEditPictureClick}
+                  onClick={() => inputFileRef?.current?.click()}
                 >
                   <FaCamera className="text-white" />
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    ref={inputFileRef}
+                    onChange={handleImageChange}
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <h3 className="text-xl font-medium">
-            {patient?.firstName} {patient?.lastName}
-          </h3>
         </div>
         <div className="flex flex-wrap items-center justify-center rounded-lg">
           <div className="w-full p-4">
@@ -180,10 +266,9 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 <div>
                   <Label
                     htmlFor="name"
-                    {...register("firstName", { required: true })}
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Nombre
+                    Nombre *
                   </Label>
                   <Input
                     {...register("firstName", { required: true })}
@@ -191,13 +276,12 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     defaultValue={patient?.firstName}
                   />
                 </div>
-
                 <div>
                   <Label
                     htmlFor="lastname"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Apellido
+                    Apellido *
                   </Label>
                   <Input
                     {...register("lastName", { required: true })}
@@ -207,7 +291,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 </div>
 
                 <div>
-                  <Label htmlFor="dni">D.N.I.</Label>
+                  <Label htmlFor="dni">D.N.I. *</Label>
                   <Input
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
                     defaultValue={patient?.dni ? formatDni(patient?.dni) : ""}
@@ -216,11 +300,17 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 </div>
 
                 <div>
-                  <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
-                  <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.birthDate.toString()}
-                    {...register("birthDate")}
+                  <Label htmlFor="healthCare">Fecha de Nacimiento *</Label>
+                  <DatePicker
+                    showIcon
+                    selected={startDate}
+                    className="max-w-full"
+                    onChange={handleDateChange}
+                    locale="es"
+                    customInput={
+                      <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                    }
+                    dateFormat="d MMMM yyyy"
                   />
                 </div>
               </div>
@@ -228,7 +318,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
               <h1 className="text-xl font-semibold mb-4">Contacto</h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <Label htmlFor="email">Correo Electrónico</Label>
+                  <Label htmlFor="email">Correo Electrónico *</Label>
                   <Input
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
                     {...register("email")}
@@ -237,7 +327,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 </div>
 
                 <div>
-                  <Label htmlFor="phone">Teléfono</Label>
+                  <Label htmlFor="phone">Teléfono *</Label>
                   <Input
                     {...register("phoneNumber", { required: true })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
@@ -249,14 +339,14 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
               <h1 className="text-xl font-semibold mb-4">Ubicación</h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <Label htmlFor="state">Provincia</Label>
+                  <Label htmlFor="state">Provincia *</Label>
                   <StateSelect
                     selected={selectedState}
                     onStateChange={handleStateChange}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="city">Ciudad</Label>
+                  <Label htmlFor="city">Ciudad *</Label>
                   <CitySelect
                     idState={selectedState?.id}
                     selected={selectedCity}
@@ -293,7 +383,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="street">Departamento *</Label>
+                  <Label htmlFor="street">Departamento</Label>
                   <Input
                     {...register("address.phoneNumber")}
                     className="bg-gray-200"
@@ -305,18 +395,18 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
               <h1 className="text-xl font-semibold mb-4">Seguro Médico</h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="email">Obra Social</Label>
+                  <Label htmlFor="email">Obra Social *</Label>
                   <HealthInsuranceSelect
-                    selected={selectedHealthInsurance}
                     onHealthInsuranceChange={handleHealthInsuranceChange}
+                    selected={selectedHealthInsurance}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Plan</Label>
+                  <Label htmlFor="phone">Plan *</Label>
                   <HealthPlanSelect
-                    selected={selectedPlan}
                     idHealthInsurance={Number(selectedHealthInsurance?.id)}
-                    onPlanChange={handleHealthPlanChange}
+                    selected={selectedHealthInsurance}
+                    onPlanChange={handlePlanChange}
                   />
                 </div>
               </div>
@@ -328,7 +418,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 >
                   Cancelar
                 </Button>
-                <Button className="mt-10 m-2" variant="teal">
+                <Button className=" m-2" variant="teal">
                   Confirmar
                 </Button>
               </div>

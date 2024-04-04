@@ -53,25 +53,18 @@ function PatientPage() {
               <div className="m-4">
                 <DataProfileCard patient={patient} />
               </div>
-              <div className="m-4">
-                <VitalSignCard />
-              </div>
-              <div className="m-4">
-                <StudiesCardComponent />
-              </div>
+              <div className="m-4">{/* <VitalSignCard /> */}</div>
+              <div className="m-4">{/* <StudiesCardComponent /> */}</div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
-                <HistoryCardComponent />
+                {/* <HistoryCardComponent /> */}
+                <StudiesCardComponent patient={patient} />
               </div>
-              <div className="m-4">
-                <VaccineComponent />
-              </div>
+              <div className="m-4">{/* <VaccineComponent /> */}</div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">
-                <AppointmentCardComponent />
-              </div>
+              <div className="m-4">{/* <AppointmentCardComponent /> */}</div>
             </div>
           </div>
         </div>

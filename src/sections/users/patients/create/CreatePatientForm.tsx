@@ -6,7 +6,6 @@ import { StateSelect } from "@/components/Select/State/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { goBack } from "@/lib/utils";
 import moment from "moment-timezone";
 import { City } from "@/modules/city/domain/City";
@@ -21,8 +20,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { toast } from "sonner";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from "date-fns/locale/es";
 registerLocale("es", es);
 
@@ -50,6 +49,7 @@ function CreatePatientForm() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(new Date());
   const inputFileRef = useRef<HTMLInputElement>(null);
+
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     console.log("Obra social seleccionada:", healthInsurance);
     setSelectedHealthInsurance(healthInsurance);
@@ -80,16 +80,25 @@ function CreatePatientForm() {
     console.log("Datos del formulario antes de enviar:", data);
     console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
     formData.append("UserName", data.userName);
-    formData.append("FirstName", data.firstName);
-    formData.append("LastName", data.lastName);
-    formData.append("Email", data.email);
+    formData.append(
+      "FirstName",
+      data.firstName.charAt(0).toUpperCase() +
+        data.firstName.slice(1).toLowerCase()
+    );
+    formData.append(
+      "LastName",
+      data.lastName.charAt(0).toUpperCase() +
+        data.lastName.slice(1).toLowerCase()
+    );
+
+    formData.append("Email", data.email.toLowerCase());
     formData.append("PhoneNumber", data.phoneNumber);
     formData.append("BirthDate", data.birthDate.toString());
 
     if (selectedFile) {
       formData.append("Photo", selectedFile);
     }
- 
+
     formData.append("Address.Street", data.address?.street);
     formData.append("Address.Number", data.address?.number);
     formData.append("Address.Description", data.address?.description);
@@ -114,7 +123,7 @@ function CreatePatientForm() {
       formData.append(`HealthPlans[${index}][name]`, plan.name);
     });
 
-    console.log(data.birthDate)
+    console.log(data.birthDate, "cumpleaños");
 
     try {
       const patientRepository = createApiPatientRepository();

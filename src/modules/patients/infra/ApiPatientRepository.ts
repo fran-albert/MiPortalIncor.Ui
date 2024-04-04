@@ -38,12 +38,17 @@ export function createApiPatientRepository(): PatientRepository {
   }
 
   async function updatePatient(
-    updatePatient: Patient,
+    updatePatient: FormData,
     idPatient: number
   ): Promise<Patient> {
     const response = await axiosInstance.put(
       `Patient/${idPatient}`,
-      updatePatient
+      updatePatient,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     const patient = response.data as Patient;
     return patient;
