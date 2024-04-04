@@ -13,7 +13,6 @@ import { City } from "@/modules/city/domain/City";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 import { HealthPlans } from "@/modules/healthPlans/domain/HealthPlan";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
-import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { State } from "@/modules/state/domain/State";
 import { useParams } from "next/navigation";
@@ -28,6 +27,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 registerLocale("es", es);
 interface Inputs extends Patient {}
+
+interface Inputs {
+  [key: string]: any;
+}
+
+interface Patient {
+  [key: string]: any;
+}
 
 function EditPatientForm({ patient }: { patient: Patient | null }) {
   const params = useParams();
@@ -89,7 +96,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     if (selectedState) {
       const cityWithState = { ...city, state: selectedState };
       setSelectedCity(cityWithState);
-      setValue("address.city", cityWithState);
+      setValue("address.city", cityWithState, { shouldValidate: true });
     }
   };
 
@@ -98,7 +105,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   };
 
   const handlePlanChange = (plan: HealthPlans) => {
-    console.log("Plan de salud seleccionado (handlePlanChange):", plan);
     setSelectedPlan([plan]);
   };
 
@@ -120,11 +126,14 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
         data.lastName.slice(1).toLowerCase()
     );
 
-    console.log(data.birthDate, "cumpleaños");
-
     formData.append("Email", data.email.toLowerCase());
     formData.append("PhoneNumber", data.phoneNumber);
-    formData.append("BirthDate", data.birthDate.toString());
+    if (data.birthDate && moment(data.birthDate).isValid()) {
+      const formattedBirthDate = moment(data.birthDate).format();
+      formData.append("BirthDate", formattedBirthDate);
+    } else {
+      console.error("birthDate es indefinido o no válido");
+    }
 
     if (selectedFile) {
       formData.append("Photo", selectedFile);
@@ -134,16 +143,21 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     formData.append("Address.Number", data.address?.number);
     formData.append("Address.Description", data.address?.description);
     formData.append("Address.PhoneNumber", data.address?.phoneNumber);
-    formData.append("Address.City.Id", data.address?.city?.id.toString());
+    formData.append(
+      "Address.City.Id",
+      data.address?.city?.id?.toString() ?? patient?.address.city.id.toString()
+    );
     formData.append("Address.City.Name", data.address?.city?.name);
     formData.append(
       "Address.City.State.Id",
-      data.address?.city?.state?.id.toString()
+      data.address?.city?.state?.id.toString() ??
+        patient?.address.city.state.id.toString()
     );
     formData.append("Address.City.State.Name", data.address?.city?.state?.name);
     formData.append(
       "Address.City.State.Country.Id",
-      data.address?.city?.state?.country?.id.toString()
+      data.address?.city?.state?.country?.id.toString() ??
+        patient?.address.city.state.country.id.toString()
     );
     formData.append(
       "Address.City.State.Country.Name",
@@ -160,9 +174,9 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
       const patientCreationPromise = updatePatientFn(formData, Number(id));
 
       toast.promise(patientCreationPromise, {
-        loading: "Creando paciente...",
-        success: "Paciente creado con éxito!",
-        error: "Error al crear el Paciente",
+        loading: "Actualizando datos del paciente...",
+        success: "Paciente actualizado con éxito!",
+        error: "Error al actualizar el Paciente",
       });
 
       patientCreationPromise
@@ -170,10 +184,10 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
           goBack();
         })
         .catch((error) => {
-          console.error("Error al crear el paciente", error);
+          console.error("Error al actualizar el paciente", error);
         });
     } catch (error) {
-      console.error("Error al crear el paciente", error);
+      console.error("Error al actualizar el paciente", error);
     }
   };
 
@@ -194,8 +208,8 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   const handleDateChange = (date: Date) => {
     const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
     const formattedDateISO = dateInArgentina.format();
-    setStartDate(date); // Actualiza startDate con la nueva fecha seleccionada
-    setValue("birthDate", formattedDateISO); // Asegura que el valor en el formulario también se actualice
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
   };
 
   return (

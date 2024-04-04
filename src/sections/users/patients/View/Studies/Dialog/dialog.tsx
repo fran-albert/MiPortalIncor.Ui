@@ -24,6 +24,11 @@ import { es } from "date-fns/locale/es";
 registerLocale("es", es);
 import { Patient } from "@/modules/patients/domain/Patient";
 import moment from "moment-timezone";
+import { StudyTypeSelect } from "@/components/Select/Study/select";
+import { Study } from "@/modules/study/domain/Study";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
+import { uploadStudy } from "@/modules/study/application/upload-study/uploadStudy";
 interface AddLabDialogProps {
   patient: Patient | null;
 }
@@ -32,26 +37,57 @@ export default function StudyDialog({ patient }: AddLabDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const toggleDialog = () => setIsOpen(!isOpen);
-
-  const handleConfirmDelete = async () => {
-    // try {
-    //   await axios.delete(
-    //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/category/${idPatient}`
-    //   );
-    //   toast.success("Laboratorio agregado correctamente");
-    // } catch (error) {
-    //   console.error("Error al agregar el laborartorio", error);
-    //   toast.error("Error al agregar el laborartorio");
-    // } finally {
-    //   setIsOpen(false);
-    // }
-  };
+  const [selectedStudy, setSelectedStudy] = useState<Study | null>(null);
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue,
+  } = useForm();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [startDate, setStartDate] = useState(new Date());
   const handleDateChange = (date: Date) => {
     const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
     const formattedDateISO = dateInArgentina.format();
     setStartDate(date);
-    // setValue("birthDate", formattedDateISO);
+    setValue("Date", formattedDateISO);
+  };
+
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    const formData = new FormData();
+    console.log("Datos del formulario antes de enviar:", data);
+
+    if (patient && selectedStudy) {
+      formData.append("PatientId", String(patient.id));
+      formData.append("StudyTypeId", String(selectedStudy.id));
+    }
+
+    if (selectedFile) {
+      formData.append("StudyFile", selectedFile);
+    }
+
+    formData.append("Note", data.Note);
+
+    try {
+      const studyRepository = createApiStudyRepository();
+      const uploadStudyFn = uploadStudy(studyRepository);
+      const uploadStudyPromise = uploadStudyFn(formData);
+      toast.promise(uploadStudyPromise, {
+        loading: "Subiendo estudio...",
+        success: "Estudio subido con éxito!",
+        error: "Error al subir el estudio",
+      });
+      toggleDialog();
+    } catch (error) {
+      console.log("Error al subir el estudio", error);
+      console.error("Error al subir el estudio", error);
+    }
+  };
+
+  const handleStudyChange = (study: Study) => {
+    setSelectedStudy(study);
+    setValue("StudyTypeId", study.id);
   };
 
   return (
@@ -69,62 +105,76 @@ export default function StudyDialog({ patient }: AddLabDialogProps) {
         <DialogHeader>
           <DialogTitle>Nuevo Estudio - {patient?.firstName} </DialogTitle>
         </DialogHeader>
-        <DialogDescription>
-          <div className="w-full max-w-md mx-auto">
-            <div className="mb-4">
-              <Label
-                htmlFor="name"
-                className="text-black font-medium mb-2 block"
-              >
-                Tipo de Estudio
-              </Label>
-              <Input
-                name="name"
-                id="name"
-                className="w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogDescription>
+            <div className="w-full max-w-md mx-auto">
+              <div className="mb-4">
+                <Label
+                  htmlFor="name"
+                  className="text-black font-medium mb-2 block"
+                >
+                  Tipo de Estudio
+                </Label>
+                <StudyTypeSelect onStudyChange={handleStudyChange} />
+              </div>
+              <div>
+                <Label
+                  htmlFor="name"
+                  className="text-black font-medium mb-2 block"
+                >
+                  Comentario *
+                </Label>
+                <Input
+                  className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                  {...register("Note", { required: true })}
+                />
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <Label
-                htmlFor="name"
-                className="text-black font-medium mb-2 block"
-              >
-                Comentario *
-              </Label>
-              <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <Label
+                  htmlFor="name"
+                  className="text-black font-medium mb-2 block"
+                >
+                  Archivo
+                </Label>
+                <Input
+                  className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                  type="file"
+                  onChange={(e) => setSelectedFile(e.target.files && e.target.files[0])}
+                />
+              </div>
 
-            <div>
-              <Label
-                htmlFor="healthCare"
-                className="text-black font-medium mb-2 block"
-              >
-                Fecha *
-              </Label>
-              <DatePicker
-                showIcon
-                selected={startDate}
-                className="max-w-full"
-                onChange={handleDateChange}
-                locale="es"
-                customInput={
-                  <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
-                }
-                dateFormat="d MMMM yyyy"
-              />
+              {/* <div>
+                <Label
+                  htmlFor="healthCare"
+                  className="text-black font-medium mb-2 block"
+                >
+                  Fecha *
+                </Label>
+                <DatePicker
+                  showIcon
+                  selected={startDate}
+                  className="max-w-full"
+                  onChange={handleDateChange}
+                  locale="es"
+                  customInput={
+                    <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                  }
+                  dateFormat="d MMMM yyyy"
+                />
+              </div> */}
             </div>
-          </div>
-        </DialogDescription>
-        <DialogFooter>
-          <Button variant="outline" onClick={toggleDialog}>
-            Cancelar
-          </Button>
-          <Button variant="teal" onClick={handleConfirmDelete}>
-            Confirmar
-          </Button>
-        </DialogFooter>
+          </DialogDescription>
+          <DialogFooter>
+            <Button variant="outline" onClick={toggleDialog}>
+              Cancelar
+            </Button>
+            <Button variant="teal" type="submit">
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
