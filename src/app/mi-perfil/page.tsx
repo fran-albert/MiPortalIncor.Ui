@@ -1,5 +1,4 @@
 "use client";
-
 import withSessionTimeout from "@/components/withSessionTimeout";
 import ProfileCardComponent from "@/sections/Profile/patient/ProfileCard";
 import { useSession } from "next-auth/react";

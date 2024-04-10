@@ -20,12 +20,18 @@ export function createApiStudyRepository(): StudyRepository {
         },
       }
     );
-
     return response.data;
+  }
+
+  async function getAllStudyByPatient(idPatient: number): Promise<Study[]> {
+    const response = await axiosInstance.get(`Study/byPatient/${idPatient}`);
+    const studies = response.data as Study[];
+    return studies;
   }
 
   return {
     getAllStudyType,
+    getAllStudyByPatient,
     uploadStudy,
   };
 }

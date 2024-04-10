@@ -37,20 +37,17 @@ interface Patient {
 }
 
 function EditPatientForm({ patient }: { patient: Patient | null }) {
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<Patient>();
-  const [selectedState, setSelectedState] = useState<State>();
-  const [selectedCity, setSelectedCity] = useState<City>();
-  const [selectedHealthInsurance, setSelectedHealthInsurance] =
-    useState<HealthInsurance>();
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans[] | undefined>(
-    undefined
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    patient?.address?.city?.state
   );
-  const patientRepository = createApiPatientRepository();
-  const loadPatient = useMemo(
-    () => patientRepository.getPatient(Number(id)),
-    [id]
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(
+    patient?.address?.city
+  );
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
+    HealthInsurance | undefined
+  >(patient?.healthPlans?.[0]?.healthInsurance);
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
+    patient?.healthPlans?.[0]
   );
 
   const {
@@ -60,34 +57,11 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     formState: { errors },
     setValue,
   } = useForm<Inputs>();
-  const [isPatientLoaded, setIsPatientLoaded] = useState(false);
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState(new Date());
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const userData = await loadPatient;
-        setSelectedState(userData?.address?.city.state);
-        setSelectedCity(userData?.address?.city);
-        setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
-        // setSelectedPlan(userData?.healthPlans[0]);
-        setUser(userData);
-        if (!isPatientLoaded) {
-          const birthDate = new Date(String(userData?.birthDate));
-          setStartDate(birthDate);
-          setIsPatientLoaded(true);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const [startDate, setStartDate] = useState(
+    patient ? new Date(patient.birthDate) : new Date()
+  );
 
-    fetchUsers();
-  }, [id, loadPatient]);
-
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const handleStateChange = (state: State) => {
     setSelectedState(state);
   };
@@ -99,79 +73,52 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
       setValue("address.city", cityWithState, { shouldValidate: true });
     }
   };
+  useEffect(() => {
+    if (patient) {
+      setValue("address.city", selectedCity);
+      setValue("healthPlans", selectedPlan ? [selectedPlan] : []);
+    }
+  }, [patient, selectedCity, selectedPlan, setValue]);
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     setSelectedHealthInsurance(healthInsurance);
   };
 
   const handlePlanChange = (plan: HealthPlans) => {
-    setSelectedPlan([plan]);
+    setSelectedPlan(plan);
   };
 
-  console.log(patient);
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const formData = new FormData();
-    console.log("Datos del formulario antes de enviar:", data);
-    console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
-    formData.append("UserName", data.userName);
-    formData.append(
-      "FirstName",
-      data.firstName.charAt(0).toUpperCase() +
-        data.firstName.slice(1).toLowerCase()
-    );
-    formData.append(
-      "LastName",
-      data.lastName.charAt(0).toUpperCase() +
-        data.lastName.slice(1).toLowerCase()
-    );
+    const healthPlansToSend = selectedPlan
+      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
+      : [];
+    const { address, ...rest } = data;
+    const formattedUserName = removeDotsFromDni(data.userName);
+    const addressToSend = {
+      ...address,
+      id: patient?.address.id,
+      city: {
+        ...selectedCity,
+        state: selectedState,
+      },
+    };
+    const dataToSend: any = {
+      ...rest,
+      userName: formattedUserName,
+      address: addressToSend,
+      healthPlans: healthPlansToSend,
+      photo: "photo",
+    };
 
-    formData.append("Email", data.email.toLowerCase());
-    formData.append("PhoneNumber", data.phoneNumber);
-    if (data.birthDate && moment(data.birthDate).isValid()) {
-      const formattedBirthDate = moment(data.birthDate).format();
-      formData.append("BirthDate", formattedBirthDate);
-    } else {
-      console.error("birthDate es indefinido o no válido");
-    }
-
-    if (selectedFile) {
-      formData.append("Photo", selectedFile);
-    }
-
-    formData.append("Address.Street", data.address?.street);
-    formData.append("Address.Number", data.address?.number);
-    formData.append("Address.Description", data.address?.description);
-    formData.append("Address.PhoneNumber", data.address?.phoneNumber);
-    formData.append(
-      "Address.City.Id",
-      data.address?.city?.id?.toString() ?? patient?.address.city.id.toString()
-    );
-    formData.append("Address.City.Name", data.address?.city?.name);
-    formData.append(
-      "Address.City.State.Id",
-      data.address?.city?.state?.id.toString() ??
-        patient?.address.city.state.id.toString()
-    );
-    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
-    formData.append(
-      "Address.City.State.Country.Id",
-      data.address?.city?.state?.country?.id.toString() ??
-        patient?.address.city.state.country.id.toString()
-    );
-    formData.append(
-      "Address.City.State.Country.Name",
-      data.address?.city?.state?.country?.name
-    );
-    selectedPlan?.forEach((plan, index) => {
-      formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
-      formData.append(`HealthPlans[${index}][name]`, plan.name);
-    });
+    console.log("dataToSend", dataToSend);
 
     try {
       const patientRepository = createApiPatientRepository();
       const updatePatientFn = updatePatient(patientRepository);
-      const patientCreationPromise = updatePatientFn(formData, Number(id));
+      const patientCreationPromise = updatePatientFn(
+        Number(patient?.userId),
+        dataToSend
+      );
 
       toast.promise(patientCreationPromise, {
         loading: "Actualizando datos del paciente...",
@@ -188,20 +135,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
         });
     } catch (error) {
       console.error("Error al actualizar el paciente", error);
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreviewUrl(null);
     }
   };
 
@@ -240,21 +173,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 height={100}
                 className="rounded-2xl"
               />
-
-              <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                <div
-                  className="bg-black p-2 rounded-full cursor-pointer"
-                  onClick={() => inputFileRef?.current?.click()}
-                >
-                  <FaCamera className="text-white" />
-                  <input
-                    type="file"
-                    style={{ display: "none" }}
-                    ref={inputFileRef}
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

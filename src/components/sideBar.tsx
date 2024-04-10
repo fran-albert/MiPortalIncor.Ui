@@ -119,11 +119,11 @@ export default function SideBar() {
                 {isPatient && (
                   <li>
                     <Link
-                      href="/mis-laboratorios"
+                      href="/mis-estudios"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
                       <FaFileMedicalAlt size={25} color="#0d9488" />
-                      <span className="ml-3">Mis Laboratorios</span>
+                      <span className="ml-3">Mis Estudios</span>
                     </Link>
                   </li>
                 )}

@@ -30,10 +30,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import { uploadStudy } from "@/modules/study/application/upload-study/uploadStudy";
 interface AddLabDialogProps {
-  patient: Patient | null;
+  idPatient: number | null;
 }
 
-export default function StudyDialog({ patient }: AddLabDialogProps) {
+export default function StudyDialog({ idPatient }: AddLabDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const toggleDialog = () => setIsOpen(!isOpen);
@@ -58,9 +58,10 @@ export default function StudyDialog({ patient }: AddLabDialogProps) {
     const formData = new FormData();
     console.log("Datos del formulario antes de enviar:", data);
 
-    if (patient && selectedStudy) {
-      formData.append("PatientId", String(patient.id));
-      formData.append("StudyTypeId", String(selectedStudy.id));
+    formData.append("StudyTypeId", data.StudyTypeId);
+
+    if (idPatient) {
+      formData.append("PatientId", idPatient.toString());
     }
 
     if (selectedFile) {
@@ -103,7 +104,7 @@ export default function StudyDialog({ patient }: AddLabDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Nuevo Estudio - {patient?.firstName} </DialogTitle>
+          <DialogTitle>Nuevo Estudio </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogDescription>
@@ -141,7 +142,9 @@ export default function StudyDialog({ patient }: AddLabDialogProps) {
                 <Input
                   className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   type="file"
-                  onChange={(e) => setSelectedFile(e.target.files && e.target.files[0])}
+                  onChange={(e) =>
+                    setSelectedFile(e.target.files && e.target.files[0])
+                  }
                 />
               </div>
 

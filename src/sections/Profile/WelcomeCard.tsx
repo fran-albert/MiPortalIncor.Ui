@@ -16,6 +16,8 @@ import { useSession } from "next-auth/react";
 import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import Loading from "@/components/Loading/loading";
+import { getPatient } from "@/modules/patients/application/get/getPatient";
+import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 
 const WelcomeCardComponent = () => {
   const { data: session } = useSession();
@@ -24,8 +26,8 @@ const WelcomeCardComponent = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const userRepository = createApiUserRepositroy();
-    const loadUser = getUser(userRepository);
+    const userRepository = createApiPatientRepository();
+    const loadUser = getPatient(userRepository);
 
     const fetchUsers = async () => {
       try {
