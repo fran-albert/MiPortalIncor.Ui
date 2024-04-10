@@ -51,7 +51,6 @@ function CreatePatientForm() {
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
-    console.log("Obra social seleccionada:", healthInsurance);
     setSelectedHealthInsurance(healthInsurance);
     setSelectedPlan(undefined);
   };
@@ -122,8 +121,6 @@ function CreatePatientForm() {
       formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
       formData.append(`HealthPlans[${index}][name]`, plan.name);
     });
-
-    console.log(data.birthDate, "cumpleaños");
 
     try {
       const patientRepository = createApiPatientRepository();

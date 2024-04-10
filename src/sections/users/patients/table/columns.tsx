@@ -109,12 +109,12 @@ export const getColumns = (
           {roles.isSecretary && (
             <>
               <ViewButton
-                id={row.original.id}
+                id={row.original.userId}
                 text="Ver Paciente"
                 path="pacientes"
               />
               <DeletePatientDialog
-                idPatient={row.original.id}
+                idPatient={row.original.userId}
                 onPatientDeleted={fetchPatients}
               />
             </>

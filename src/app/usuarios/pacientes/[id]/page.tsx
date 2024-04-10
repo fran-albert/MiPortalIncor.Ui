@@ -1,7 +1,11 @@
 "use client";
 import Loading from "@/components/Loading/loading";
+import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
+import { getAllStudyByPatient } from "@/modules/study/application/get-all-by-patient/getAllStudyByPatient";
+import { Study } from "@/modules/study/domain/Study";
+import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import AppointmentCardComponent from "@/sections/users/patients/View/Appointment/card";
 import UserCardComponent from "@/sections/users/patients/View/Card/card";
 import DataProfileCard from "@/sections/users/patients/View/Data/card";
@@ -13,28 +17,54 @@ import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 function PatientPage() {
-  const [patient, setPatient] = useState<Patient | null>(null);
+  const [patient, setPatient] = useState<Patient | undefined>(undefined);
   const params = useParams();
   const id = params.id;
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const patientRepository = createApiPatientRepository();
-  const loadPatient = patientRepository.getPatient(Number(id));
-
-  const fetchPatient = async () => {
-    try {
-      setIsLoading(true);
-      const patientData = await loadPatient;
-      setPatient(patientData ?? null);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const studyRepository = createApiStudyRepository();
+  const [studies, setStudies] = useState<Study[]>([]);
 
   useEffect(() => {
-    fetchPatient();
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const loadPatient = getPatient(patientRepository);
+        const patientResult = await loadPatient(Number(id));
+        setPatient(patientResult);
+
+        if (patientResult) {
+          const loadStudies = getAllStudyByPatient(studyRepository);
+          const studiesResult = await loadStudies(Number(id));
+          setStudies(studiesResult);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [Number(id)]);
+
+ 
+
+  // const fetchPatient = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const patientData = await loadPatient;
+  //     setPatient(patientData ?? null);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchPatient();
+  // }, []);
 
   if (isLoading) {
     return <Loading isLoading />;
@@ -59,12 +89,12 @@ function PatientPage() {
             <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
                 {/* <HistoryCardComponent /> */}
-                <StudiesCardComponent patient={patient} />
+                <StudiesCardComponent studies={studies} idPatient={Number(patient?.id)} />
               </div>
               <div className="m-4">{/* <VaccineComponent /> */}</div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">{/* <AppointmentCardComponent /> */}</div>
+              <div className="m-4"><AppointmentCardComponent /></div>
             </div>
           </div>
         </div>

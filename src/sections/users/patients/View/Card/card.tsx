@@ -20,7 +20,8 @@ import EditPatientDialog from "../Dialog/dialog";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { EditButton } from "@/components/Button/Edit/button";
 import Image from "next/image";
-const UserCardComponent = ({ patient }: { patient: Patient | null }) => {
+import { calculateAge } from "@/common/helpers/helpers";
+const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
   return (
     <>
       <Card className="w-full max-w-lg shadow-md rounded-lg overflow-hidden">
@@ -42,18 +43,23 @@ const UserCardComponent = ({ patient }: { patient: Patient | null }) => {
             <CardTitle className="text-teal-700 text-lg font-bold">
               {patient?.firstName} {patient?.lastName}
             </CardTitle>
-            <p className="text-gray-600">Agosto 22, 1985 - 32 años</p>
+            <p className="text-gray-600">
+              {calculateAge(String(patient?.birthDate))} años
+            </p>
             <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
-              <EditButton id={Number(patient?.id)} path="usuarios/pacientes" />
+              <EditButton
+                id={Number(patient?.userId)}
+                path="usuarios/pacientes"
+              />
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4">
+        {/* <CardContent className="p-4">
           <div className="p-4 border border-green-700  rounded-lg">
             <h3 className="text-lg font-semibold">NOTAS INTERNAS</h3>
             <p>El paciente debe $3,000 en inyecciones de la consulta pasada.</p>
           </div>
-        </CardContent>
+        </CardContent> */}
       </Card>
     </>
   );

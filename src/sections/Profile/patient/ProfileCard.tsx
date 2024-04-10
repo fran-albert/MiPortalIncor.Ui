@@ -1,11 +1,5 @@
-// import { formatDate, formatearDNI, stateName } from "@/common/Utils";
 import { useEffect, useState } from "react";
-// import ChangePasswordModal from "./change.password";
-// import toast, { Toaster } from "react-hot-toast";
-// import LoadingPage from "@/components/Loading";
 import { FaCamera, FaPencilAlt } from "react-icons/fa";
-// import { State } from "@/common/interfaces/state.interface";
-// import EditUserModal from "./edit.user";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,20 +24,38 @@ import { City } from "@/modules/city/domain/City";
 import { HealthPlanSelect } from "@/components/Select/HealthPlan/select";
 import Loading from "@/components/Loading/loading";
 import { ChangePassword } from "../changePassword/dialog";
+import { SubmitHandler, useForm } from "react-hook-form";
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import { es } from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment-timezone";
+import { toast } from "sonner";
+import { updatePatient } from "@/modules/patients/application/update/updatePatient";
+registerLocale("es", es);
+interface Inputs extends Patient {}
+const userRepository = createApiPatientRepository();
 
 export default function ProfileCardComponent({ id }: { id: number }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<Inputs>();
   const [profile, setProfile] = useState<Patient | undefined>();
   const [selectedState, setSelectedState] = useState<State>();
-  const [selectedHealthInsurance, setSelectedHealthInsurance] =
-    useState<HealthInsurance>();
-  const [selectedHealthPlan, setSelectedHealthPlan] = useState<HealthPlans>();
+
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
+    HealthInsurance | undefined
+  >();
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>();
   const [selectedCity, setSelectedCity] = useState<City>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const [startDate, setStartDate] = useState(new Date());
+  const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
   useEffect(() => {
-    const userRepository = createApiPatientRepository();
     const loadPatient = getPatient(userRepository);
-
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
@@ -52,7 +64,8 @@ export default function ProfileCardComponent({ id }: { id: number }) {
         setSelectedState(userData?.address.city.state);
         setSelectedCity(userData?.address.city);
         setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
-        setSelectedHealthPlan(userData?.healthPlans[0]);
+        setSelectedPlan(userData?.healthPlans[0]);
+        setStartDate(new Date(userData?.birthDate ?? new Date()));
       } catch (error) {
         console.error("Error al cargar los datos del perfil:", error);
       } finally {
@@ -76,7 +89,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
   };
 
   const handleHealthPlanChange = (healthPlan: HealthPlans) => {
-    setSelectedHealthPlan(healthPlan);
+    setSelectedPlan(healthPlan);
   };
 
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -87,12 +100,57 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     setOpenModal(true);
   };
 
-  //   if (!user || !states) {
-  //     return <LoadingPage props="Cargando tu perfil..." />;
-  //   }
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const healthPlansToSend = selectedPlan
+      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
+      : [];
+    const formattedUserName = removeDotsFromDni(data.userName);
+    const { address, ...rest } = data;
+    const addressToSend = {
+      ...address,
+      id: profile?.address.id,
+      city: {
+        ...selectedCity,
+        state: selectedState,
+      },
+    };
+    const dataToSend: any = {
+      ...rest,
+      userName: formattedUserName,
+      address: addressToSend,
+      healthPlans: healthPlansToSend,
+      photo: "photo",
+    };
+
+    console.log("dataToSend", dataToSend);
+
+    try {
+      const patientRepository = createApiPatientRepository();
+      const updatePatientFn = updatePatient(patientRepository);
+      const patientCreationPromise = updatePatientFn(Number(id), dataToSend);
+
+      toast.promise(patientCreationPromise, {
+        loading: "Actualizando datos...",
+        success: "Datos actualizados con éxito!",
+        error: "Error al actualizar los datos",
+      });
+
+      patientCreationPromise.catch((error) => {
+        console.error("Error al actualizar los datos", error);
+      });
+    } catch (error) {
+      console.error("Error al actualizar los datos", error);
+    }
+  };
+  const handleDateChange = (date: Date) => {
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
+  };
 
   if (isLoading) {
-    return <Loading isLoading={true} />;
+    return <Loading isLoading />;
   }
 
   return (
@@ -162,142 +220,150 @@ export default function ProfileCardComponent({ id }: { id: number }) {
               <h3 className="text-xl font-medium">
                 {profile?.firstName} {profile?.lastName}
               </h3>
-              <p className="text-gray-600">VER ROL</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center rounded-lg p-4 ">
               <div className="w-full p-4">
-                {/* <form onSubmit={handleSubmit(onSubmit)}> */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Nombre</Label>
-                    <Input
-                      // {...register("name", { required: true })}
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                      defaultValue={profile?.firstName}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastname">Apellido</Label>
-                    <Input
-                      // {...register("lastname", { required: true })}
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                      defaultValue={profile?.lastName}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dni">D.N.I.</Label>
-                    <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Correo Electrónico</Label>
-                    <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                      // {...register("email")}
-                      defaultValue={profile?.email}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Teléfono</Label>
-                    <Input
-                      // {...register("phone", { required: true })}
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                      defaultValue={profile?.phoneNumber}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="healthCare">Obra Social - Plan</Label>
-                    <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      value={
-                        profile?.healthPlans[0].healthInsurance.name +
-                        " - " +
-                        profile?.healthPlans[0].name
-                      }
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
-                    <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      defaultValue={profile?.birthDate.toString()}
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="state">Provincia</Label>
-                    <StateSelect
-                      selected={selectedState}
-                      // onStateChange={handleStateChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">Ciudad</Label>
-                    <CitySelect
-                      idState={selectedState?.id}
-                      selected={selectedCity}
-                      //   onCityChange={handleCityChange}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="street">Calle</Label>
+                      <Label htmlFor="firstName">Nombre</Label>
                       <Input
-                        // {...register("address.street")}
-                        className="bg-gray-200"
-                        defaultValue={profile?.address.street}
+                        {...register("firstName", { required: true })}
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                        defaultValue={profile?.firstName}
                       />
                     </div>
+                    <div>
+                      <Label htmlFor="lastName">Apellido</Label>
+                      <Input
+                        {...register("lastName", { required: true })}
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                        defaultValue={profile?.lastName}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="dni">D.N.I.</Label>
+                      <Input
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
+                        defaultValue={
+                          profile?.dni ? formatDni(profile?.dni) : ""
+                        }
+                        {...register("userName")}
+                        readOnly
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Correo Electrónico</Label>
+                      <Input
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                        {...register("email")}
+                        defaultValue={profile?.email}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phoneNumber">Teléfono</Label>
+                      <Input
+                        {...register("phoneNumber", { required: true })}
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                        defaultValue={profile?.phoneNumber}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="healthCare">Obra Social - Plan</Label>
+                      <Input
+                        className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
+                        value={
+                          profile?.healthPlans[0].healthInsurance.name +
+                          " - " +
+                          profile?.healthPlans[0].name
+                        }
+                        readOnly
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
+                      <DatePicker
+                        showIcon
+                        selected={startDate}
+                        className="max-w-full"
+                        onChange={handleDateChange}
+                        locale="es"
+                        customInput={
+                          <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                        }
+                        dateFormat="d MMMM yyyy"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="state">Provincia</Label>
+                      <StateSelect
+                        selected={selectedState}
+                        // onStateChange={handleStateChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="city">Ciudad</Label>
+                      <CitySelect
+                        idState={selectedState?.id}
+                        selected={selectedCity}
+                        //   onCityChange={handleCityChange}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <Label htmlFor="street">Calle</Label>
+                        <Input
+                          {...register("address.street")}
+                          className="bg-gray-200"
+                          defaultValue={profile?.address.street}
+                        />
+                      </div>
 
-                    <div>
-                      <Label htmlFor="number">N°</Label>
-                      <Input
-                        // {...register("address.number")}
-                        className="bg-gray-200"
-                        defaultValue={profile?.address.number}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="street">Descripción</Label>
-                      <Input
-                        // {...register("address.description")}
-                        className="bg-gray-200"
-                        defaultValue={profile?.address.description}
-                      />
-                    </div>
-                    <div>
-                      {/* <Label htmlFor="number">Phone Number </Label>
-                      <Input
-                        // {...register("address.phoneNumber")}
-                        className="bg-gray-200"
-                        defaultValue={profile?.address.phoneNumber}
-                      /> */}
+                      <div>
+                        <Label htmlFor="number">N°</Label>
+                        <Input
+                          {...register("address.number")}
+                          className="bg-gray-200"
+                          defaultValue={profile?.address.number}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="street">Descripción</Label>
+                        <Input
+                          {...register("address.description")}
+                          className="bg-gray-200"
+                          defaultValue={profile?.address.description}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="number">Phone Number </Label>
+                        <Input
+                          {...register("address.phoneNumber")}
+                          className="bg-gray-200"
+                          defaultValue={profile?.address.phoneNumber}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
-                  <ChangePassword></ChangePassword>
-                  {/* <Button
+                  <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+                    <ChangePassword></ChangePassword>
+                    {/* <Button
                     className="font-medium"
                     variant="outline"
                     onClick={handleEditPassword}
                   >
                     Cambiar Contraseña
                   </Button> */}
-                  <Button
-                    className="w-full sm:w-auto"
-                    variant="outline"
-                    type="submit"
-                  >
-                    Modificar Datos
-                  </Button>
-                </div>
-                {/* </form> */}
+                    <Button
+                      className="w-full sm:w-auto"
+                      variant="outline"
+                      type="submit"
+                    >
+                      Modificar Datos
+                    </Button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

@@ -10,7 +10,6 @@ import { UserCount } from "@/sections/users/secretary/cards/User/UserAllCard";
 
 function HomePage() {
   const { isPatient, isSecretary, isDoctor } = useRoles();
-  console.log(isPatient, isSecretary, isDoctor);
   return (
     <div className="flex justify-center items-center">
       <div className="md:w-64 w-full"></div>

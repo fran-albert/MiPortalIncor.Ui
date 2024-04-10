@@ -15,8 +15,8 @@ import { AiOutlineFileJpg } from "react-icons/ai";
 import { IoIosBody } from "react-icons/io";
 import { MdHeight } from "react-icons/md";
 import { Patient } from "@/modules/patients/domain/Patient";
-import { formatDni } from "@/common/helpers/helpers";
-const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
+import { formatDate, formatDni } from "@/common/helpers/helpers";
+const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
   return (
     <>
       <div className="flex sm:mx-auto">
@@ -55,7 +55,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | null }) => {
                   </span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  {patient?.birthDate.toLocaleString()}
+                  {formatDate(String(patient?.birthDate))}
                 </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
