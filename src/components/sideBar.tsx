@@ -6,6 +6,7 @@ import {
   FaUser,
   FaFileMedicalAlt,
   FaFilePdf,
+  FaHeadset,
 } from "react-icons/fa";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -28,7 +29,7 @@ export default function SideBar() {
   useEffect(() => {
     if (
       status === "unauthenticated" &&
-      currentPath !== "/restablecer-contrase%C3%B1a" &&
+      currentPath !== "/olvidar-contrase%C3%B1a" &&
       currentPath !== "/nueva-contrase%C3%B1a"
     ) {
       router.push("/iniciar-sesion");
@@ -166,11 +167,11 @@ export default function SideBar() {
                   </li>
                   <li className="pl-5">
                     <Link
-                      href="/especialidades"
+                      href="/soporte"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaFilePdf size={25} color="#0d9488" />
-                      <span className="ml-3 line-through">Estudios</span>
+                      <FaHeadset  size={25} color="#0d9488" />
+                      <span className="ml-3">Soporte</span>
                     </Link>
                   </li>
                 </>

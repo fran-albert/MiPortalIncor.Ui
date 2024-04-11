@@ -15,6 +15,10 @@ export interface User {
   address: Address;
   userName: string;
   roles: string[];
+  userId: string
+  priority: string;
+  module: string;
+  description: string;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }
