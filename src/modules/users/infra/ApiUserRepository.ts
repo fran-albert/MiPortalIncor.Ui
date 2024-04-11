@@ -16,6 +16,12 @@ export function createApiUserRepositroy(): UserRepository {
     return users;
   }
 
+  async function requestSupport(request: User): Promise<void> {
+    const response = await axiosInstance.post(`account/support`, request);
+    const users = response.data;
+    return users;
+  }
+
   async function getTotalUsers(): Promise<number> {
     const response = await axiosInstance.get(`account/all`, {});
     const user = response.data as User[];
@@ -25,7 +31,7 @@ export function createApiUserRepositroy(): UserRepository {
 
   return {
     getUser,
-    getTotalUsers,
+    getTotalUsers, requestSupport,
     getAllUsers,
   };
 }
