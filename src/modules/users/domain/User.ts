@@ -14,8 +14,8 @@ export interface User {
   token?: string;
   address: Address;
   userName: string;
+  userId: number;
   roles: string[];
-  userId: string
   priority: string;
   module: string;
   description: string;
