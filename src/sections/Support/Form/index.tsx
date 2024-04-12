@@ -17,6 +17,7 @@ import { requestSupport } from "@/modules/users/application/support/support";
 import { toast } from "sonner";
 import { User } from "@/modules/users/domain/User";
 interface Inputs extends User {}
+const userRepository = createApiUserRepositroy();
 
 function SupportForm() {
   const { data: session, status } = useSession();
@@ -25,6 +26,7 @@ function SupportForm() {
     register,
     handleSubmit,
     watch,
+    reset,
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
@@ -51,7 +53,6 @@ function SupportForm() {
     console.log("Datos del formulario antes de enviar:", data);
 
     try {
-      const userRepository = createApiUserRepositroy();
       const createRequestSupportFn = requestSupport(userRepository);
       const patientCreationPromise = createRequestSupportFn(data);
 
@@ -60,14 +61,13 @@ function SupportForm() {
         success: "Ticket enviado correctamente",
         error: "Error al enviar el ticket",
       });
-
-      patientCreationPromise
-        .then(() => {
-          toast.success("Ticket enviado correctamente");
-        })
-        .catch((error) => {
-          console.error("Error al crear el paciente", error);
-        });
+      await patientCreationPromise;
+      reset({
+        userId: session?.user?.id || "",
+        priority: "Media",
+        module: "",
+        description: "",
+      });
     } catch (error) {
       console.error("Error al crear el ticket", error);
     }

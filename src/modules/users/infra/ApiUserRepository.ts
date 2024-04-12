@@ -5,13 +5,13 @@ import axios from "axios";
 
 export function createApiUserRepositroy(): UserRepository {
   async function getUser(id: number): Promise<User | undefined> {
-    const response = await axiosInstance.get(`Account/user?id=${id}`, {});
+    const response = await axiosInstance.get(`Account/user?id=${id}`);
     const user = response.data as User;
     return user;
   }
 
   async function getAllUsers(): Promise<User[]> {
-    const response = await axiosInstance.get(`account/all`, {});
+    const response = await axiosInstance.get(`account/all`);
     const users = response.data as User[];
     return users;
   }
@@ -23,7 +23,7 @@ export function createApiUserRepositroy(): UserRepository {
   }
 
   async function getTotalUsers(): Promise<number> {
-    const response = await axiosInstance.get(`account/all`, {});
+    const response = await axiosInstance.get(`account/all`);
     const user = response.data as User[];
     const totalUser = user.length;
     return totalUser;

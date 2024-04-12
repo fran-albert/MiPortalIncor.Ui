@@ -100,7 +100,7 @@ function LoginForm() {
             </Button>
             <hr />
             <div className="text-center">
-              <a href="/olvidar-contrase%C3%B1a">
+              <a href="/restablecer-contrase%C3%B1a">
                 ¿Has olvidado tu contraseña?
               </a>
             </div>

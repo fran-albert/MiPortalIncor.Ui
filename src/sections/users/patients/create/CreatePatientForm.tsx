@@ -44,7 +44,7 @@ function CreatePatientForm() {
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
-    HealthPlans | undefined
+    HealthInsurance | undefined
   >(undefined);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(new Date());
@@ -118,8 +118,15 @@ function CreatePatientForm() {
       data.address?.city?.state?.country?.name
     );
     selectedPlan?.forEach((plan, index) => {
-      formData.append(`HealthPlans[${index}][id]`, plan.id.toString());
-      formData.append(`HealthPlans[${index}][name]`, plan.name);
+      const planData = JSON.stringify({
+        id: plan.id,
+        name: plan.name,
+        healthInsurance: {
+          id: selectedHealthInsurance?.id,
+          name: selectedHealthInsurance?.name,
+        },
+      });
+      formData.append(`HealthPlans`, planData);
     });
 
     try {

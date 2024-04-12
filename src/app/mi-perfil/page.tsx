@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Loading from "@/components/Loading/loading";
 import useRoles from "@/hooks/useRoles";
 import ProfileDoctorCardComponent from "@/sections/Profile/doctor/card";
+import ProfileSecretaryCardComponent from "@/sections/Profile/secretary/card";
 
 const Profile = () => {
   const { data: session } = useSession();
@@ -19,6 +20,7 @@ const Profile = () => {
         <div className="flex-grow mt-20 flex justify-center items-center bg-slate-50 min-h-screen">
           {isPatient && <ProfileCardComponent id={id} />}
           {isDoctor && <ProfileDoctorCardComponent id={id} />}
+          {isSecretary && <ProfileSecretaryCardComponent id={id} />}
         </div>
       </div>
     </>

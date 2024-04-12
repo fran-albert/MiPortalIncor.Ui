@@ -31,14 +31,16 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">D.N.I.</span>
                 </div>
-                <div className="text-xs text-gray-500">{formatDni(String(doctor?.dni))}</div>
+                <div className="text-xs text-gray-500 md:ml-10">
+                  {formatDni(String(doctor?.dni))}
+                </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">Obra Social</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {/* {doctor?.healthPlans.map((healthPlan) => (
                     <div key={healthPlan.id}>
                       {healthPlan.healthInsurance.name} - {healthPlan.name}
@@ -54,7 +56,7 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                     Fecha de Nacimiento
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {doctor?.birthDate.toLocaleString()}
                 </div>
               </li>
@@ -64,7 +66,7 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                   {/* Reemplaza con tu ícono de imagen */}
                   <span className="text-sm font-medium">Teléfono</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {doctor?.phoneNumber}
                 </div>
               </li>
@@ -76,7 +78,9 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                     Correo Electrónico
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">{doctor?.email}</div>
+                <div className="text-xs text-gray-500 md:ml-10">
+                  {doctor?.email}
+                </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
@@ -84,7 +88,7 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                   {/* Reemplaza con tu ícono de imagen */}
                   <span className="text-sm font-medium">Domicilio</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {doctor?.address?.street}, {doctor?.address?.number},{" "}
                   {doctor?.address?.city?.name}
                 </div>
