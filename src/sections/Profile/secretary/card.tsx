@@ -1,75 +1,96 @@
-// import { formatDate, formatearDNI, stateName } from "@/common/Utils";
 import { useEffect, useState } from "react";
-// import ChangePasswordModal from "./change.password";
-// import toast, { Toaster } from "react-hot-toast";
-// import LoadingPage from "@/components/Loading";
 import { FaCamera, FaPencilAlt } from "react-icons/fa";
-// import { State } from "@/common/interfaces/state.interface";
-// import EditUserModal from "./edit.user";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CitySelect } from "@/components/Select/City/select";
 import { StateSelect } from "@/components/Select/State/select";
-import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
 import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import { formatDni } from "@/common/helpers/helpers";
 import useRoles from "@/hooks/useRoles";
-import { Patient } from "@/modules/patients/domain/Patient";
-import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
-import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { State } from "@/modules/state/domain/State";
 import { City } from "@/modules/city/domain/City";
-import { Doctor } from "@/modules/doctors/domain/Doctor";
-import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
-import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
-
-export default function ProfileDoctorCardComponent({ id }: { id: number }) {
-  const [profile, setProfile] = useState<Doctor | undefined>();
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import { es } from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment-timezone";
+import { useForm, SubmitHandler } from "react-hook-form";
+registerLocale("es", es);
+const userRepository = createApiUserRepositroy();
+interface Inputs extends User {}
+export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm<Inputs>();
+  const [profile, setProfile] = useState<User | undefined>();
   const { isPatient, isSecretary, isDoctor } = useRoles();
-  const [selectedState, setSelectedState] = useState<State>();
-  const [selectedCity, setSelectedCity] = useState<City>();
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    profile?.address?.city?.state
+  );
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(
+    profile?.address?.city
+  );
+  const [startDate, setStartDate] = useState(
+    profile ? new Date(profile.birthDate) : new Date()
+  );
 
   useEffect(() => {
-    const userRepository = createApiDoctorRepository();
-    const loadDoctor = getDoctor(userRepository);
+    const loadUser = getUser(userRepository);
 
     const fetchUsers = async () => {
       try {
-        const userData = await loadDoctor(id);
+        const userData = await loadUser(id);
         setProfile(userData);
-        setSelectedState(userData?.address.city.state);
-        setSelectedCity(userData?.address.city);
+        if (userData?.birthDate) {
+          setStartDate(new Date(userData.birthDate));
+        }
+        setSelectedState(userData?.address?.city?.state);
+        setSelectedCity(userData?.address?.city);
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [id]);
 
   console.log(profile);
 
-  const [openModal, setOpenModal] = useState<boolean>(false);
   // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   // const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
-
-  const handleEditPassword = () => {
-    setOpenModal(true);
-  };
 
   //   if (!user || !states) {
   //     return <LoadingPage props="Cargando tu perfil..." />;
   //   }
 
+  const handleStateChange = (state: State) => {
+    setSelectedState(state);
+  };
+
+  const handleCityChange = (city: City) => {
+    if (selectedState) {
+      const cityWithState = { ...city, state: selectedState };
+      setSelectedCity(cityWithState);
+      setValue("address.city", cityWithState, { shouldValidate: true });
+    }
+  };
+
+  const handleDateChange = (date: Date) => {
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
+  };
+
   return (
     <>
-      <div className="flex justify-center w-full px-4 mt-5 md:ml-24 lg:px-0 lg:ml-20">
+      <div className="flex justify-center w-full px-4 lg:px-0">
         <div className="w-full max-w-7xl">
           <div className=" p-6">
             {/* Header */}
@@ -169,9 +190,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Label htmlFor="healthCare">D.N.I.</Label>
                     <Input
                       className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      defaultValue={
-                        profile?.userName ? formatDni(profile?.userName) : ""
-                      }
+                      defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
                       readOnly
                     />
                   </div>
@@ -191,31 +210,26 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                       defaultValue={profile?.phoneNumber}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="healthCare">Obra Social - Plan</Label>
-                    {/* <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      value={
-                        profile?.healthPlans[0].healthInsurance.name +
-                        " - " +
-                        profile?.healthPlans[0].name
-                      }
-                      readOnly
-                    /> */}
-                  </div>
+
                   <div>
                     <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
-                    <Input
-                      className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      defaultValue={profile?.birthDate.toString()}
-                      readOnly
+                    <DatePicker
+                      showIcon
+                      selected={startDate}
+                      className="max-w-full"
+                      onChange={handleDateChange}
+                      locale="es"
+                      customInput={
+                        <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                      }
+                      dateFormat="d MMMM yyyy"
                     />
                   </div>
                   <div>
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
                       selected={selectedState}
-                      // onStateChange={handleStateChange}
+                      //   onStateChange={handleStateChange}
                     />
                   </div>
                   <div>
@@ -227,16 +241,16 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-                    <div>
+                    {/* <div>
                       <Label htmlFor="street">Calle</Label>
                       <Input
                         // {...register("address.street")}
                         className="bg-gray-200"
                         defaultValue={profile?.address.street}
                       />
-                    </div>
+                    </div> */}
 
-                    <div>
+                    {/* <div>
                       <Label htmlFor="number">N°</Label>
                       <Input
                         // {...register("address.number")}
@@ -251,7 +265,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                         className="bg-gray-200"
                         defaultValue={profile?.address.description}
                       />
-                    </div>
+                    </div> */}
                     <div>
                       {/* <Label htmlFor="number">Phone Number </Label>
                       <Input
@@ -266,7 +280,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                   <Button
                     className="font-medium"
                     variant="outline"
-                    onClick={handleEditPassword}
+                    // onClick={handleEditPassword}
                   >
                     Cambiar Contraseña
                   </Button>

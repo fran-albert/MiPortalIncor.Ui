@@ -56,12 +56,12 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     const formData = new FormData();
-    console.log("Datos del formulario antes de enviar:", data);
+    console.log("Datos del formulario antes de enviar:", data, idPatient);
 
     formData.append("StudyTypeId", data.StudyTypeId);
 
     if (idPatient) {
-      formData.append("PatientId", idPatient.toString());
+      formData.append("UserId", String(idPatient));
     }
 
     if (selectedFile) {

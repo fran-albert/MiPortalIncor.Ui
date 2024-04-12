@@ -6,7 +6,7 @@ import useRoles from "@/hooks/useRoles";
 import WelcomeCardComponent from "@/sections/Profile/WelcomeCard";
 import { DoctorsCount } from "@/sections/users/secretary/cards/Doctor/DoctorAllCards";
 import { PatientCount } from "@/sections/users/secretary/cards/Patient/PatientAllCard";
-import { UserCount } from "@/sections/users/secretary/cards/User/UserAllCard";
+import { SpectialityCount } from "@/sections/users/secretary/cards/Spectiality/SpecialityAllCards";
 
 function HomePage() {
   const { isPatient, isSecretary, isDoctor } = useRoles();
@@ -16,18 +16,13 @@ function HomePage() {
       <div className="flex justify-center items-start mt-32">
         {isSecretary && (
           <div className="w-full px-4">
-            <h2 className="text-2xl font-semibold text-center mb-6 md:ml-32">
+            <h2 className="text-2xl font-semibold text-center mb-6">
               Admin Dashboard
             </h2>
-            <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12"> 
-              <a href="/usuarios/pacientes">
-                <PatientCount />
-              </a>
-              <a href="/usuarios/medicos">
-                <DoctorsCount />
-              </a>  
-              <UserCount />
-              <UserCount />
+            <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12">
+              <PatientCount />
+              <DoctorsCount />
+              <SpectialityCount />
             </div>
           </div>
         )}

@@ -48,8 +48,6 @@ function PatientPage() {
     fetchData();
   }, [Number(id)]);
 
- 
-
   // const fetchPatient = async () => {
   //   try {
   //     setIsLoading(true);
@@ -72,7 +70,7 @@ function PatientPage() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row ">
+      <div className="flex flex-col md:flex-row md:ml-20 lg:ml-16">
         <div className="md:w-64 w-full"></div>
         <div className="flex-grow mt-24 p-3 md:p-0 bg-slate-100">
           <div className="flex flex-col md:flex-row">
@@ -89,12 +87,17 @@ function PatientPage() {
             <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
                 {/* <HistoryCardComponent /> */}
-                <StudiesCardComponent studies={studies} idPatient={Number(patient?.id)} />
+                <StudiesCardComponent
+                  studies={studies}
+                  idPatient={Number(patient?.userId)}
+                />
               </div>
               <div className="m-4">{/* <VaccineComponent /> */}</div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4"><AppointmentCardComponent /></div>
+              <div className="m-4">
+                <AppointmentCardComponent />
+              </div>
             </div>
           </div>
         </div>

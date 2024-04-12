@@ -43,7 +43,7 @@ function DoctorPage() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row ">
+      <div className="flex flex-col md:flex-row md:ml-8">
         <div className="md:w-64 w-full"></div>
         <div className="flex-grow mt-24 p-3 md:p-0 bg-slate-100">
           <div className="flex flex-col md:flex-row">

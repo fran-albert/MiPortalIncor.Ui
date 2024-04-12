@@ -31,14 +31,16 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">D.N.I.</span>
                 </div>
-                <div className="text-xs text-gray-500">{formatDni(String(patient?.dni))}</div>
+                <div className="text-xs text-gray-500 md:ml-10">
+                  {formatDni(String(patient?.dni))}
+                </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
                   <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">Obra Social</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {patient?.healthPlans.map((healthPlan) => (
                     <div key={healthPlan.id}>
                       {healthPlan.healthInsurance.name} - {healthPlan.name}
@@ -54,7 +56,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                     Fecha de Nacimiento
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {formatDate(String(patient?.birthDate))}
                 </div>
               </li>
@@ -64,7 +66,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                   {/* Reemplaza con tu ícono de imagen */}
                   <span className="text-sm font-medium">Teléfono</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {patient?.phoneNumber}
                 </div>
               </li>
@@ -76,7 +78,9 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                     Correo Electrónico
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">{patient?.email}</div>
+                <div className="text-xs text-gray-500 md:ml-10">
+                  {patient?.email}
+                </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
@@ -84,7 +88,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                   {/* Reemplaza con tu ícono de imagen */}
                   <span className="text-sm font-medium">Domicilio</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 md:ml-10">
                   {patient?.address?.street}, {patient?.address?.number},{" "}
                   {patient?.address?.city?.name}
                 </div>
