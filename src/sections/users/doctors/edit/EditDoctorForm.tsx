@@ -63,9 +63,9 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
         const userData = await loadDoctor(userId);
         setSelectedState(userData?.address?.city.state);
         setSelectedCity(userData?.address?.city);
-        setSelectedSpecialities(
-          userData?.specialities.map((s) => s.speciality)
-        );
+        // setSelectedSpecialities(
+        //   userData?.specialities.map((s) => s.speciality)
+        // );
         setSelectedHealthInsurances(userData?.healthInsurances || []);
         setUser(userData);
       } catch (error) {

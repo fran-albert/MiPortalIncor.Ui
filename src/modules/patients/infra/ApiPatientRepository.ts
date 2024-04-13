@@ -23,18 +23,11 @@ export function createApiPatientRepository(): PatientRepository {
     return totalPatient;
   }
 
-  async function createPatient(newPatient: FormData): Promise<Patient> {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}Patient/create`,
-      newPatient,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+  async function createPatient(newPatient: Patient): Promise<Patient> {
+    const response = await axiosInstance.post(`Patient/create`, newPatient);
     const patient = response.data as Patient;
     return patient;
+
   }
 
   async function updatePatient(

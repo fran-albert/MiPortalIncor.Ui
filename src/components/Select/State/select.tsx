@@ -48,7 +48,7 @@ export const StateSelect = ({ selected, onStateChange }: StateSelectProps) => {
       <SelectContent>
         {states.map((state) => (
           <SelectItem key={String(state.id)} value={String(state.id)}>
-            {state.name}, {state.country.name}
+            {state.name}
           </SelectItem>
         ))}
       </SelectContent>

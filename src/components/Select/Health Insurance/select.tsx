@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 interface HealthInsuranceSelectProps {
   selected?: HealthInsurance;
-  onHealthInsuranceChange?: (value: HealthInsurance) => void;
+  onHealthInsuranceChange: (value: HealthInsurance) => void;
 }
 
 export const HealthInsuranceSelect = ({
@@ -26,6 +26,10 @@ export const HealthInsuranceSelect = ({
       try {
         const loadedHealthInsurance = await healthInsuranceRepository.getAll();
         setHealthInsurance(loadedHealthInsurance || []);
+        // Selecciona automáticamente la primera obra social si ninguna está seleccionada
+        if (!selected && loadedHealthInsurance.length > 0) {
+          onHealthInsuranceChange(loadedHealthInsurance[0]);
+        }
       } catch (error) {
         console.error("Error al obtener las obras sociales:", error);
       }
@@ -44,7 +48,17 @@ export const HealthInsuranceSelect = ({
   };
 
   return (
-    <Select value={selected?.id.toString()} onValueChange={handleValueChange}>
+    <Select
+      value={selected?.id.toString()}
+      onValueChange={(selectedId) => {
+        const selectedHealthInsurance = healthInsurance.find(
+          (hi) => String(hi.id) === selectedId
+        );
+        if (onHealthInsuranceChange && selectedHealthInsurance) {
+          onHealthInsuranceChange(selectedHealthInsurance);
+        }
+      }}
+    >
       <SelectTrigger className="w-full bg-gray-200 text-gray-700">
         <SelectValue placeholder="Seleccionar la obra..." />
       </SelectTrigger>

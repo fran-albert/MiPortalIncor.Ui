@@ -47,7 +47,7 @@ const UserCardComponent = ({ doctor }: { doctor: Doctor | null }) => {
             <h3 className="text-lg font-semibold">ESPECIALIDADES</h3>
             <p>
               {doctor?.specialities
-                .map((item) => item.speciality.name)
+                .map((item) => item.name)
                 .join(", ")}
             </p>
             <h3 className="text-lg mt-2 font-semibold">OBRA SOCIAL</h3>

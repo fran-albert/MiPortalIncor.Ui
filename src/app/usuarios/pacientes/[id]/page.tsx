@@ -96,7 +96,7 @@ function PatientPage() {
             </div>
             <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
-                <AppointmentCardComponent />
+                {/* <AppointmentCardComponent /> */}
               </div>
             </div>
           </div>

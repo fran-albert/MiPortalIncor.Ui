@@ -23,16 +23,8 @@ export function createApiDoctorRepository(): DoctorRepository {
     return totalDoctor;
   }
 
-  async function createDoctor(newDoctor: FormData): Promise<Doctor> {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}doctor/create`,
-      newDoctor,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+  async function createDoctor(newDoctor: Doctor): Promise<Doctor> {
+    const response = await axiosInstance.post(`Doctor/create`, newDoctor);
     const doctor = response.data as Doctor;
     return doctor;
   }

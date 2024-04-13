@@ -46,7 +46,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthInsurance | undefined
   >(patient?.healthPlans?.[0]?.healthInsurance);
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>(
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | null>(
     patient?.healthPlans?.[0]
   );
 
@@ -84,8 +84,8 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     setSelectedHealthInsurance(healthInsurance);
   };
 
-  const handlePlanChange = (plan: HealthPlans) => {
-    setSelectedPlan(plan);
+  const handlePlanChange = (plan: HealthPlans | null) => {
+    setSelectedPlan(plan ? plan : null);
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {

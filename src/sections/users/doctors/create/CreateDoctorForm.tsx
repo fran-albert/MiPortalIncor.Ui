@@ -43,15 +43,12 @@ function CreateDoctorForm() {
   const [selectedSpecialities, setSelectedSpecialities] = useState<
     Speciality[]
   >([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
     HealthInsurance[]
   >([]);
   const [startDate, setStartDate] = useState(new Date());
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const handleCityChange = (city: City) => {
     if (selectedState) {
       const cityWithState = { ...city, state: selectedState };
@@ -65,65 +62,31 @@ function CreateDoctorForm() {
     setValue("address.city.state", state);
   };
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const formData = new FormData();
-    console.log("Datos del formulario antes de enviar:", data);
-    formData.append("UserName", data.userName);
-    formData.append(
-      "FirstName",
-      data.firstName.charAt(0).toUpperCase() +
-        data.firstName.slice(1).toLowerCase()
-    );
-    formData.append(
-      "LastName",
-      data.lastName.charAt(0).toUpperCase() +
-        data.lastName.slice(1).toLowerCase()
-    );
-    formData.append("Email", data.email.toLowerCase());
-    formData.append("PhoneNumber", data.phoneNumber);
-    formData.append("BirthDate", data.birthDate.toString());
-
-    if (selectedFile) {
-      formData.append("Photo", selectedFile);
+  const onSubmit: SubmitHandler<Inputs> = async (data: Doctor) => {
+    if (!selectedCity) {
+      return;
     }
 
-    formData.append("address.street", data.address?.street);
-    formData.append("address.number", data.address?.number);
-    formData.append("address.description", data.address?.description);
-    formData.append("address.phoneNumber", data.address?.phoneNumber);
-    formData.append("address.City.id", data.address?.city?.id.toString());
-    formData.append("address.city.name", data.address?.city?.name);
-    formData.append(
-      "address.city.state.id",
-      data.address?.city?.state?.id.toString()
-    );
-    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
-    formData.append(
-      "Address.City.State.Country.Id",
-      data.address?.city?.state?.country?.id.toString()
-    );
-    formData.append(
-      "Address.City.State.Country.Name",
-      data.address?.city?.state?.country?.name
-    );
-    formData.append("Matricula", data.matricula);
-    selectedHealthInsurances?.forEach((insurance, index) => {
-      formData.append(
-        `HealthInsurances[${index}][id]`,
-        insurance.id.toString()
-      );
-      formData.append(`HealthInsurances[${index}][name]`, insurance.name);
-    });
+    const payload: Doctor = {
+      ...data,
+      specialities: selectedSpecialities.map((sp) => ({
+        id: sp.id, // Asegúrate de convertir el id a número si es necesario
+        name: sp.name,
+      })), // Envuelve cada especialidad
+      healthInsurances: selectedHealthInsurances,
+      address: {
+        ...data.address,
+        city: selectedCity,
+      },
+      photo: "",
+    };
 
-    selectedSpecialities?.forEach((speciality, index) => {
-      formData.append(`Specialities[${index}][id]`, speciality.id.toString());
-      formData.append(`Specialities[${index}][name]`, speciality.name);
-    });
+    console.log(payload);
 
     try {
       const doctorRepository = createApiDoctorRepository();
       const createDoctorFn = createDoctor(doctorRepository);
-      const doctorCreationPromise = createDoctorFn(formData);
+      const doctorCreationPromise = createDoctorFn(payload);
       toast.promise(doctorCreationPromise, {
         loading: "Creando médico...",
         success: "Médico creado con éxito!",
@@ -139,20 +102,6 @@ function CreateDoctorForm() {
         });
     } catch (error) {
       console.error("Error al crear el doctor", error);
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreviewUrl(null);
     }
   };
 
@@ -182,7 +131,6 @@ function CreateDoctorForm() {
             <div className="group rounded-2xl overflow-hidden">
               <img
                 src={
-                  imagePreviewUrl ||
                   "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
                 }
                 alt="Imagen del Médico"
@@ -190,20 +138,6 @@ function CreateDoctorForm() {
                 height={100}
                 className="rounded-2xl"
               />
-              <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                <div
-                  className="bg-black p-2 rounded-full cursor-pointer"
-                  onClick={() => inputFileRef?.current?.click()}
-                >
-                  <FaCamera className="text-white" />
-                  <input
-                    type="file"
-                    style={{ display: "none" }}
-                    ref={inputFileRef}
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

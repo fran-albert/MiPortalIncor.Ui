@@ -41,9 +41,9 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
                   <span className="text-sm font-medium">Obra Social</span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
-                  {patient?.healthPlans.map((healthPlan) => (
+                  {patient?.healthPlans?.map((healthPlan) => (
                     <div key={healthPlan.id}>
-                      {healthPlan.healthInsurance.name} - {healthPlan.name}
+                      {healthPlan.healthInsurance.name}
                     </div>
                   ))}
                 </div>

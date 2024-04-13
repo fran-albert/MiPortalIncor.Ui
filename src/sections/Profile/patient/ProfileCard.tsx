@@ -63,8 +63,8 @@ export default function ProfileCardComponent({ id }: { id: number }) {
         setProfile(userData);
         setSelectedState(userData?.address.city.state);
         setSelectedCity(userData?.address.city);
-        setSelectedHealthInsurance(userData?.healthPlans[0]?.healthInsurance);
-        setSelectedPlan(userData?.healthPlans[0]);
+        // setSelectedHealthInsurance(userData?.healthPlans[0]?.name);
+        // setSelectedPlan(userData?.healthPlans[0]);
         setStartDate(new Date(userData?.birthDate ?? new Date()));
       } catch (error) {
         console.error("Error al cargar los datos del perfil:", error);
@@ -271,7 +271,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     </div>
                     <div>
                       <Label htmlFor="healthCare">Obra Social - Plan</Label>
-                      <Input
+                      {/* <Input
                         className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
                         value={
                           profile?.healthPlans[0].healthInsurance.name +
@@ -279,7 +279,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                           profile?.healthPlans[0].name
                         }
                         readOnly
-                      />
+                      /> */}
                     </div>
                     <div>
                       <Label htmlFor="healthCare">Fecha de Nacimiento</Label>

@@ -80,12 +80,12 @@ export const getColumns = (
       accessorKey: "healthPlans",
       header: "Obra Social - Plan",
       cell: ({ row }) => {
-        const firstHealthPlan = row.original.healthPlans[0];
-        const healthPlanDisplay = `${firstHealthPlan?.healthInsurance.name} - ${firstHealthPlan?.name}`;
-
+        const firstHealthPlan =
+          row.original.healthPlans?.map((healthPlan) => healthPlan.name)[0] ||
+          "Sin Obra Social";
         return (
           <div className="flex items-center">
-            <p className="text-sm font-medium">{healthPlanDisplay}</p>
+            <p className="text-sm font-medium">{firstHealthPlan}</p>
           </div>
         );
       },

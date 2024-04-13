@@ -39,10 +39,7 @@ function CreatePatientForm() {
     undefined
   );
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans[] | undefined>(
-    undefined
-  );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | null>(null);
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthInsurance | undefined
   >(undefined);
@@ -52,7 +49,7 @@ function CreatePatientForm() {
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     setSelectedHealthInsurance(healthInsurance);
-    setSelectedPlan(undefined);
+    setSelectedPlan(null);
   };
 
   const handleCityChange = (city: City) => {
@@ -66,73 +63,42 @@ function CreatePatientForm() {
   const handleStateChange = (state: State) => {
     setSelectedState(state);
     setValue("address.city.state", state);
-    console.log("address.city.state set to:", state);
   };
 
-  const handlePlanChange = (plan: HealthPlans) => {
-    console.log("Plan de salud seleccionado (handlePlanChange):", plan);
-    setSelectedPlan([plan]);
+  const handlePlanChange = (plan: HealthPlans | null) => {
+    setSelectedPlan(plan ? plan : null);
   };
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const formData = new FormData();
-    console.log("Datos del formulario antes de enviar:", data);
-    console.log("Plan de salud seleccionado antes de enviar:", selectedPlan);
-    formData.append("UserName", data.userName);
-    formData.append(
-      "FirstName",
-      data.firstName.charAt(0).toUpperCase() +
-        data.firstName.slice(1).toLowerCase()
-    );
-    formData.append(
-      "LastName",
-      data.lastName.charAt(0).toUpperCase() +
-        data.lastName.slice(1).toLowerCase()
-    );
-
-    formData.append("Email", data.email.toLowerCase());
-    formData.append("PhoneNumber", data.phoneNumber);
-    formData.append("BirthDate", data.birthDate.toString());
-
-    if (selectedFile) {
-      formData.append("Photo", selectedFile);
+  const onSubmit: SubmitHandler<Inputs> = async (data: Patient) => {
+    if (!selectedCity) {
+      console.error("La ciudad debe ser seleccionada.");
+      return;
     }
-
-    formData.append("Address.Street", data.address?.street);
-    formData.append("Address.Number", data.address?.number);
-    formData.append("Address.Description", data.address?.description);
-    formData.append("Address.PhoneNumber", data.address?.phoneNumber);
-    formData.append("Address.City.Id", data.address?.city?.id.toString());
-    formData.append("Address.City.Name", data.address?.city?.name);
-    formData.append(
-      "Address.City.State.Id",
-      data.address?.city?.state?.id.toString()
-    );
-    formData.append("Address.City.State.Name", data.address?.city?.state?.name);
-    formData.append(
-      "Address.City.State.Country.Id",
-      data.address?.city?.state?.country?.id.toString()
-    );
-    formData.append(
-      "Address.City.State.Country.Name",
-      data.address?.city?.state?.country?.name
-    );
-    selectedPlan?.forEach((plan, index) => {
-      const planData = JSON.stringify({
-        id: plan.id,
-        name: plan.name,
-        healthInsurance: {
-          id: selectedHealthInsurance?.id,
-          name: selectedHealthInsurance?.name,
-        },
-      });
-      formData.append(`HealthPlans`, planData);
-    });
+    const payload = {
+      ...data,
+      address: {
+        ...data.address,
+        city: selectedCity,
+      },
+      healthPlans: selectedPlan
+        ? [
+            {
+              id: selectedPlan.id,
+              name: selectedPlan.name,
+              healthInsurance: {
+                id: selectedHealthInsurance?.id || 0,
+                name: selectedHealthInsurance?.name || "",
+              },
+            },
+          ]
+        : [],
+      photo: "",
+    };
 
     try {
       const patientRepository = createApiPatientRepository();
       const createPatientFn = createPatient(patientRepository);
-      const patientCreationPromise = createPatientFn(formData);
+      const patientCreationPromise = createPatientFn(payload);
 
       toast.promise(patientCreationPromise, {
         loading: "Creando paciente...",
@@ -153,23 +119,8 @@ function CreatePatientForm() {
   };
 
   useEffect(() => {
-    console.log("Obra social cambiada, reseteando el plan seleccionado");
-    setSelectedPlan(undefined);
+    setSelectedPlan(null);
   }, [selectedHealthInsurance]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreviewUrl(null);
-    }
-  };
 
   const handleDateChange = (date: Date) => {
     const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
@@ -205,20 +156,6 @@ function CreatePatientForm() {
                 height={100}
                 className="rounded-2xl"
               />
-              <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                <div
-                  className="bg-black p-2 rounded-full cursor-pointer"
-                  onClick={() => inputFileRef?.current?.click()}
-                >
-                  <FaCamera className="text-white" />
-                  <input
-                    type="file"
-                    style={{ display: "none" }}
-                    ref={inputFileRef}
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>

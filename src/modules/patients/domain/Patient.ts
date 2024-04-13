@@ -11,5 +11,5 @@ export interface Patient extends User {
       id: number;
       name: string;
     };
-  }[];
+  }[] | null;
 }

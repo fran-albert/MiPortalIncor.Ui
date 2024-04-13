@@ -14,7 +14,8 @@ import { useEffect, useState } from "react";
 
 interface HealthPlanSelectProps {
   selected?: HealthPlans;
-  onPlanChange?: (value: HealthPlans) => void;
+  onPlanChange: (value: HealthPlans | null) => void;
+
   idHealthInsurance: number;
 }
 
@@ -29,31 +30,30 @@ export const HealthPlanSelect = ({
     selected?.id.toString()
   );
   useEffect(() => {
+    const loadHealthPlans = async () => {
+      const loadedHealthPlans =
+        await healthPlansRepository.getByHealthInsurance(idHealthInsurance);
+      setHealthPlans(loadedHealthPlans || []);
+      if (loadedHealthPlans && loadedHealthPlans.length > 0) {
+        const firstPlan = loadedHealthPlans[0];
+        onPlanChange(firstPlan);
+        setSelectedPlanId(firstPlan.id.toString());
+      } else {
+        onPlanChange(null);
+        setSelectedPlanId(undefined);
+      }
+    };
+
     if (idHealthInsurance) {
-      const loadHealthPlans = async () => {
-        try {
-          const loadedHealthPlans =
-            await healthPlansRepository.getByHealthInsurance(idHealthInsurance);
-          console.log("Planes de salud cargados:", loadedHealthPlans);
-          setHealthPlans(loadedHealthPlans || []);
-          if (loadedHealthPlans && loadedHealthPlans.length > 0) {
-            const firstPlanId = loadedHealthPlans[0].id.toString();
-            setSelectedPlanId(firstPlanId);
-            onPlanChange && onPlanChange(loadedHealthPlans[0]);
-          }
-        } catch (error) {
-          console.error("Error al obtener las obras sociales:", error);
-        }
-      };
       loadHealthPlans();
     } else {
       setHealthPlans([]);
+      onPlanChange(null);
       setSelectedPlanId(undefined);
     }
   }, [idHealthInsurance]);
 
   useEffect(() => {
-    console.log("Plan seleccionado actualizado:", selected);
     if (selected) {
       setSelectedPlanId(selected.id.toString());
     }
@@ -61,7 +61,6 @@ export const HealthPlanSelect = ({
 
   const handleValueChange = (idHI: string) => {
     const healthPlan = healthPlans.find((c) => c.id === Number(idHI));
-    console.log("Plan de salud seleccionado por el usuario:", healthPlan);
     if (healthPlan) {
       onPlanChange && onPlanChange(healthPlan);
       setSelectedPlanId(idHI);
