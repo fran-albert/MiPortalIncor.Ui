@@ -35,7 +35,7 @@ function DoctorPage() {
 
   useEffect(() => {
     fetchDoctor();
-  }, []);
+  }, [Number(id)]);
 
   if (isLoading) {
     return <Loading isLoading />;
@@ -43,17 +43,17 @@ function DoctorPage() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:ml-8">
+      <div className="flex flex-col md:flex-row md:ml-8 bg-slate-50 min-h-screen">
         <div className="md:w-64 w-full"></div>
-        <div className="flex-grow mt-24 p-3 md:p-0 bg-slate-100">
+        <div className="flex-grow mt-24 p-3 md:p-0 ">
           <div className="flex flex-col md:flex-row">
             <div className="md:flex-1 md:mr-3">
               <div className="m-4">
                 <UserCardComponent doctor={doctor} />
               </div>
               <div className="mt-24">
-                {/* <StudiesCardComponent /> */} TABLA CON PACIENTES ATENDIDOS
-                <table className="min-w-full">
+                {/* <StudiesCardComponent /> */} 
+                {/* <table className="min-w-full">
                   <thead>
                     <tr>
                       <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -82,7 +82,7 @@ function DoctorPage() {
                       </td>
                     </tr>
                   </tbody>
-                </table>
+                </table> */}
               </div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
@@ -93,7 +93,7 @@ function DoctorPage() {
             </div>
             <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
-                <AppointmentCardComponent />
+                {/* <AppointmentCardComponent /> */}
               </div>
             </div>
           </div>

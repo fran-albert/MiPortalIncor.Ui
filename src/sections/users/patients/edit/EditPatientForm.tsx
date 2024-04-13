@@ -89,9 +89,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const healthPlansToSend = selectedPlan
-      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
-      : [];
     const { address, ...rest } = data;
     const formattedUserName = removeDotsFromDni(data.userName);
     const addressToSend = {
@@ -106,11 +103,20 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
       ...rest,
       userName: formattedUserName,
       address: addressToSend,
-      healthPlans: healthPlansToSend,
+      healthPlans: selectedPlan
+        ? [
+            {
+              id: selectedPlan.id,
+              name: selectedPlan.name,
+              healthInsurance: {
+                id: selectedHealthInsurance?.id || 0,
+                name: selectedHealthInsurance?.name || "",
+              },
+            },
+          ]
+        : [],
       photo: "photo",
     };
-
-    console.log("dataToSend", dataToSend);
 
     try {
       const patientRepository = createApiPatientRepository();

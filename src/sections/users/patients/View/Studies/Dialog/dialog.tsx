@@ -56,7 +56,6 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     const formData = new FormData();
-    console.log("Datos del formulario antes de enviar:", data, idPatient);
 
     formData.append("StudyTypeId", data.StudyTypeId);
 
@@ -81,7 +80,6 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
       });
       toggleDialog();
     } catch (error) {
-      console.log("Error al subir el estudio", error);
       console.error("Error al subir el estudio", error);
     }
   };

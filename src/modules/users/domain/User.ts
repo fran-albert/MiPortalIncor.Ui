@@ -8,7 +8,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  birthDate: Date | string;
+  birthDate: Date | string | undefined;
   phoneNumber: string;
   photo: string;
   token?: string;
@@ -19,6 +19,11 @@ export interface User {
   priority: string;
   module: string;
   description: string;
+  currentPassword: string;
+  password: string;
+  newPassword: string;
+  code: string;
+  confirmPassword: string;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

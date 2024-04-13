@@ -3,7 +3,7 @@ import { User } from "../domain/User";
 import { UserRepository } from "../domain/UserRepository";
 import axios from "axios";
 
-export function createApiUserRepositroy(): UserRepository {
+export function createApiUserRepository(): UserRepository {
   async function getUser(id: number): Promise<User | undefined> {
     const response = await axiosInstance.get(`Account/user?id=${id}`);
     const user = response.data as User;
@@ -29,8 +29,37 @@ export function createApiUserRepositroy(): UserRepository {
     return totalUser;
   }
 
+  async function changePassword(
+    data: User
+  ): Promise<User | undefined> {
+    const response = await axiosInstance.post(
+      `account/change/password`,
+      data
+    );
+    const user = response.data as User;
+    return user;
+  }
+
+  async function forgotPassword(email: string): Promise<void> {
+    const response = await axiosInstance.post(
+      `Account/forgot/password?email=${email}`,
+      email
+    );
+    const user = response.data;
+    return user;
+  }
+  async function resetPassword(data: any): Promise<User | undefined> {
+    const response = await axiosInstance.post(
+      `account/reset/password`,
+      data
+    );
+    const user = response.data;
+    return user;
+  }
+
   return {
-    getUser,
+    getUser, forgotPassword,
+    changePassword, resetPassword,
     getTotalUsers, requestSupport,
     getAllUsers,
   };

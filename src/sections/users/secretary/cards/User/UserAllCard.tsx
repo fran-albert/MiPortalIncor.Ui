@@ -1,4 +1,4 @@
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { useEffect, useState } from "react";
 import { FaUsers } from "react-icons/fa";
 
@@ -7,7 +7,7 @@ export const UserCount = () => {
 
   useEffect(() => {
     const fetchTotalUsers = async () => {
-      const userRepository = createApiUserRepositroy();
+      const userRepository = createApiUserRepository();
       const total = await userRepository.getTotalUsers();
       setTotalUsers(total);
     };

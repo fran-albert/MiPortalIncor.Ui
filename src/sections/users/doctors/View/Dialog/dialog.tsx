@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { formatDni } from "@/common/helpers/helpers";
+import { formatDate, formatDni } from "@/common/helpers/helpers";
 import { StateSelect } from "@/components/Select/State/select";
 import { CitySelect } from "@/components/Select/City/select";
 
@@ -166,7 +166,7 @@ export default function EditPatientDialog({ patient }: EditPatientDialogProps) {
                         <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
                         <Input
                           className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                          defaultValue={patient?.birthDate.toString()}
+                          defaultValue={formatDate(String(patient?.birthDate))}
                           readOnly
                         />
                       </div>

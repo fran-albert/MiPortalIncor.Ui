@@ -69,10 +69,12 @@ function CreateDoctorForm() {
 
     const payload: Doctor = {
       ...data,
-      specialities: selectedSpecialities.map((sp) => ({
-        id: sp.id, // Asegúrate de convertir el id a número si es necesario
-        name: sp.name,
-      })), // Envuelve cada especialidad
+      specialities: selectedSpecialities.map((speciality) => ({
+        speciality: {
+          id: speciality.id,
+          name: speciality.name,
+        },
+      })),
       healthInsurances: selectedHealthInsurances,
       address: {
         ...data.address,
@@ -81,7 +83,6 @@ function CreateDoctorForm() {
       photo: "",
     };
 
-    console.log(payload);
 
     try {
       const doctorRepository = createApiDoctorRepository();

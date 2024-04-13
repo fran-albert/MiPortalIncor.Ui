@@ -12,12 +12,12 @@ import { PrioritySelect } from "@/components/Select/Priority/select";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ServiceSelect } from "@/components/Select/Services/select";
 import { Textarea } from "@/components/ui/textarea";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { requestSupport } from "@/modules/users/application/support/support";
 import { toast } from "sonner";
 import { User } from "@/modules/users/domain/User";
 interface Inputs extends User {}
-const userRepository = createApiUserRepositroy();
+const userRepository = createApiUserRepository();
 
 function SupportForm() {
   const { data: session, status } = useSession();
@@ -50,7 +50,6 @@ function SupportForm() {
     setValue("module", selected);
   };
   const onSubmit: SubmitHandler<Inputs> = async (data: User) => {
-    console.log("Datos del formulario antes de enviar:", data);
 
     try {
       const createRequestSupportFn = requestSupport(userRepository);

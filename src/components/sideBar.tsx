@@ -29,7 +29,7 @@ export default function SideBar() {
   useEffect(() => {
     if (
       status === "unauthenticated" &&
-      currentPath !== "/olvidar-contrase%C3%B1a" &&
+      currentPath !== "/restablecer-contrase%C3%B1a" &&
       currentPath !== "/nueva-contrase%C3%B1a"
     ) {
       router.push("/iniciar-sesion");

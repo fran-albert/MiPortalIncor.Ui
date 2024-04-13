@@ -19,6 +19,7 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       },
     },
     {
+      accessorKey: 'firstName',
       header: "Médico",
       cell: ({ row }) => (
         <div className="flex items-center">
@@ -86,7 +87,7 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
         <div className="flex items-center">
           <p className="text-sm font-medium">
             {row.original.specialities
-              .map((item) => item.name)
+              .map((speciality) => speciality.speciality.name)
               .join(", ")}
           </p>
         </div>
@@ -96,9 +97,9 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       header: " ",
       cell: ({ row }) => (
         <div className="flex items-center">
-          <ViewButton id={row.original.id} text="Ver Medico" path="medicos" />
+          <ViewButton id={row.original.userId} text="Ver Medico" path="medicos" />
           <DeleteDoctorDialog
-            idDoctor={row.original.id}
+            idDoctor={row.original.userId}
             onDoctorDeleted={fetchDoctors}
           />
         </div>

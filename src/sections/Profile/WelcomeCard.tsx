@@ -13,7 +13,7 @@ import { FaHeartbeat, FaSmile } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/modules/users/domain/User";
 import { useSession } from "next-auth/react";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import Loading from "@/components/Loading/loading";
 import { getPatient } from "@/modules/patients/application/get/getPatient";

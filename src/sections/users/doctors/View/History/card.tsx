@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { User } from "@/modules/users/domain/User";
 import { useSession } from "next-auth/react";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import Loading from "@/components/Loading/loading";
 import { FaEdit, FaPlus, FaUpload } from "react-icons/fa";

@@ -1,9 +1,12 @@
-import NewPasswordForm from "@/sections/Auth/New-Password/NewPasswordForm";
-
+import Loading from "@/components/Loading/loading";
+import ResetPasswordForm from "@/sections/Auth/Reset-Password/ResetPasswordForm";
+import { Suspense } from "react";
 function NewPasswordPage() {
   return (
     <>
-      <NewPasswordForm />
+      <Suspense fallback={<Loading isLoading />}>
+        <ResetPasswordForm />
+      </Suspense>
     </>
   );
 }

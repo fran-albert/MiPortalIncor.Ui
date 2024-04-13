@@ -5,4 +5,7 @@ export interface UserRepository {
 	getAllUsers: () => Promise<User[]>;
 	getTotalUsers: () => Promise<number>;
 	requestSupport: (request: User) => Promise<void>;
+	changePassword: (data: User) => Promise<User | undefined>;
+	resetPassword: (data: any) => Promise<User | undefined>;
+	forgotPassword: (data: string) => Promise<void>;
 }

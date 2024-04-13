@@ -15,10 +15,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CitySelect } from "@/components/Select/City/select";
 import { StateSelect } from "@/components/Select/State/select";
 import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
-import { formatDni } from "@/common/helpers/helpers";
+import { formatDate, formatDni } from "@/common/helpers/helpers";
 import useRoles from "@/hooks/useRoles";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
@@ -207,7 +207,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
                     <Input
                       className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                      defaultValue={profile?.birthDate.toString()}
+                      defaultValue={formatDate(String(profile?.birthDate))}
                       readOnly
                     />
                   </div>

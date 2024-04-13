@@ -26,7 +26,6 @@ export const StudyTypeSelect = ({
     const loadStudies = async () => {
       try {
         const studies = await studyRepository.getAllStudyType();
-        console.log(studies);
         setStudies(studies);
       } catch (error) {
         console.error("Error al obtener los estados:", error);

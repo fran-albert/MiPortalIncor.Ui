@@ -64,7 +64,6 @@ export default function EditSpecialityDialog({
         .then(() => {
           setIsOpen(false);
           if (updateSpecialityInList) updateSpecialityInList(data);
-          console.log("Especialidad editada con éxito!", data);
         })
         .catch((error) => {
           console.error("Error al editar la Especialidad", error);

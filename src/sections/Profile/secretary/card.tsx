@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CitySelect } from "@/components/Select/City/select";
 import { StateSelect } from "@/components/Select/State/select";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import { formatDni } from "@/common/helpers/helpers";
@@ -18,7 +18,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { useForm, SubmitHandler } from "react-hook-form";
 registerLocale("es", es);
-const userRepository = createApiUserRepositroy();
+const userRepository = createApiUserRepository();
 interface Inputs extends User {}
 export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
   const {
@@ -37,7 +37,7 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
     profile?.address?.city
   );
   const [startDate, setStartDate] = useState(
-    profile ? new Date(profile.birthDate) : new Date()
+    profile ? new Date(String(profile.birthDate)) : new Date()
   );
 
   useEffect(() => {

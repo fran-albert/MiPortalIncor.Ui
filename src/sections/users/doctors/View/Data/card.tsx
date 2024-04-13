@@ -15,7 +15,7 @@ import { AiOutlineFileJpg } from "react-icons/ai";
 import { IoIosBody } from "react-icons/io";
 import { MdHeight } from "react-icons/md";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
-import { formatDni } from "@/common/helpers/helpers";
+import { formatDate, formatDni } from "@/common/helpers/helpers";
 const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
   return (
     <>
@@ -35,19 +35,7 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                   {formatDni(String(doctor?.dni))}
                 </div>
               </li>
-              <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
-                <div className="flex items-center">
-                  <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
-                  <span className="text-sm font-medium">Obra Social</span>
-                </div>
-                <div className="text-xs text-gray-500 md:ml-10">
-                  {/* {doctor?.healthPlans.map((healthPlan) => (
-                    <div key={healthPlan.id}>
-                      {healthPlan.healthInsurance.name} - {healthPlan.name}
-                    </div>
-                  ))} */}
-                </div>
-              </li>
+
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
                   <FaWeight className="w-4 h-4 mr-2 text-amber-600" />{" "}
@@ -57,7 +45,7 @@ const DataProfileCard = ({ doctor }: { doctor: Doctor | null }) => {
                   </span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
-                  {doctor?.birthDate.toLocaleString()}
+                  {formatDate(String(doctor?.birthDate))}
                 </div>
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">

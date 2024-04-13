@@ -6,15 +6,19 @@ import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/passwordInput";
 import { toast } from "sonner";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
+import { resetPassword } from "@/modules/users/application/reset-password/resetPassword";
 
 interface Inputs {
   password: string;
-  passwordConfirmation: string;
+  confirmPassword: string;
 }
+
+const userRepository = createApiUserRepository();
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
@@ -32,32 +36,26 @@ function ResetPasswordForm() {
       return;
     }
 
-    try {
-      console.log(data);
-    } catch (error) {}
+    const payload = {
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      code: token,
+    };
 
-    // toast
-    //   .promise(
-    //     axios.patch(
-    //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,
-    //       { resetPasswordToken: token, password: password }
-    //     ),
-    //     {
-    //       loading: "Enviando solicitud de restablecimiento...",
-    //       success: (data) => {
-    //         setTimeout(() => router.push("/"), 2000);
-    //         return "Contraseña actualizada con éxito!";
-    //       },
-    //       error: "Ocurrió un error al actualizar la contraseña.",
-    //     }
-    //   )
-    //   .catch((error) => {
-    //     if (axios.isAxiosError(error) && error.response) {
-    //       setErrors([error.response.data.message]);
-    //     } else {
-    //       setErrors(["Ocurrió un error al intentar actualizar la contraseña."]);
-    //     }
-    //   });
+    console.log(payload)
+
+    try {
+      const resetPasswordFn = resetPassword(userRepository);
+      const resetPasswordPromise = resetPasswordFn(payload);
+
+      toast.promise(resetPasswordPromise, {
+        loading: "Creando paciente...",
+        success: "Paciente creado con éxito!",
+        error: "Error al crear el Paciente",
+      });
+    } catch (error) {
+      console.error("Error al crear el paciente", error);
+    }
   };
 
   return (
@@ -92,14 +90,14 @@ function ResetPasswordForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="password_confirmation">
+                <Label htmlFor="confirmPassword">
                   Confirmar nueva contraseña
                 </Label>
                 <PasswordInput
-                  {...register("passwordConfirmation")}
-                  value={passwordConfirmation}
-                  onChange={(e) => setPasswordConfirmation(e.target.value)}
-                  autoComplete="new-password"
+                  {...register("confirmPassword")}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="confirmPassword"
                 />
               </div>
             </div>

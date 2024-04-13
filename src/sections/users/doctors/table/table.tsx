@@ -30,6 +30,8 @@ export const DoctorsTable = () => {
     fetchDoctors();
   }, []);
 
+
+
   if (isLoading) {
     return <Loading isLoading />;
   }

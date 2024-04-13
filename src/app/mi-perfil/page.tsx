@@ -9,7 +9,6 @@ import ProfileSecretaryCardComponent from "@/sections/Profile/secretary/card";
 
 const Profile = () => {
   const { data: session } = useSession();
-  console.log(session)
   const id = session?.user.id;
   const token = session?.accessToken;
   const { isPatient, isDoctor, isSecretary } = useRoles();

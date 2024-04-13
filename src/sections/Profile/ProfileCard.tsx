@@ -15,17 +15,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CitySelect } from "@/components/Select/City/select";
 import { StateSelect } from "@/components/Select/State/select";
 import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
-import { createApiUserRepositroy } from "@/modules/users/infra/ApiUserRepository";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import { formatDni } from "@/common/helpers/helpers";
 
 export default function ProfileCardComponent({ id }: { id: number }) {
   const [profile, setProfile] = useState<User | undefined>({} as User);
-  console.log(id, "id");
 
   useEffect(() => {
-    const userRepository = createApiUserRepositroy();
+    const userRepository = createApiUserRepository();
     const loadUser = getUser(userRepository);
 
     const fetchUsers = async () => {
