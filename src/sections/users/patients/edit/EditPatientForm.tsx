@@ -115,7 +115,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
             },
           ]
         : [],
-      photo: "photo",
+      photo: patient?.photo,
     };
 
     try {

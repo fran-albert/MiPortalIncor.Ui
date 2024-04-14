@@ -78,7 +78,7 @@ export const getColumns = (
     },
     {
       accessorKey: "healthPlans",
-      header: "Obra Social - Plan",
+      header: "Obra Social",
       cell: ({ row }) => {
         const firstHealthPlan =
           row.original.healthPlans?.map((healthPlan) => healthPlan.name)[0] ||

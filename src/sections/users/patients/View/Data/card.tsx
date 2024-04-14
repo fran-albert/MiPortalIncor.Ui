@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { MdDateRange } from "react-icons/md";
+import { MdPhone } from "react-icons/md";
+import { FaIdCard } from "react-icons/fa";
+import { MdEmail, MdLocationOn } from "react-icons/md";
 import Loading from "@/components/Loading/loading";
-import { FaUpload, FaWeight } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { FaRegFilePdf } from "react-icons/fa";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { AiOutlineFileJpg } from "react-icons/ai";
@@ -28,7 +24,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
             <ul>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
-                  <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
+                  <FaIdCard className="w-4 h-4 mr-2 text-red-600" />{" "}
                   <span className="text-sm font-medium">D.N.I.</span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
@@ -37,7 +33,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100">
                 <div className="flex items-center">
-                  <MdHeight className="w-4 h-4 mr-2 text-red-600" />{" "}
+                  <FaHeart className="w-4 h-4 mr-2 text-cyan-800" />{" "}
                   <span className="text-sm font-medium">Obra Social</span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
@@ -50,8 +46,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
-                  <FaWeight className="w-4 h-4 mr-2 text-amber-600" />{" "}
-                  {/* Reemplaza con tu ícono de imagen */}
+                  <MdDateRange className="w-4 h-4 mr-2 text-amber-600" />{" "}
                   <span className="text-sm font-medium">
                     Fecha de Nacimiento
                   </span>
@@ -62,8 +57,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
-                  <IoIosBody className="w-4 h-4 mr-2 text-green-600" />{" "}
-                  {/* Reemplaza con tu ícono de imagen */}
+                  <MdPhone className="w-4 h-4 mr-2 text-green-600" />{" "}
                   <span className="text-sm font-medium">Teléfono</span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
@@ -72,8 +66,7 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
-                  <GiWeightLiftingUp className="w-4 h-4 mr-2 text-sky-600" />{" "}
-                  {/* Reemplaza con tu ícono de imagen */}
+                  <MdEmail className="w-4 h-4 mr-2 text-sky-600" />{" "}
                   <span className="text-sm font-medium">
                     Correo Electrónico
                   </span>
@@ -84,13 +77,13 @@ const DataProfileCard = ({ patient }: { patient: Patient | undefined }) => {
               </li>
               <li className="flex items-center justify-between p-2 rounded hover:bg-gray-100 mt-2">
                 <div className="flex items-center">
-                  <GiWeightLiftingUp className="w-4 h-4 mr-2 text-sky-600" />{" "}
-                  {/* Reemplaza con tu ícono de imagen */}
+                  <MdLocationOn className="w-4 h-4 mr-2 text-gray-600" />{" "}
                   <span className="text-sm font-medium">Domicilio</span>
                 </div>
                 <div className="text-xs text-gray-500 md:ml-10">
-                  {patient?.address?.street}, {patient?.address?.number},{" "}
-                  {patient?.address?.city?.name}
+                  {patient?.address?.street} {patient?.address?.number} -{" "}
+                  {patient?.address?.city?.name},{" "}
+                  {patient?.address?.city?.state.name}
                 </div>
               </li>
             </ul>

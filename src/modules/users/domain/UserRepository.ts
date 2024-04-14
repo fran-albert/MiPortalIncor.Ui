@@ -8,4 +8,5 @@ export interface UserRepository {
 	changePassword: (data: User) => Promise<User | undefined>;
 	resetPassword: (data: any) => Promise<User | undefined>;
 	forgotPassword: (data: string) => Promise<void>;
+	updateUser: (data: User, id: number) => Promise<User | undefined>;
 }

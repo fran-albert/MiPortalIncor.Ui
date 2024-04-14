@@ -56,9 +56,17 @@ export function createApiUserRepository(): UserRepository {
     const user = response.data;
     return user;
   }
+  async function updateUser(data: User, id: number): Promise<User | undefined> {
+    const response = await axiosInstance.put(
+      `account/${id}`,
+      data
+    );
+    const user = response.data;
+    return user;
+  }
 
   return {
-    getUser, forgotPassword,
+    getUser, forgotPassword, updateUser,
     changePassword, resetPassword,
     getTotalUsers, requestSupport,
     getAllUsers,

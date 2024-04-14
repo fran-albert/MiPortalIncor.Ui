@@ -70,10 +70,8 @@ function CreateDoctorForm() {
     const payload: Doctor = {
       ...data,
       specialities: selectedSpecialities.map((speciality) => ({
-        speciality: {
-          id: speciality.id,
-          name: speciality.name,
-        },
+        id: speciality.id,
+        name: speciality.name,
       })),
       healthInsurances: selectedHealthInsurances,
       address: {
@@ -83,6 +81,7 @@ function CreateDoctorForm() {
       photo: "",
     };
 
+    console.log("Payload", payload);
 
     try {
       const doctorRepository = createApiDoctorRepository();

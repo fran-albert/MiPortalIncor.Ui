@@ -36,7 +36,9 @@ const UserCardComponent = ({ doctor }: { doctor: Doctor | null }) => {
             <CardTitle className="text-teal-700 text-lg font-bold">
               {doctor?.firstName} {doctor?.lastName}
             </CardTitle>
-            <p className="text-gray-600">{calculateAge(String(doctor?.birthDate))} años</p>
+            <p className="text-gray-600">
+              {calculateAge(String(doctor?.birthDate))} años
+            </p>
             <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
               <EditButton id={Number(doctor?.userId)} path="usuarios/medicos" />
             </div>
@@ -51,8 +53,14 @@ const UserCardComponent = ({ doctor }: { doctor: Doctor | null }) => {
                 .join(", ")}
             </p>
             <h3 className="text-lg mt-2 font-semibold">OBRA SOCIAL</h3>
-            <p>
-              {doctor?.healthInsurances.map((item) => item.name).join(", ")}
+            <p className="text-sm font-medium">
+              {doctor?.healthInsurances
+                .map(
+                  (item) =>
+                    item.name.charAt(0).toUpperCase() +
+                    item.name.slice(1).toLowerCase()
+                )
+                .join(", ")}
             </p>
           </div>
         </CardContent>

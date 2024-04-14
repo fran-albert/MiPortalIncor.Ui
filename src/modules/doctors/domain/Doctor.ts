@@ -9,6 +9,6 @@ interface SpecialityContainer {
 
 export interface Doctor extends User {
   matricula: string;
-  specialities: SpecialityContainer[];
+  specialities: any[];
   healthInsurances: HealthInsurance[];
 }
