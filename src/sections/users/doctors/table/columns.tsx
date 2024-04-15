@@ -87,7 +87,7 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
         <div className="flex items-center">
           <p className="text-sm font-medium">
             {row.original.specialities
-              .map((speciality) => speciality.speciality.name)
+              .map((speciality) => speciality.name)
               .join(", ")}
           </p>
         </div>
