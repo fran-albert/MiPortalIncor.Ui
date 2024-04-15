@@ -24,6 +24,7 @@ function PatientPage() {
   const patientRepository = createApiPatientRepository();
   const studyRepository = createApiStudyRepository();
   const [studies, setStudies] = useState<Study[]>([]);
+  const [urls, setUrls] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +48,11 @@ function PatientPage() {
 
     fetchData();
   }, [Number(id)]);
+  
+
+  const handleAddStudy = (newStudy: Study) => {
+    setStudies(prevStudies => [...prevStudies, newStudy]);
+  };
 
   if (isLoading) {
     return <Loading isLoading />;
@@ -74,6 +80,7 @@ function PatientPage() {
                 <StudiesCardComponent
                   studies={studies}
                   idPatient={Number(patient?.userId)}
+                  onStudyAdded={handleAddStudy}
                 />
               </div>
               <div className="m-4">{/* <VaccineComponent /> */}</div>

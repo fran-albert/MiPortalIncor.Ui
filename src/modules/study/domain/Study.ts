@@ -2,7 +2,7 @@ export interface Study {
   id: number;
   name: string;
   locationS3?: string;
-  date?: string;
+  date?: Date | string | undefined;
   studyType?: {
     id: number;
     name: string;

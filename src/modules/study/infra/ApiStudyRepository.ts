@@ -28,9 +28,15 @@ export function createApiStudyRepository(): StudyRepository {
     const studies = response.data as Study[];
     return studies;
   }
+  async function getUrlByPatient(idPatient: number, locationS3: string | undefined): Promise<string> {
+    const response = await axiosInstance.get(`Study/getUrl/${idPatient}?fileName=${locationS3}`);
+    const studies = response.data;
+    return studies;
+  }
+
 
   return {
-    getAllStudyType,
+    getAllStudyType, getUrlByPatient,
     getAllStudyByPatient,
     uploadStudy,
   };

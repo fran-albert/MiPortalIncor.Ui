@@ -20,13 +20,45 @@ import StudyDialog from "./Dialog/dialog";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { Study } from "@/modules/study/domain/Study";
 import { formatDate } from "@/common/helpers/helpers";
+import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
+
+
+interface UrlMap {
+  [key: number]: string;
+}
+
+
 const StudiesCardComponent = ({
   studies,
   idPatient,
+  onStudyAdded,
 }: {
-  studies: Study[] | undefined;
+  studies: Study[];
   idPatient: number;
+  onStudyAdded?: (newStudy: Study) => void;
 }) => {
+
+  const [urls, setUrls] = useState<UrlMap>({});
+
+  useEffect(() => {
+    const fetchUrls = async () => {
+      if (studies) {  // Asegúrate de que studies está definido antes de usarlo
+        const studyRepository = createApiStudyRepository();
+        const newUrls: UrlMap = {}
+
+        for (const study of studies) {
+          const url = await studyRepository.getUrlByPatient(idPatient, study.locationS3);
+          newUrls[study.id] = url;
+        }
+
+        setUrls(newUrls);
+      }
+    };
+
+    fetchUrls();
+  }, [studies]);
+
+
   return (
     <>
       <div className="flex sm:mx-auto">
@@ -39,12 +71,7 @@ const StudiesCardComponent = ({
               {studies?.map((study) => (
                 <li
                   key={study.id}
-                  onClick={() =>
-                    window.open(
-                      `https://incor-healthcare.s3.us-east-1.amazonaws.com/studies/${study.locationS3}`,
-                      "_blank"
-                    )
-                  }
+                  onClick={() => window.open(urls[study.id], "_blank")}
                   className="flex items-center justify-between p-2 cursor-pointer rounded hover:bg-gray-100"
                 >
                   <div className="flex items-center ">
@@ -58,7 +85,7 @@ const StudiesCardComponent = ({
               ))}
             </ul>
             <div className="mt-4">
-              <StudyDialog idPatient={idPatient} />
+              <StudyDialog idPatient={idPatient} onStudyAdded={onStudyAdded} />
             </div>
           </div>
         </div>

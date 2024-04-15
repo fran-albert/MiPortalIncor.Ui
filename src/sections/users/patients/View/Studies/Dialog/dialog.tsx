@@ -31,9 +31,10 @@ import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyReposito
 import { uploadStudy } from "@/modules/study/application/upload-study/uploadStudy";
 interface AddLabDialogProps {
   idPatient: number | null;
+  onStudyAdded?: (newStudy: Study) => void;
 }
 
-export default function StudyDialog({ idPatient }: AddLabDialogProps) {
+export default function StudyDialog({ idPatient, onStudyAdded }: AddLabDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const toggleDialog = () => setIsOpen(!isOpen);
@@ -66,21 +67,30 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
     if (selectedFile) {
       formData.append("StudyFile", selectedFile);
     }
-
+    const formattedDateISO = moment(startDate).toISOString();
+    formData.append("Date", formattedDateISO);
     formData.append("Note", data.Note);
 
+    const studyRepository = createApiStudyRepository();
+    const uploadStudyFn = uploadStudy(studyRepository);
+
     try {
-      const studyRepository = createApiStudyRepository();
-      const uploadStudyFn = uploadStudy(studyRepository);
       const uploadStudyPromise = uploadStudyFn(formData);
-      toast.promise(uploadStudyPromise, {
-        loading: "Subiendo estudio...",
-        success: "Estudio subido con éxito!",
-        error: "Error al subir el estudio",
-      });
-      toggleDialog();
+
+      toast.promise(
+        uploadStudyPromise,
+        {
+          loading: 'Subiendo estudio...',
+          success: (responseText) => {
+            toggleDialog();
+            return responseText;
+          },
+          error: 'Error al subir el estudio'
+        }
+      );
     } catch (error) {
       console.error("Error al subir el estudio", error);
+      toast.error("Error al subir el estudio");
     }
   };
 
@@ -146,7 +156,7 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
                 />
               </div>
 
-              {/* <div>
+              <div>
                 <Label
                   htmlFor="healthCare"
                   className="text-black font-medium mb-2 block"
@@ -164,7 +174,7 @@ export default function StudyDialog({ idPatient }: AddLabDialogProps) {
                   }
                   dateFormat="d MMMM yyyy"
                 />
-              </div> */}
+              </div>
             </div>
           </DialogDescription>
           <DialogFooter>
