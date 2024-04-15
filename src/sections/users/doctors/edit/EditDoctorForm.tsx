@@ -30,20 +30,19 @@ import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
 import { HealthInsuranceDoctorSelect } from "@/components/Select/Health Insurance/selectDoctor";
 import { goBack } from "@/lib/utils";
 
-interface Inputs extends Doctor {}
+interface Inputs extends Doctor { }
+const doctorRepository = createApiDoctorRepository();
 
 function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
-  const params = useParams();
-  const id = params.id;
-  const [user, setUser] = useState<Doctor>();
-  const [selectedState, setSelectedState] = useState<State>();
-  const [selectedCity, setSelectedCity] = useState<City>();
-  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
-    HealthInsurance[]
-  >([]);
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    doctor?.address?.city?.state
+  );
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(
+    doctor?.address?.city
+  );
+  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<HealthInsurance[]>(doctor?.healthInsurances || []);
+  const [selectedSpecialities, setSelectedSpecialities] = useState<Speciality[]>(doctor?.specialities || []);
 
-  const doctorRepository = createApiDoctorRepository();
-  const loadDoctor = getDoctor(doctorRepository);
   const {
     register,
     handleSubmit,
@@ -52,29 +51,11 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
     setValue,
   } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-  const [selectedSpecialities, setSelectedSpecialities] = useState<
-    Speciality[]
-  >([]);
-  const [startDate, setStartDate] = useState(new Date());
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const userId = Number(id);
-        const userData = await loadDoctor(userId);
-        setSelectedState(userData?.address?.city.state);
-        setSelectedCity(userData?.address?.city);
-        // setSelectedSpecialities(
-        //   userData?.specialities.map((s) => s.speciality)
-        // );
-        setSelectedHealthInsurances(userData?.healthInsurances || []);
-        setUser(userData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    fetchUsers();
-  }, []);
+  const [startDate, setStartDate] = useState(
+    doctor ? new Date(String(doctor.birthDate)) : new Date()
+  );
+
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -105,7 +86,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
     const formattedUserName = removeDotsFromDni(data.userName);
     const addressToSend = {
       ...address,
-      id: user?.address.id,
+      id: address.id,
       city: {
         ...selectedCity,
         state: selectedState,
@@ -118,13 +99,12 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
       address: addressToSend,
       specialities: specialitiesToSend,
       healthInsurances: healthInsuranceToSend,
-      photo: "photo",
+      photo: doctor?.photo,
     };
 
     try {
-      const doctorRepository = createApiDoctorRepository();
       const updateDoctorFn = updateDoctor(doctorRepository);
-      const doctorCreationPromise = updateDoctorFn(dataToSend, Number(id));
+      const doctorCreationPromise = updateDoctorFn(dataToSend, Number(doctor?.userId));
 
       toast.promise(doctorCreationPromise, {
         loading: "Actualizando médico...",
@@ -201,7 +181,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                   <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
                     <div
                       className="bg-black p-2 rounded-full cursor-pointer"
-                      // onClick={handleEditPictureClick}
+                    // onClick={handleEditPictureClick}
                     >
                       <FaCamera className="text-white" />
                     </div>
@@ -385,6 +365,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                   className="mt-10 m-2"
                   variant="destructive"
                   onClick={goBack}
+                  type="button"
                 >
                   Cancelar
                 </Button>

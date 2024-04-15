@@ -30,6 +30,8 @@ function EditDoctorPage() {
     fetchDoctor();
   }, []);
 
+  console.log(doctor)
+
   if (isLoading) {
     return <Loading isLoading />;
   }

@@ -42,7 +42,7 @@ const StudiesCardComponent = ({
 
   useEffect(() => {
     const fetchUrls = async () => {
-      if (studies) {  // Asegúrate de que studies está definido antes de usarlo
+      if (studies) {  
         const studyRepository = createApiStudyRepository();
         const newUrls: UrlMap = {}
 
