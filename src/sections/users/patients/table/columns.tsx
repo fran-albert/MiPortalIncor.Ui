@@ -121,7 +121,11 @@ export const getColumns = (
           )}
           {roles.isDoctor && (
             <>
-              <Button>Ver Paciente</Button>
+              <ViewButton
+                id={row.original.userId}
+                text="Ver Paciente"
+                path="pacientes"
+              />
             </>
           )}
         </div>

@@ -21,6 +21,7 @@ import { Patient } from "@/modules/patients/domain/Patient";
 import { Study } from "@/modules/study/domain/Study";
 import { formatDate } from "@/common/helpers/helpers";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
+import useRoles from "@/hooks/useRoles";
 
 
 interface UrlMap {
@@ -39,7 +40,7 @@ const StudiesCardComponent = ({
 }) => {
 
   const [urls, setUrls] = useState<UrlMap>({});
-
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   useEffect(() => {
     const fetchUrls = async () => {
       if (studies) {  
@@ -84,9 +85,12 @@ const StudiesCardComponent = ({
                 </li>
               ))}
             </ul>
-            <div className="mt-4">
-              <StudyDialog idPatient={idPatient} onStudyAdded={onStudyAdded} />
-            </div>
+            {isSecretary && (
+             <div className="mt-4">
+             <StudyDialog idPatient={idPatient} onStudyAdded={onStudyAdded} />
+           </div>
+            )}
+            
           </div>
         </div>
       </div>

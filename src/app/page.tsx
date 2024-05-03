@@ -7,7 +7,7 @@ function HomePage() {
   useEffect(() => {
     router.push("/inicio");
   }, [router]);
-  return <div>HomePage</div>;
+  return <div></div>;
 }
 
 export default HomePage;

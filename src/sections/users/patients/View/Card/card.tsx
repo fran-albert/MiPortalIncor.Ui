@@ -21,7 +21,9 @@ import { Patient } from "@/modules/patients/domain/Patient";
 import { EditButton } from "@/components/Button/Edit/button";
 import Image from "next/image";
 import { calculateAge } from "@/common/helpers/helpers";
+import useRoles from "@/hooks/useRoles";
 const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
     <>
       <Card className="w-full max-w-lg shadow-md rounded-lg overflow-hidden">
@@ -46,12 +48,14 @@ const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
             <p className="text-gray-600">
               {calculateAge(String(patient?.birthDate))} años
             </p>
-            <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
-              <EditButton
-                id={Number(patient?.userId)}
-                path="usuarios/pacientes"
-              />
-            </div>
+            {isSecretary && (
+              <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
+                <EditButton
+                  id={Number(patient?.userId)}
+                  path="usuarios/pacientes"
+                />
+              </div>
+            )}
           </div>
         </CardHeader>
         {/* <CardContent className="p-4">

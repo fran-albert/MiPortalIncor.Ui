@@ -24,14 +24,16 @@ registerLocale("es", es);
 const userRepository = createApiUserRepository();
 interface Inputs extends User {}
 export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
+  const [profile, setProfile] = useState<User | undefined>();
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
     setValue,
-  } = useForm<Inputs>();
-  const [profile, setProfile] = useState<User | undefined>();
+    formState: { errors },
+  } = useForm<Inputs>({
+    defaultValues: profile,
+  });
   const { isPatient, isSecretary, isDoctor } = useRoles();
   const [selectedState, setSelectedState] = useState<State | undefined>(
     profile?.address?.city?.state
@@ -63,48 +65,43 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
     fetchUsers();
   }, [id]);
 
+  useEffect(() => {
+    setValue("firstName", profile?.firstName ?? "");
+    setValue("lastName", profile?.lastName ?? "");
+    setValue("email", profile?.email ?? "");
+    setValue("phoneNumber", profile?.phoneNumber ?? "");
+    setValue("address.street", profile?.address.street ?? "");
+    setValue("address.number", profile?.address.number ?? "");
+    setValue("address.description", profile?.address.description ?? "");
+    setValue("address.phoneNumber", profile?.address.phoneNumber ?? "");
+  }, [profile, setValue]);
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { address, ...rest } = data;
     const addressToSend = {
-      ...address,
+      ...data.address,
       id: profile?.address.id,
-      city: {
-        ...selectedCity,
-        state: selectedState,
-      },
+      city: selectedCity,
+      state: selectedState,
     };
+
     const dataToSend: any = {
-      ...rest,
-      userName: profile?.userName,
+      ...data,
+      userName: profile?.dni,
       address: addressToSend,
       photo: profile?.photo || "default2.png",
     };
 
-    console.log(dataToSend, "dataToSend");
+    console.log(dataToSend)
 
     try {
-      const updatePatientFn = updateUser(userRepository);
-      const patientCreationPromise = updatePatientFn(dataToSend, Number(id));
-
-      toast.promise(patientCreationPromise, {
-        loading: "Actualizando datos...",
-        success: "Datos actualizados con éxito!",
-        error: "Error al actualizar los datos",
-      });
-
-      patientCreationPromise.catch((error) => {
-        console.error("Error al actualizar los datos", error);
-      });
+      const updateFn = updateUser(userRepository);
+      await updateFn(dataToSend, Number(id));
+      toast.success("Datos actualizados con éxito!");
     } catch (error) {
       console.error("Error al actualizar los datos", error);
+      toast.error("Error al actualizar los datos");
     }
   };
-  // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
-
-  //   if (!user || !states) {
-  //     return <LoadingPage props="Cargando tu perfil..." />;
-  //   }
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -366,11 +363,6 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
           </div>
         </div>
       </div>
-      {/* <ChangePasswordModal
-        isOpen={openModal}
-        onOpenChange={setOpenModal}
-        user={user}
-      /> */}
     </>
   );
 }

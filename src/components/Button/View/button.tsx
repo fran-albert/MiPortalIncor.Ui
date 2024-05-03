@@ -19,12 +19,7 @@ export const ViewButton = ({
 
   return (
     <div className="flex justify-center">
-      <Button variant="ghost" onClick={handleEdit}>
-        <ActionIcon
-          icon={<FaRegEye size={20} className="mr-2" />}
-          tooltip="Ver Paciente"
-          color="text-gray-600"
-        />
+      <Button className="bg-teal-700 hover:bg-teal-500" onClick={handleEdit}>
         {text}
       </Button>
     </div>

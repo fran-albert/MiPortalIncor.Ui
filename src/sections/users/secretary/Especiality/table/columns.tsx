@@ -3,6 +3,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Speciality } from "@/modules/speciality/domain/Speciality";
 import DeleteSpecialityDialog from "../delete/DeleteSpecialityDialog";
 import EditSpecialityDialog from "../edit/EditSpecialityDialog";
+import { ViewButton } from "@/components/Button/View/button";
+import { Button } from "@/components/ui/button";
 
 export const getColumns = (
   removeSpecialityFromList: (idSpeciality: number) => void,
@@ -27,12 +29,12 @@ export const getColumns = (
       cell: ({ row }) => (
         <div className="flex items-center justify-end">
           <>
-            <button
+            <Button
               onClick={() => onEditSpeciality(row.original)}
-              className="text-sm text-blue-500 hover:text-blue-700 mr-2"
+              className="bg-teal-700 hover:bg-teal-500"
             >
               Editar
-            </button>
+            </Button>
             <DeleteSpecialityDialog
               idSpeciality={Number(row.original.id)}
               removeSpecialityFromList={removeSpecialityFromList}

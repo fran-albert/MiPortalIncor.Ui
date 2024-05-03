@@ -64,8 +64,6 @@ export default function ProfileCardComponent({ id }: { id: number }) {
         setProfile(userData);
         setSelectedState(userData?.address.city.state);
         setSelectedCity(userData?.address.city);
-        // setSelectedHealthInsurance(userData?.healthPlans[0]?.name);
-        // setSelectedPlan(userData?.healthPlans[0]);
         setStartDate(new Date(userData?.birthDate ?? new Date()));
       } catch (error) {
         console.error("Error al cargar los datos del perfil:", error);
@@ -93,18 +91,15 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     setSelectedPlan(healthPlan);
   };
 
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
-
-  const handleEditPassword = () => {
-    setOpenModal(true);
-  };
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const healthPlansToSend = selectedPlan
-      ? [{ id: selectedPlan.id, name: selectedPlan.name }]
-      : [];
+    // const healthPlansToSend = selectedPlan.map((plan) => ({
+    //   id: plan.id,
+    //   name: plan.name,
+    //   healthInsurance: {
+    //     id: plan.healthInsurance.id,
+    //     name: plan.healthInsurance.name,
+    //   },
+    // }));
     const formattedUserName = removeDotsFromDni(data.userName);
     const { address, ...rest } = data;
     const addressToSend = {
@@ -119,9 +114,11 @@ export default function ProfileCardComponent({ id }: { id: number }) {
       ...rest,
       userName: formattedUserName,
       address: addressToSend,
-      healthPlans: healthPlansToSend,
+      healthPlans: selectedPlan ? [selectedPlan] : profile?.healthPlans,
       photo: "photo",
     };
+
+    console.log("Data to send", dataToSend);
 
     try {
       const patientRepository = createApiPatientRepository();
@@ -303,7 +300,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                       <Label htmlFor="state">Provincia</Label>
                       <StateSelect
                         selected={selectedState}
-                        // onStateChange={handleStateChange}
+                        onStateChange={handleStateChange}
                       />
                     </div>
                     <div>
@@ -311,7 +308,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                       <CitySelect
                         idState={selectedState?.id}
                         selected={selectedCity}
-                        //   onCityChange={handleCityChange}
+                        onCityChange={handleCityChange}
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">

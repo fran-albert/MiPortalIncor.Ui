@@ -26,6 +26,18 @@ function HomePage() {
             </div>
           </div>
         )}
+        {isDoctor && (
+          <div className="w-full px-4">
+            <h2 className="text-2xl font-semibold text-center mb-6">
+              Doctor Dashboard
+            </h2>
+            <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12">
+              <PatientCount />
+              {/* <DoctorsCount /> */}
+              {/* <SpectialityCount /> */}
+            </div>
+          </div>
+        )}
         {isPatient && (
           <div className="mt-14">
             <WelcomeCardComponent />

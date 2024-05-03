@@ -57,12 +57,11 @@ export default function DeleteSpecialityDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" onClick={toggleDialog}>
-          <ActionIcon
-            icon={<FaRegTrashAlt size={20} />}
-            tooltip="Eliminar"
-            color="text-red-600"
-          />
+        <Button
+          className="bg-red-700 hover:bg-red-500 ml-2"
+          onClick={toggleDialog}
+        >
+          Eliminar
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
