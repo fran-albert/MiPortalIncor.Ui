@@ -74,3 +74,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+      display: none;
+  }
+  .main-content {
+      margin: 0;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap; /* Allows items to wrap onto the next line as needed */
+  padding: 10px;
+}
+
+.card {
+  flex: 1 1 30%; /* Grow to fill space, don't shrink, base width of 30% */
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 20px 10px;
+}

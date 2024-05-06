@@ -23,11 +23,9 @@ import { formatDate } from "@/common/helpers/helpers";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import useRoles from "@/hooks/useRoles";
 
-
 interface UrlMap {
   [key: number]: string;
 }
-
 
 const StudiesCardComponent = ({
   studies,
@@ -38,17 +36,19 @@ const StudiesCardComponent = ({
   idPatient: number;
   onStudyAdded?: (newStudy: Study) => void;
 }) => {
-
   const [urls, setUrls] = useState<UrlMap>({});
   const { isPatient, isSecretary, isDoctor } = useRoles();
   useEffect(() => {
     const fetchUrls = async () => {
-      if (studies) {  
+      if (studies) {
         const studyRepository = createApiStudyRepository();
-        const newUrls: UrlMap = {}
+        const newUrls: UrlMap = {};
 
         for (const study of studies) {
-          const url = await studyRepository.getUrlByPatient(idPatient, study.locationS3);
+          const url = await studyRepository.getUrlByPatient(
+            idPatient,
+            study.locationS3
+          );
           newUrls[study.id] = url;
         }
 
@@ -59,41 +59,53 @@ const StudiesCardComponent = ({
     fetchUrls();
   }, [studies]);
 
-
   return (
     <>
-      <div className="flex sm:mx-auto">
-        <div className="bg-white p-4 rounded-lg overflow-hidden shadow-md w-full max-w-lg">
-          <div className="mb-4">
-            <h3 className="text-sm font-bold text-gray-700 uppercase mb-2 bg-gray-100 p-2">
-              Archivos
-            </h3>
-            <ul>
-              {studies?.map((study) => (
-                <li
-                  key={study.id}
-                  onClick={() => window.open(urls[study.id], "_blank")}
-                  className="flex items-center justify-between p-2 cursor-pointer rounded hover:bg-gray-100"
-                >
-                  <div className="flex items-center ">
-                    <FaRegFilePdf className="w-4 h-4 mr-2 text-red-600" />
-                    <span className="text-sm font-medium">{study.note}</span>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {formatDate(String(study.date))}
-                  </div>
-                </li>
-              ))}
-            </ul>
+      <Card>
+        <CardHeader>
+          <CardTitle>Estudios</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col justify-between h-full">
+            <div>
+              {studies?.length > 0 ? (
+                <div className="rounded-lg overflow-hidden">
+                  {studies.map((study) => (
+                    <div
+                      key={study.id}
+                      onClick={() => window.open(urls[study.id], "_blank")}
+                      className="grid grid-cols-[50px_1fr] gap-4 items-center p-2 cursor-pointer rounded hover:bg-gray-100"
+                    >
+                      <FaRegFilePdf className="w-8 h-8 text-red-600" />
+                      <div className="grid gap-1">
+                        <span className="text-sm font-medium">
+                          {study?.note}
+                        </span>
+                        <div className="text-xs text-gray-500">
+                          {formatDate(String(study.date))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-700 p-2">
+                  No hay estudios cargados.
+                </div>
+              )}
+            </div>
             {isSecretary && (
-             <div className="mt-4">
-             <StudyDialog idPatient={idPatient} onStudyAdded={onStudyAdded} />
-           </div>
+              <div className="mt-auto">
+                <StudyDialog
+                  idPatient={idPatient}
+                  onStudyAdded={onStudyAdded}
+                />
+              </div>
             )}
-            
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </>
   );
 };

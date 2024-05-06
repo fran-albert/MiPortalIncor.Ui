@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { FiLogOut } from "react-icons/fi";
 import { FaUserDoctor } from "react-icons/fa6";
+import { MdHealthAndSafety } from "react-icons/md";
 import Link from "next/link";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import { GiHospitalCross } from "react-icons/gi";
@@ -162,6 +163,15 @@ export default function SideBar() {
                       <span className="ml-3">Especialidades</span>
                     </Link>
                   </li>
+                  <li className="pl-5">
+                    <Link
+                      href="/obras-sociales"
+                      className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
+                    >
+                      <MdHealthAndSafety size={25} color="#0d9488" />
+                      <span className="ml-3">Obras Sociales</span>
+                    </Link>
+                  </li>
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
                     Reportes
                   </li>
@@ -170,7 +180,7 @@ export default function SideBar() {
                       href="/soporte"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                     >
-                      <FaHeadset  size={25} color="#0d9488" />
+                      <FaHeadset size={25} color="#0d9488" />
                       <span className="ml-3">Soporte</span>
                     </Link>
                   </li>
@@ -203,7 +213,9 @@ export default function SideBar() {
                   className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-red-100  group cursor-pointer"
                 >
                   <FiLogOut size={25} />
-                  <span className="flex-1 ml-3 whitespace-nowrap">Cerrar Sesión</span>
+                  <span className="flex-1 ml-3 whitespace-nowrap">
+                    Cerrar Sesión
+                  </span>
                 </a>
               </li>
             </ul>

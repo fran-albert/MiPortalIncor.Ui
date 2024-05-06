@@ -202,11 +202,11 @@ function CreatePatientForm() {
                   <DatePicker
                     showIcon
                     selected={startDate}
-                    className="max-w-full"
                     onChange={handleDateChange}
                     locale="es"
+                    className="max-w-full"
                     customInput={
-                      <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
+                      <Input className="max-w-full bg-gray-200 border-gray-300 text-gray-800" />
                     }
                     dateFormat="d MMMM yyyy"
                   />

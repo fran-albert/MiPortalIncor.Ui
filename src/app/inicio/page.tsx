@@ -1,5 +1,6 @@
 "use client";
 import { Role } from "@/common/enums/role.enum";
+import { SecretaryCard } from "@/components/secretaryCard";
 import withSessionTimeout from "@/components/withSessionTimeout";
 import { useCustomSession } from "@/context/SessionAuthProviders";
 import useRoles from "@/hooks/useRoles";
@@ -16,13 +17,11 @@ function HomePage() {
       <div className="flex justify-center items-start mt-32">
         {isSecretary && (
           <div className="w-full px-4">
-            <h2 className="text-2xl font-semibold text-center mb-6">
+            <h2 className="text-2xl font-semibold text-center">
               Admin Dashboard
             </h2>
             <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12">
-              <PatientCount />
-              <DoctorsCount />
-              <SpectialityCount />
+              <SecretaryCard />
             </div>
           </div>
         )}

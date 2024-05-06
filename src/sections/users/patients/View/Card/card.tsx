@@ -26,8 +26,8 @@ const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
   const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
     <>
-      <Card className="w-full max-w-lg shadow-md rounded-lg overflow-hidden">
-        <CardHeader className="flex flex-col sm:flex-row p-4 items-start sm:items-center">
+      <Card>
+        <CardHeader className="flex justify-between items-center">
           <div className="flex-shrink-0 pb-4 sm:pb-0">
             <Image
               src={
@@ -36,34 +36,33 @@ const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
                   : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
               }
               className="rounded-full"
-              width={96}
-              height={96}
+              width={64}
+              height={64}
               alt="Incor Logo"
             />
           </div>
-          <div className="flex-grow sm:pl-4">
-            <CardTitle className="text-teal-700 text-lg font-bold">
-              {patient?.firstName} {patient?.lastName}
-            </CardTitle>
-            <p className="text-gray-600">
-              {calculateAge(String(patient?.birthDate))} años
-            </p>
-            {isSecretary && (
-              <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
-                <EditButton
-                  id={Number(patient?.userId)}
-                  path="usuarios/pacientes"
-                />
-              </div>
-            )}
-          </div>
+          <CardTitle className="text-teal-700">
+            {patient?.firstName} {patient?.lastName}
+          </CardTitle>
         </CardHeader>
-        {/* <CardContent className="p-4">
-          <div className="p-4 border border-green-700  rounded-lg">
-            <h3 className="text-lg font-semibold">NOTAS INTERNAS</h3>
-            <p>El paciente debe $3,000 en inyecciones de la consulta pasada.</p>
+        <CardContent>
+          <div className="flex justify-between items-center">
+            <div className="text-xl font-semibold text-gray-700">
+              {" "}
+              {calculateAge(String(patient?.birthDate))} años
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {isSecretary && (
+                <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
+                  <EditButton
+                    id={Number(patient?.userId)}
+                    path="usuarios/pacientes"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </CardContent> */}
+        </CardContent>
       </Card>
     </>
   );

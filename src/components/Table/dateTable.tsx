@@ -25,6 +25,7 @@ interface DataTableProps<TData, TValue> {
   addLinkText?: string;
   searchColumn?: string;
   canAddUser?: boolean;
+  customFilter?: (data: TData, query: string) => boolean;
   onAddClick?: () => void;
 }
 
@@ -36,6 +37,7 @@ export function DataTable<TData, TValue>({
   addLinkPath = "/",
   addLinkText = "Agregar",
   searchColumn = "name",
+  customFilter,
   canAddUser = true,
   onAddClick,
 }: DataTableProps<TData, TValue>) {
@@ -45,10 +47,18 @@ export function DataTable<TData, TValue>({
   );
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 16,
   });
+  const [searchInput, setSearchInput] = React.useState("");
+
+  const filteredData = React.useMemo(() => {
+    if (customFilter && searchInput) {
+      return data.filter((item) => customFilter(item, searchInput));
+    }
+    return data;
+  }, [data, customFilter, searchInput]);
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -62,6 +72,10 @@ export function DataTable<TData, TValue>({
       pagination,
     },
   });
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value);
+  };
 
   const pageCount = table.getPageCount();
 
@@ -78,14 +92,14 @@ export function DataTable<TData, TValue>({
       pages.push(
         <Button
           key={i}
-          variant="teal"
+          variant="outline"
           size="sm"
           onClick={() => handlePageChange(i)}
           className={`transition duration-150 ease-in-out ${
             pagination.pageIndex === i
-              ? "bg-teal-500 text-white"
+              ? "bg-teal-700 text-white"
               : "bg-white text-teal-500"
-          } hover:bg-teal-600 hover:text-white focus:outline-none mx-1`}
+          } hover:bg-teal-500 hover:text-white focus:outline-none mx-1`}
         >
           {i + 1}
         </Button>
@@ -101,17 +115,12 @@ export function DataTable<TData, TValue>({
           <Search
             placeholder={searchPlaceholder}
             className="w-full px-4 py-2 border rounded-md"
-            value={
-              (table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn(searchColumn)?.setFilterValue(event.target.value)
-            }
+            value={searchInput}
+            onChange={handleSearchChange}
           />
           {canAddUser && (
             <Button
-              className="ml-4"
-              variant="teal"
+              className="ml-4 bg-teal-700"
               onClick={onAddClick ? onAddClick : () => {}}
             >
               <Link href={addLinkPath}>{addLinkText}</Link>
@@ -122,13 +131,13 @@ export function DataTable<TData, TValue>({
       <div className="rounded-lg overflow-hidden shadow-xl border border-gray-200">
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-teal-500">
+            <thead className="bg-teal-700">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="py-3 px-6 text-left text-sm font-semibold text-white uppercase tracking-wider"
+                      className="py-2 px-6 text-left text-sm font-semibold text-white uppercase tracking-wider"
                     >
                       {header.isPlaceholder
                         ? null
@@ -153,7 +162,7 @@ export function DataTable<TData, TValue>({
                     {row.getVisibleCells().map((cell) => (
                       <td
                         key={cell.id}
-                        className="py-4 px-6 border-b border-gray-200"
+                        className="py-2 px-6 border-b border-gray-200"
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

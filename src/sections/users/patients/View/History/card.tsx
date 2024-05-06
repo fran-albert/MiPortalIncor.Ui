@@ -18,6 +18,8 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { AiOutlineFileJpg } from "react-icons/ai";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import useRoles from "@/hooks/useRoles";
+import HistoryDialog from "./Dialog/dialog";
 
 const HistoryCardComponent = () => {
   const antecedentes = [
@@ -30,6 +32,14 @@ const HistoryCardComponent = () => {
       fecha: "01/01/2021",
     },
     {
+      nombre: "Antecedente 4",
+      fecha: "01/01/2021",
+    },
+    {
+      nombre: "Antecedente 5",
+      fecha: "01/01/2021",
+    },
+    {
       nombre: "Antecedente 3",
       fecha: "01/01/2021",
     },
@@ -37,40 +47,48 @@ const HistoryCardComponent = () => {
 
   return (
     <>
-      <div className="flex sm:mx-auto">
-        <div className="bg-white p-4 rounded-lg overflow-hidden shadow-md w-full max-w-lg">
-          <div className="mb-4">
-            <h3 className="text-sm font-bold text-gray-700 uppercase mb-2 bg-gray-100 p-2">
-              Antecedentes
-            </h3>
-            <div className="space-y-4">
-              {/* Lista de antecedentes */}
-              {antecedentes.map((antecedente, index) => (
-                <div
-                  key={index}
-                  className="p-2 rounded hover:bg-gray-100 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="text-gray-800 font-semibold">
-                      {antecedente.nombre}
-                    </p>
-                    <p className="text-gray-600 text-xs">{antecedente.fecha}</p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Antecedentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {antecedentes.length > 0 ? (
+              <ul>
+                {antecedentes.map((antecedente, index) => (
+                  <div
+                    key={index}
+                    className="p-4 my-2 cursor-pointer hover:bg-gray-100  flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="text-black font-semibold mb-1">
+                        {antecedente.nombre}
+                      </p>
+                      <p className="text-black text-xs">{antecedente.fecha}</p>
+                      <p className="text-black text-xs">
+                        Prestador: Dr. Nombre Apellido
+                      </p>
+                    </div>
+                    <button className="ml-4 text-gray-500 hover:text-gray-700">
+                      <FaEdit className="w-4 h-4 text-teal-600" />
+                    </button>
                   </div>
-                  <button className="ml-4 text-gray-500 hover:text-gray-700">
-                    <FaEdit className="w-4 h-4 text-teal-600" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4">
-              <button className="flex items-center justify-center w-full p-2 border border-dashed border-gray-300 rounded hover:bg-gray-50">
-                <FaPlus className="w-4 h-4 mr-2 text-teal-600" />
-                <span className="text-teal-600">Nuevo Antecedente</span>
-              </button>
-            </div>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-sm text-gray-700 p-2">
+                No hay antecedentes cargados.
+              </div>
+            )}
           </div>
-        </div>
-      </div>
+          <div className="mt-4">
+            <HistoryDialog
+            // idPatient={idPatient}
+            // onStudyAdded={onStudyAdded}
+            />
+          </div>
+        </CardContent>
+      </Card>
     </>
   );
 };

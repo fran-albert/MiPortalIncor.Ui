@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditButton } from "@/components/Button/Edit/button";
 import DeleteDoctorDialog from "../delete/DeleteDoctorDialog";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
-import { formatDni } from "@/common/helpers/helpers";
+import { formatDni, formatMatricula } from "@/common/helpers/helpers";
 import { ViewButton } from "@/components/Button/View/button";
 
 export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
@@ -59,7 +59,7 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       cell: ({ row }) => (
         <div className="flex items-center">
           <p className="text-sm font-medium">
-            {row.original.matricula ? row.original.matricula : "Sin matrícula"}
+            {row.original.matricula ? formatMatricula(row.original.matricula) : "Sin matrícula"}
           </p>
         </div>
       ),

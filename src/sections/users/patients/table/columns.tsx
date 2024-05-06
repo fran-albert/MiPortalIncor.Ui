@@ -21,14 +21,19 @@ export const getColumns = (
       header: "#",
       cell: ({ row }) => {
         const index = row.index;
-        return <div>{index + 1}</div>;
+        return <div className="text-sm">{index + 1}</div>;
       },
     },
     {
       accessorKey: "firstName",
       header: "Paciente",
       cell: ({ row }) => (
-        <div className="flex items-center">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() =>
+            (window.location.href = `/usuarios/pacientes/${row.original.userId}`)
+          }
+        >
           <Avatar>
             <AvatarImage
               src={

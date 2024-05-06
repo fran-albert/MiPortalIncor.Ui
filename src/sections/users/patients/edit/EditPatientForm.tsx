@@ -88,6 +88,25 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     setSelectedPlan(plan ? plan : null);
   };
 
+  const handleDateChange = (date: Date) => {
+    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
+    const formattedDateISO = dateInArgentina.format();
+    setStartDate(date);
+    setValue("birthDate", formattedDateISO);
+  };
+
+  useEffect(() => {
+    if (patient) {
+      const patientBirthDate = new Date(patient.birthDate);
+      setStartDate(patientBirthDate);
+      const dateInArgentina = moment(patientBirthDate).tz(
+        "America/Argentina/Buenos_Aires"
+      );
+      const formattedDateISO = dateInArgentina.format();
+      setValue("birthDate", formattedDateISO);
+    }
+  }, [patient, setValue]);
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { address, ...rest } = data;
     const formattedUserName = removeDotsFromDni(data.userName);
@@ -142,13 +161,6 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     } catch (error) {
       console.error("Error al actualizar el paciente", error);
     }
-  };
-
-  const handleDateChange = (date: Date) => {
-    const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
-    const formattedDateISO = dateInArgentina.format();
-    setStartDate(date);
-    setValue("birthDate", formattedDateISO);
   };
 
   return (
@@ -339,6 +351,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   className="mt-10 m-2"
                   variant="destructive"
                   onClick={goBack}
+                  type="button"
                 >
                   Cancelar
                 </Button>

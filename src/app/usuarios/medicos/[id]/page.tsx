@@ -1,5 +1,6 @@
 "use client";
 import Loading from "@/components/Loading/loading";
+import useRoles from "@/hooks/useRoles";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
 import AppointmentCardComponent from "@/sections/users/doctors/View/Appointment/card";
@@ -10,7 +11,8 @@ import StudiesCardComponent from "@/sections/users/doctors/View/Studies/card";
 import VaccineComponent from "@/sections/users/doctors/View/Vaccine/card";
 import VitalSignCard from "@/sections/users/doctors/View/VitalSigns/card";
 import { PatientTable } from "@/sections/users/patients/table/table";
-import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 function DoctorPage() {
@@ -20,7 +22,9 @@ function DoctorPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const doctorRepository = createApiDoctorRepository();
   const loadDoctor = doctorRepository.getDoctor(Number(id));
-
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   const fetchDoctor = async () => {
     try {
       setIsLoading(true);
@@ -37,8 +41,17 @@ function DoctorPage() {
     fetchDoctor();
   }, [Number(id)]);
 
-  if (isLoading) {
-    return <Loading isLoading />;
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || isPatient || isDoctor) {
+      router.replace("/inicio");
+    } else {
+      setIsLoading(false);
+    }
+  }, [session, status, router]);
+
+  if (isLoading || status === "loading") {
+    return <Loading isLoading={true} />;
   }
 
   return (
@@ -52,7 +65,7 @@ function DoctorPage() {
                 <UserCardComponent doctor={doctor} />
               </div>
               <div className="mt-24">
-                {/* <StudiesCardComponent /> */} 
+                {/* <StudiesCardComponent /> */}
                 {/* <table className="min-w-full">
                   <thead>
                     <tr>
@@ -92,9 +105,7 @@ function DoctorPage() {
               <div className="m-4"></div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">
-                {/* <AppointmentCardComponent /> */}
-              </div>
+              <div className="m-4">{/* <AppointmentCardComponent /> */}</div>
             </div>
           </div>
         </div>

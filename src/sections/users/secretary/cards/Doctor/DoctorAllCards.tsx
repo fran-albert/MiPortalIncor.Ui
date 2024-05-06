@@ -2,7 +2,13 @@ import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepo
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaUserDoctor } from "react-icons/fa6";
-
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  Card,
+} from "@/components/ui/card";
 export const DoctorsCount = () => {
   const [totalDoctors, setTotalDoctors] = useState<number>(0);
 
@@ -18,25 +24,20 @@ export const DoctorsCount = () => {
 
   return (
     <>
-      <div
-        className="bg-white rounded-xl shadow-md overflow-hidden flex sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer"
-        style={{ width: "250px", height: "120px", overflow: "auto" }}
-      >
-        <div className="w-2 bg-indigo-500 rounded-l-xl"></div>
+      <div className="rounded-lg sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
         <Link href={`/usuarios/medicos`}>
-          <div className="flex-grow p-4">
-            <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">
-              Médicos
-            </div>
-            <div className="flex items-center justify-between">
-              <p className="mt-2 text-4xl font-bold text-gray-900">
-                {totalDoctors}
-              </p>
-              <div className="flex-shrink-0">
-                <FaUserDoctor size={25} color="#1f2937" />
+          <Card>
+            <CardHeader className="flex justify-between items-center">
+              <FaUserDoctor className="w-6 h-6" color="#0e7490" />
+              <CardTitle>Médicos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center max-w-full">
+                <div className="text-3xl font-bold">{totalDoctors}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400"></div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </Link>
       </div>
     </>

@@ -31,6 +31,11 @@ export const PatientTable = () => {
     fetchPatients();
   }, []);
 
+  const customFilterFunction = (patient: Patient, query: string) =>
+    patient.firstName.toLowerCase().includes(query.toLowerCase()) ||
+    patient.lastName.toLowerCase().includes(query.toLowerCase()) ||
+    patient.dni.toLowerCase().includes(query.toLowerCase());
+
   if (isLoading) {
     return <Loading isLoading />;
   }
@@ -48,7 +53,7 @@ export const PatientTable = () => {
           searchPlaceholder="Buscar pacientes..."
           showSearch={true}
           addLinkPath="pacientes/agregar"
-          searchColumn="firstName"
+          customFilter={customFilterFunction}
           addLinkText="Agregar Paciente"
           canAddUser={isSecretary}
         />

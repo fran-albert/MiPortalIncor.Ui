@@ -1,5 +1,7 @@
 "use client";
 import Loading from "@/components/Loading/loading";
+import { PatientCardComponent } from "@/sections/users/patients/CardComponent/component";
+import useRoles from "@/hooks/useRoles";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
@@ -10,6 +12,7 @@ import AppointmentCardComponent from "@/sections/users/patients/View/Appointment
 import UserCardComponent from "@/sections/users/patients/View/Card/card";
 import DataProfileCard from "@/sections/users/patients/View/Data/card";
 import HistoryCardComponent from "@/sections/users/patients/View/History/card";
+import LabCard from "@/sections/users/patients/View/Lab/card";
 import StudiesCardComponent from "@/sections/users/patients/View/Studies/card";
 import VaccineComponent from "@/sections/users/patients/View/Vaccine/card";
 import VitalSignCard from "@/sections/users/patients/View/VitalSigns/card";
@@ -25,7 +28,8 @@ function PatientPage() {
   const studyRepository = createApiStudyRepository();
   const [studies, setStudies] = useState<Study[]>([]);
   const [urls, setUrls] = useState<{ [key: number]: string }>({});
-
+  const { isPatient, isSecretary, isDoctor } = useRoles();
+  const [refreshKey, setRefreshKey] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,13 +51,12 @@ function PatientPage() {
     };
 
     fetchData();
-  }, [Number(id)]);
-  
+  }, [Number(id), refreshKey]);
 
   const handleAddStudy = (newStudy: Study) => {
-    setStudies(prevStudies => [...prevStudies, newStudy]);
+    setStudies((prevStudies) => [...prevStudies, newStudy]);
+    setRefreshKey((prevKey) => prevKey + 1);
   };
-
   if (isLoading) {
     return <Loading isLoading />;
   }
@@ -62,7 +65,7 @@ function PatientPage() {
     <>
       <div className="flex flex-col md:flex-row md:ml-20 bg-slate-50 min-h-screen lg:ml-16">
         <div className="md:w-64 w-full"></div>
-        <div className="flex-grow mt-24 p-3 md:p-0 ">
+        {/* <div className="flex-grow mt-24 p-3 md:p-0 ">
           <div className="flex flex-col md:flex-row">
             <div className="md:flex-1 md:mr-3">
               <div className="m-4">
@@ -71,25 +74,41 @@ function PatientPage() {
               <div className="m-4">
                 <DataProfileCard patient={patient} />
               </div>
-              <div className="m-4">{/* <VitalSignCard /> */}</div>
-              <div className="m-4">{/* <StudiesCardComponent /> */}</div>
-            </div>
-            <div className="flex-1 md:mt-0 mt-3">
               <div className="m-4">
-                {/* <HistoryCardComponent /> */}
+                <VitalSignCard />
+              </div>
+              {isSecretary && (
+                <div className="m-4">
+                  <LabCard />
+                </div>
+              )}
+            </div>
+            <div className="flex-1 ">
+              <div className="m-4">
                 <StudiesCardComponent
                   studies={studies}
                   idPatient={Number(patient?.userId)}
                   onStudyAdded={handleAddStudy}
                 />
               </div>
-              <div className="m-4">{/* <VaccineComponent /> */}</div>
-            </div>
+              {isDoctor && (
+                <div className="m-4">
+                  <HistoryCardComponent />
+                </div>
+              )}
+            </div>{" "}
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">{/* <AppointmentCardComponent /> */}</div>
+              <div className="m-4">
+                <AppointmentCardComponent />
+              </div>
             </div>
           </div>
-        </div>
+        </div> */}
+        <PatientCardComponent
+          patient={patient}
+          studies={studies}
+          onStudyAdded={handleAddStudy}
+        />
       </div>
     </>
   );

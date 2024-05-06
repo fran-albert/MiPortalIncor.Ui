@@ -10,12 +10,17 @@ import Loading from "@/components/Loading/loading";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { Patient } from "@/modules/patients/domain/Patient";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import useRoles from "@/hooks/useRoles";
 
 const studyRepository = createApiStudyRepository();
 const patientRepository = createApiPatientRepository();
 
 function StudiesPage() {
-  const { session } = useCustomSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { isPatient, isSecretary, isDoctor } = useRoles();
   const userId = session?.user.id;
   const [patient, setPatient] = useState<Patient | undefined>();
   const [studies, setStudies] = useState<Study[]>([]);
@@ -44,8 +49,17 @@ function StudiesPage() {
 
     fetchData();
   }, [userId]);
-  if (isLoading) {
-    return <Loading isLoading />;
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || isSecretary || isDoctor) {
+      router.replace("/inicio");
+    } else {
+      setIsLoading(false);
+    }
+  }, [session, status, router]);
+  if (isLoading || status === "loading") {
+    return <Loading isLoading={true} />;
   }
 
   return (
