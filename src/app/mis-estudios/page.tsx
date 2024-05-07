@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "@/components/Table/dateTable";
-import { columns } from "@/sections/users/patients/labs/table/columns";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import { getAllStudyByPatient } from "@/modules/study/application/get-all-by-patient/getAllStudyByPatient";
 import { useCustomSession } from "@/context/SessionAuthProviders";
@@ -13,7 +12,10 @@ import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useRoles from "@/hooks/useRoles";
-
+import { getColumns } from "@/sections/users/patients/labs/table/columns";
+interface UrlMap {
+  [key: number]: string;
+}
 const studyRepository = createApiStudyRepository();
 const patientRepository = createApiPatientRepository();
 
@@ -25,6 +27,7 @@ function StudiesPage() {
   const [patient, setPatient] = useState<Patient | undefined>();
   const [studies, setStudies] = useState<Study[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [urls, setUrls] = useState<UrlMap>({});
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -51,6 +54,26 @@ function StudiesPage() {
   }, [userId]);
 
   useEffect(() => {
+    const fetchUrls = async () => {
+      if (studies) {
+        const newUrls: UrlMap = {};
+
+        for (const study of studies) {
+          const url = await studyRepository.getUrlByPatient(
+            userId,
+            study.locationS3
+          );
+          newUrls[study.id] = url;
+        }
+
+        setUrls(newUrls);
+      }
+    };
+
+    fetchUrls();
+  }, [studies]);
+
+  useEffect(() => {
     if (status === "loading") return;
     if (!session || isSecretary || isDoctor) {
       router.replace("/inicio");
@@ -67,7 +90,7 @@ function StudiesPage() {
       <div className="md:w-64 w-full"></div>
       <div className="flex-grow p-10 mt-28">
         <h1 className="text-3xl text-center font-bold mb-10">Mis Estudios</h1>
-        <DataTable columns={columns} data={studies} />
+        <DataTable columns={getColumns(urls)}data={studies} />
       </div>
     </div>
   );

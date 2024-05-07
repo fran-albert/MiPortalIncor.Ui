@@ -163,7 +163,7 @@ export default function SideBar() {
                       <span className="ml-3">Especialidades</span>
                     </Link>
                   </li>
-                  <li className="pl-5">
+                  {/* <li className="pl-5">
                     <Link
                       href="/obras-sociales"
                       className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
@@ -171,7 +171,7 @@ export default function SideBar() {
                       <MdHealthAndSafety size={25} color="#0d9488" />
                       <span className="ml-3">Obras Sociales</span>
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
                     Reportes
                   </li>

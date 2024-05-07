@@ -330,7 +330,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="street">Descripción</Label>
+                        <Label htmlFor="street">Piso</Label>
                         <Input
                           {...register("address.description")}
                           className="bg-gray-200"
@@ -338,7 +338,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="number">Phone Number </Label>
+                        <Label htmlFor="number">Depto </Label>
                         <Input
                           {...register("address.phoneNumber")}
                           className="bg-gray-200"

@@ -1,30 +1,3 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  Card,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuContent,
-  DropdownMenu,
-} from "@/components/ui/dropdown-menu";
-import {
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableCell,
-  TableBody,
-  Table,
-} from "@/components/ui/table";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { PatientCount } from "@/sections/users/secretary/cards/Patient/PatientAllCard";
 import { DoctorsCount } from "@/sections/users/secretary/cards/Doctor/DoctorAllCards";
 import { SpectialityCount } from "@/sections/users/secretary/cards/Spectiality/SpecialityAllCards";
