@@ -97,17 +97,6 @@ export const getColumns = (
     },
 
     {
-      header: "Domicilio",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <div className="flex flex-col ml-2">
-            {row.original.address?.city?.state?.name}, {""}{" "}
-            {`${row.original.address?.city?.name}`}
-          </div>
-        </div>
-      ),
-    },
-    {
       header: " ",
       cell: ({ row }) => (
         <div className="flex items-center justify-end">

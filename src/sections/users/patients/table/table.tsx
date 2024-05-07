@@ -42,21 +42,28 @@ export const PatientTable = () => {
 
   return (
     <>
-      <div className="md:ml-[40px] w-11/12">
-        {" "}
-        <h1 className="text-2xl text-start font-medium mb-4">
-          Lista de Pacientes
-        </h1>
-        <DataTable
-          columns={patientColumns}
-          data={patients}
-          searchPlaceholder="Buscar pacientes..."
-          showSearch={true}
-          addLinkPath="pacientes/agregar"
-          customFilter={customFilterFunction}
-          addLinkText="Agregar Paciente"
-          canAddUser={isSecretary}
-        />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col">
+          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+              <h1 className="text-2xl text-start font-medium mb-4">
+                Lista de Pacientes
+              </h1>
+              <div className="overflow-hidden sm:rounded-lg">
+                <DataTable
+                  columns={patientColumns}
+                  data={patients}
+                  searchPlaceholder="Buscar pacientes..."
+                  showSearch={true}
+                  addLinkPath="pacientes/agregar"
+                  customFilter={customFilterFunction}
+                  addLinkText="Agregar Paciente"
+                  canAddUser={isSecretary}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
