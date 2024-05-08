@@ -12,13 +12,12 @@ import { SpectialityCount } from "@/sections/users/secretary/cards/Spectiality/S
 function HomePage() {
   const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
-    <div className="flex justify-center items-center">
-      <div className="md:w-64 w-full"></div>
-      <div className="flex justify-center items-start mt-32">
+    <div className="flex flex-col justify-center items-center min-h-screen ">
+      <div className="flex justify-center items-center ">
         {isSecretary && (
-          <div className="w-full px-4">
+          <div className="w-full px-4 mt-28">
             <h2 className="text-2xl font-semibold text-center">
-              Admin Dashboard
+              Secretaria Dashboard
             </h2>
             <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12">
               <SecretaryCard />
@@ -28,12 +27,10 @@ function HomePage() {
         {isDoctor && (
           <div className="w-full px-4">
             <h2 className="text-2xl font-semibold text-center mb-6">
-              Doctor Dashboard
+              Médico Dashboard
             </h2>
-            <div className="flex flex-wrap justify-center gap-20 md:ml-32 lg:ml-12">
+            <div className="flex justify-center items-center">
               <PatientCount />
-              {/* <DoctorsCount /> */}
-              {/* <SpectialityCount /> */}
             </div>
           </div>
         )}

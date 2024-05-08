@@ -25,7 +25,7 @@ export const SpectialityCount = () => {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden flex sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+      <div className="rounded-lg sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
         <Link href={`/especialidades`}>
           <Card>
             <CardHeader className="flex justify-between items-center">
