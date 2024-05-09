@@ -5,6 +5,7 @@ import SideBar from "@/components/sideBar";
 import { Toaster } from "sonner";
 import SessionAuthProvider from "@/context/SessionAuthProviders";
 import MainContainer from "@/components/mainContainer";
+import { SideBarV2 } from "@/components/component/side-bar-v2";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionAuthProvider>
           <Toaster richColors position="top-center" />
-          <MainContainer>{children}</MainContainer>
+          <SideBarV2 children={children} />
         </SessionAuthProvider>
       </body>
     </html>

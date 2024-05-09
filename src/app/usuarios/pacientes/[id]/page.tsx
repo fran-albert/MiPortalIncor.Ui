@@ -73,11 +73,7 @@ function PatientPage() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:ml-20 bg-slate-50 min-h-screen lg:ml-16">
-        <div className="md:w-64 w-full"></div>
-        {/* <div className="flex-grow mt-24 p-3 md:p-0 ">
-                <AppointmentCardComponent />
-        </div> */}
+      <div>
         <PatientCardComponent
           patient={patient}
           studies={studies}

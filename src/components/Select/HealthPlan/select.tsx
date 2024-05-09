@@ -69,7 +69,7 @@ export const HealthPlanSelect = ({
 
   return (
     <Select value={selectedPlanId} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full bg-gray-200 text-gray-700">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Seleccione el plan..." />
       </SelectTrigger>
       <SelectContent>

@@ -68,7 +68,7 @@ export function PatientCardComponent({
 }: ModalProps) {
   const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
-    <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr] mt-24 lg:block">
+    <div className="grid w-full lg:grid-cols-[280px_1fr] lg:block">
       <div className="flex flex-col">
         <main className="flex-1 p-4 md:p-6">
           <div className="grid gap-6 md:gap-8">

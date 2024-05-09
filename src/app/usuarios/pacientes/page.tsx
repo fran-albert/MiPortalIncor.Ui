@@ -24,11 +24,18 @@ const PatientsPage = () => {
     return <Loading isLoading={true} />;
   }
   return (
-    <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
-      <div className="md:w-64 w-full"></div>
-      <div className="flex-grow mt-28">
-        <PatientTable />
-      </div>
+    // <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
+    //   <div className="md:w-64 w-full"></div>
+    //   <div className="flex-grow mt-28">
+    //     <PatientTable />
+    //   </div>
+    // </div>
+    // <div className="flex flex-col md:flex-row bg-slate-50 min-h-screen">
+    //   <div className="flex-grow">
+    //   </div>
+    // </div>
+    <div>
+      <PatientTable />
     </div>
   );
 };

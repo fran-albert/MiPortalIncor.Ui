@@ -30,6 +30,11 @@ export const DoctorsTable = () => {
     fetchDoctors();
   }, []);
 
+  const customFilterFunction = (doctor: Doctor, query: string) =>
+    doctor.firstName.toLowerCase().includes(query.toLowerCase()) ||
+    doctor.lastName.toLowerCase().includes(query.toLowerCase()) ||
+    doctor.dni.toLowerCase().includes(query.toLowerCase());
+
   if (isLoading) {
     return <Loading isLoading />;
   }
@@ -40,15 +45,14 @@ export const DoctorsTable = () => {
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <h1 className="text-2xl text-start font-medium mb-4">
-                Lista de Médicos
-              </h1>
+              <h1 className="text-2xl text-start font-medium mb-4"></h1>
               <div className="overflow-hidden sm:rounded-lg">
                 <DataTable
                   columns={doctorColumns}
                   data={doctors}
                   searchPlaceholder="Buscar médicos..."
                   showSearch={true}
+                  customFilter={customFilterFunction}
                   searchColumn="firstName"
                   addLinkPath="medicos/agregar"
                   addLinkText="Agregar Médico"
