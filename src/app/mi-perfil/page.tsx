@@ -14,14 +14,9 @@ const Profile = () => {
   const { isPatient, isDoctor, isSecretary } = useRoles();
   return (
     <>
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-64 w-full"></div>
-        <div className="flex-grow mt-20 flex justify-center items-center bg-slate-50 min-h-screen">
-          {isPatient && <ProfileCardComponent id={id} />}
-          {isDoctor && <ProfileDoctorCardComponent id={id} />}
-          {isSecretary && <ProfileSecretaryCardComponent id={id} />}
-        </div>
-      </div>
+      {isPatient && <ProfileCardComponent id={id} />}
+      {isDoctor && <ProfileDoctorCardComponent id={id} />}
+      {isSecretary && <ProfileSecretaryCardComponent id={id} />}
     </>
   );
 };

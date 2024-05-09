@@ -35,6 +35,10 @@ import { useCustomSession } from "@/context/SessionAuthProviders";
 import "@/styles/custom.datepicker.css";
 import { capitalizeWords } from "@/common/helpers/helpers";
 import { FaCalendar } from "react-icons/fa6";
+import { BloodSelect } from "@/components/Select/Blood/select";
+import { RHFactorSelect } from "@/components/Select/RHFactor/select";
+import { GenderSelect } from "@/components/Select/Gender/select";
+import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 export function CreatePatientForm() {
@@ -171,227 +175,310 @@ export function CreatePatientForm() {
               </Avatar>
               <Button variant="outline">Upload Photo</Button>
             </div> */}
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="firstName">Nombre</Label>
-                <Input
-                  id="firstName"
-                  placeholder="Ingresar nombre"
-                  {...register("firstName", {
-                    required: "Este campo es obligatorio",
-                    minLength: {
-                      value: 2,
-                      message: "El nombre debe tener al menos 2 caracteres",
-                    },
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("firstName", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-                {errors.firstName && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.firstName.message}
-                  </p>
-                )}
+                
+              </div> */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">Nombre</Label>
+                  <Input
+                    id="firstName"
+                    placeholder="Ingresar nombre"
+                    {...register("firstName", {
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message: "El nombre debe tener al menos 2 caracteres",
+                      },
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("firstName", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.firstName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Apellido</Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Ingresar apellido"
+                    {...register("lastName", {
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message: "El apellido debe tener al menos 2 caracteres",
+                      },
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("lastName", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                  {errors.lastName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.lastName.message}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Apellido</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Ingresar apellido"
-                  {...register("lastName", {
-                    required: "Este campo es obligatorio",
-                    minLength: {
-                      value: 2,
-                      message: "El apellido debe tener al menos 2 caracteres",
-                    },
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("lastName", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-                {errors.lastName && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.lastName.message}
-                  </p>
-                )}
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="healthInsurancePlan">
+                    Correo Electrónico
+                  </Label>
+                  <Input
+                    id="email"
+                    placeholder="Ingresar correo electrónico"
+                    {...register("email", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                        message: "Introduce un correo electrónico válido",
+                      },
+                    })}
+                    type="email"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="username">D.N.I.</Label>
-                <Input
-                  id="username"
-                  placeholder="Ingresar D.N.I."
-                  {...register("userName", {
-                    required: "Este campo es obligatorio",
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: "El D.N.I. debe contener solo números",
-                    },
-                  })}
-                />
-                {errors.userName && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.userName.message}
-                  </p>
-                )}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">D.N.I.</Label>
+                  <Input
+                    id="username"
+                    placeholder="Ingresar D.N.I."
+                    {...register("userName", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El D.N.I. debe contener solo números",
+                      },
+                    })}
+                  />
+                  {errors.userName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.userName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Fecha de Nacimiento</Label>
+                  <DatePicker
+                    showIcon
+                    selected={startDate}
+                    onChange={handleDateChange}
+                    locale="es"
+                    className="max-w-full"
+                    icon={<FaCalendar color="#0f766e" />}
+                    customInput={<Input className="input-custom-style" />}
+                    dateFormat="d MMMM yyyy"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="dob">Fecha de Nacimiento</Label>
-                <DatePicker
-                  showIcon
-                  selected={startDate}
-                  onChange={handleDateChange}
-                  locale="es"
-                  className="max-w-full"
-                  icon={<FaCalendar color="#0f766e" />}
-                  customInput={<Input className="input-custom-style" />}
-                  dateFormat="d MMMM yyyy"
-                />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Teléfono</Label>
+                  <Input
+                    id="phoneNumber"
+                    placeholder="Ingresar teléfono"
+                    {...register("phoneNumber", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El Teléfono debe contener solo números",
+                      },
+                    })}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Teléfono 2</Label>
+                  <Input
+                    id="phone"
+                    placeholder="Ingresar teléfono 2"
+                    type="tel"
+                    {...register("phoneNumber", {
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El teléfono debe contener solo números",
+                      },
+                    })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Sangre </Label>
+                  <BloodSelect onBlood={() => {}} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Factor R.H.</Label>
+                  <RHFactorSelect onRHFactor={() => {}} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Sexo</Label>
+                  <GenderSelect onGender={() => {}} />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Estado Civil</Label>
+                  <MaritalStatusSelect onMaritalStatus={() => {}} />
+                </div>
               </div>
             </div>
+
             <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo Electrónico</Label>
-                <Input
-                  id="email"
-                  placeholder="Ingresar correo electrónico"
-                  {...register("email", {
-                    required: "Este campo es obligatorio",
-                    pattern: {
-                      value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-                      message: "Introduce un correo electrónico válido",
-                    },
-                  })}
-                  type="email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.email.message}
-                  </p>
-                )}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="healthCareProvider">Obra Social</Label>
+                  <HealthInsuranceSelect
+                    onHealthInsuranceChange={handleHealthInsuranceChange}
+                    selected={selectedHealthInsurance}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="healthInsurancePlan">Plan</Label>
+                  <HealthPlanSelect
+                    idHealthInsurance={Number(selectedHealthInsurance?.id)}
+                    selected={selectedHealthInsurance}
+                    onPlanChange={handlePlanChange}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Teléfono</Label>
-                <Input
-                  id="phone"
-                  placeholder="Ingresar teléfono"
-                  type="tel"
-                  {...register("phoneNumber", {
-                    required: "Este campo es obligatorio",
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: "El teléfono debe contener solo números",
-                    },
-                  })}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-xs italic">
-                    {errors.phoneNumber.message}
-                  </p>
-                )}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="state">Número de Obra Social</Label>
+                  <Input
+                    id="username"
+                    placeholder="Ingresar D.N.I."
+                    {...register("userName", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El D.N.I. debe contener solo números",
+                      },
+                    })}
+                  />
+                  {errors.userName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.userName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">Observaciones</Label>
+                  <Input
+                    id="username"
+                    placeholder="Ingresar D.N.I."
+                    {...register("userName")}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="state">Provincia</Label>
-                <StateSelect
-                  selected={selectedState}
-                  onStateChange={handleStateChange}
-                />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="state">Provincia</Label>
+                  <StateSelect
+                    selected={selectedState}
+                    onStateChange={handleStateChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">Ciudad</Label>
+                  <CitySelect
+                    idState={selectedState?.id}
+                    onCityChange={handleCityChange}
+                    selected={selectedCity}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="city">Ciudad</Label>
-                <CitySelect
-                  idState={selectedState?.id}
-                  onCityChange={handleCityChange}
-                  selected={selectedCity}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="street">Calle</Label>
-                <Input
-                  id="street"
-                  placeholder="Ingresar calle"
-                  {...register("address.street", {
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("address.street", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="number">N°</Label>
-                <Input
-                  id="number"
-                  type="number"
-                  placeholder="Ingresar número"
-                  {...register("address.number", {
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("address.number", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="floor">Piso</Label>
-                <Input
-                  id="floor"
-                  type="number"
-                  placeholder="Ingresar piso"
-                  {...register("address.description", {
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("address.description", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="department">Departamento</Label>
-                <Input
-                  id="department"
-                  placeholder="Ingresar departamento"
-                  {...register("address.phoneNumber", {
-                    onChange: (e) => {
-                      const capitalized = capitalizeWords(e.target.value);
-                      setValue("address.phoneNumber", capitalized, {
-                        shouldValidate: true,
-                      });
-                    },
-                  })}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="healthCareProvider">Obra Social</Label>
-                <HealthInsuranceSelect
-                  onHealthInsuranceChange={handleHealthInsuranceChange}
-                  selected={selectedHealthInsurance}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="healthInsurancePlan">Plan</Label>
-                <HealthPlanSelect
-                  idHealthInsurance={Number(selectedHealthInsurance?.id)}
-                  selected={selectedHealthInsurance}
-                  onPlanChange={handlePlanChange}
-                />
+              <div className="grid grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="street">Calle</Label>
+                  <Input
+                    id="street"
+                    placeholder="Ingresar calle"
+                    {...register("address.street", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.street", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="number">N°</Label>
+                  <Input
+                    id="number"
+                    type="number"
+                    placeholder="Ingresar número"
+                    {...register("address.number", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.number", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="floor">Piso</Label>
+                  <Input
+                    id="floor"
+                    type="number"
+                    placeholder="Ingresar piso"
+                    {...register("address.description", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.description", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="department">Departamento</Label>
+                  <Input
+                    id="department"
+                    placeholder="Ingresar departamento"
+                    {...register("address.phoneNumber", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.phoneNumber", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>

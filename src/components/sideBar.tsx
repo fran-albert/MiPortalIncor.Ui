@@ -98,7 +98,7 @@ export default function SideBar() {
             <ul className="space-y-2 font-medium">
               <li>
                 <Link
-                  className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100  group cursor-pointer"
+                  className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                   href="/inicio"
                 >
                   <FaHome size={25} color="#0d9488" />

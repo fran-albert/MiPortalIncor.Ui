@@ -11,6 +11,8 @@ import { createApiHealthInsuranceRepository } from "@/modules/healthInsurance/in
 import { getAll } from "@/modules/healthInsurance/application/get-all/getAllHealthInsurance";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 import useRoles from "@/hooks/useRoles";
+import AddHealthInsuranceDialog from "@/components/Button/Add/HealthInsurance/button";
+import EditHealthInsuranceDialog from "../edit/EditHealthInsuranceDialog";
 
 export const HealthInsuranceTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -51,20 +53,22 @@ export const HealthInsuranceTable = () => {
     query: string
   ) => healthInsurance.name.toLowerCase().includes(query.toLowerCase());
 
-  // const addSpecialityToList = (newSpeciality: Speciality) => {
-  //   setHealthInsurance((currentSpecialities) => [
-  //     ...currentSpecialities,
-  //     newSpeciality,
-  //   ]);
-  // };
+  const addHealthInsuranceToList = (newHealthInsurance: HealthInsurance) => {
+    setHealthInsurance((currentHealthInsurances) => [
+      ...currentHealthInsurances,
+      newHealthInsurance,
+    ]);
+  };
 
-  // const updateSpecialityInList = (updatedSpeciality: Speciality) => {
-  //   setHealthInsurance((currentSpecialities) =>
-  //     currentSpecialities.map((speciality) =>
-  //       speciality.id === updatedSpeciality.id ? updatedSpeciality : speciality
-  //     )
-  //   );
-  // };
+  const updateHealthInsuranceInList = (
+    updatedHealthInsurance: HealthInsurance
+  ) => {
+    setHealthInsurance((currentSpecialities) =>
+      currentSpecialities.map((hc) =>
+        hc.id === updatedHealthInsurance.id ? updatedHealthInsurance : hc
+      )
+    );
+  };
 
   const removeHealthInsuranceFromList = (idHC: number) => {
     setHealthInsurance((currentHealthInsurances) =>
@@ -85,35 +89,43 @@ export const HealthInsuranceTable = () => {
   }
 
   return (
-    <div className="md:ml-[40px] w-11/12">
-      <h1 className="text-2xl text-start font-medium mb-4">
-        Lista de Obras Sociales
-      </h1>
-      <DataTable
-        columns={healthInsuranceColumns}
-        data={healthInsurance}
-        searchPlaceholder="Buscar obra social..."
-        showSearch={true}
-        onAddClick={openAddHealthInsuranceDialog}
-        searchColumn="name"
-        addLinkPath=""
-        addLinkText="Agregar Obra Social"
-        customFilter={customFilterFunction}
-        canAddUser={isSecretary}
-      />
-      {/* <AddSpecialityDialog
+    <div className="mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-semibold text-center mb-2">
+              Lista de Obras Sociales
+            </h2>
+            <div className="overflow-hidden sm:rounded-lg">
+              <DataTable
+                columns={healthInsuranceColumns}
+                data={healthInsurance}
+                searchPlaceholder="Buscar obra social..."
+                showSearch={true}
+                onAddClick={openAddHealthInsuranceDialog}
+                searchColumn="name"
+                addLinkPath=""
+                addLinkText="Agregar Obra Social"
+                customFilter={customFilterFunction}
+                canAddUser={isSecretary}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <AddHealthInsuranceDialog
         isOpen={isAddHealthInsuranceDialogOpen}
         setIsOpen={setIsAddHealthInsuranceDialogOpen}
-        onSpecialityAdded={addSpecialityToList}
-      /> */}
-      {/* {isEditDialogOpen && editingHealthInsurance && (
-        // <EditSpecialityDialog
-        //   isOpen={isEditDialogOpen}
-        //   setIsOpen={setIsEditDialogOpen}
-        //   speciality={editingHealthInsurance}
-        //   updateSpecialityInList={updateSpecialityInList}
-        // />
-      )} */}
+        onHealthInsuranceAdded={addHealthInsuranceToList}
+      />
+      {isEditDialogOpen && editingHealthInsurance && (
+        <EditHealthInsuranceDialog
+          isOpen={isEditDialogOpen}
+          setIsOpen={setIsEditDialogOpen}
+          healthInsurance={editingHealthInsurance}
+          updateHealthInsuranceInList={updateHealthInsuranceInList}
+        />
+      )}
     </div>
   );
 };

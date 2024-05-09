@@ -17,26 +17,26 @@ export function createApiHealthInsuranceRepository(): HealthInsuranceRepository 
   }
 
   async function updateHealthInsurance(
-    idSpeciality: number,
-    newSpeciality: HealthInsurance
+    idHc: number,
+    newHC: HealthInsurance
   ): Promise<HealthInsurance> {
     const response = await axiosInstance.put(
-      `Speciality/${idSpeciality}`,
-      newSpeciality
+      `HealthInsurance/${idHc}`,
+      newHC
     );
-    const speciality = response.data as HealthInsurance;
-    return speciality;
+    const HC = response.data as HealthInsurance;
+    return HC;
   }
 
   async function createHealthInsurance(
-    newSpeciality: HealthInsurance
+    newHC: HealthInsurance
   ): Promise<HealthInsurance> {
     const response = await axiosInstance.post(
-      "Speciality/create",
-      newSpeciality
+      "HealthInsurance/create",
+      newHC
     );
-    const speciality = response.data as HealthInsurance;
-    return speciality;
+    const hc = response.data as HealthInsurance;
+    return hc;
   }
 
   async function deleteHealthInsurance(idHealthInsurance: number): Promise<HealthInsurance> {

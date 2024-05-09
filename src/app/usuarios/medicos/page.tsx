@@ -32,7 +32,6 @@ const DoctorsPage = () => {
     //   </div>
     // </div>
     <div>
-      <h2 className="text-2xl font-semibold text-center">Lista de Médicos</h2>
       <DoctorsTable />
     </div>
   );

@@ -80,34 +80,42 @@ export const SpecialityTable = () => {
   }
 
   return (
-    <div className="w-full">
-      <h1 className="text-2xl text-start font-medium mb-4">
-        Lista de Especialidades
-      </h1>
-      <DataTable
-        columns={specialityColumns}
-        data={specialities}
-        searchPlaceholder="Buscar especialidad..."
-        showSearch={true}
-        onAddClick={openAddSpecialityDialog}
-        customFilter={customFilterFunction}
-        addLinkPath=""
-        addLinkText="Agregar Especialidad"
-        canAddUser={isSecretary}
-      />
-      <AddSpecialityDialog
-        isOpen={isAddSpecialityDialogOpen}
-        setIsOpen={setIsAddSpecialityDialogOpen}
-        onSpecialityAdded={addSpecialityToList}
-      />
-      {isEditDialogOpen && editingSpeciality && (
-        <EditSpecialityDialog
-          isOpen={isEditDialogOpen}
-          setIsOpen={setIsEditDialogOpen}
-          speciality={editingSpeciality}
-          updateSpecialityInList={updateSpecialityInList}
-        />
-      )}
+    <div className="mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-semibold text-center mb-2">
+              Lista de Especialidades
+            </h2>
+            <div className="overflow-hidden sm:rounded-lg">
+              <DataTable
+                columns={specialityColumns}
+                data={specialities}
+                searchPlaceholder="Buscar especialidad..."
+                showSearch={true}
+                onAddClick={openAddSpecialityDialog}
+                customFilter={customFilterFunction}
+                addLinkPath=""
+                addLinkText="Agregar Especialidad"
+                canAddUser={isSecretary}
+              />
+              <AddSpecialityDialog
+                isOpen={isAddSpecialityDialogOpen}
+                setIsOpen={setIsAddSpecialityDialogOpen}
+                onSpecialityAdded={addSpecialityToList}
+              />
+              {isEditDialogOpen && editingSpeciality && (
+                <EditSpecialityDialog
+                  isOpen={isEditDialogOpen}
+                  setIsOpen={setIsEditDialogOpen}
+                  speciality={editingSpeciality}
+                  updateSpecialityInList={updateSpecialityInList}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
