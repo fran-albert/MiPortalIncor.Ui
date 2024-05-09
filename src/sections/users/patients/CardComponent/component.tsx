@@ -53,14 +53,17 @@ import StudiesCardComponent from "@/sections/users/patients/View/Studies/card";
 import useRoles from "@/hooks/useRoles";
 import StudyDialog from "@/sections/users/patients/View/Studies/Dialog/dialog";
 import DataProfileCard from "@/sections/users/patients/View/Data/card";
+import { User } from "@/modules/users/domain/User";
 interface ModalProps {
   patient: Patient | undefined;
   studies: Study[];
   onStudyAdded: (study: Study) => void;
+  registerBy: undefined | string;
 }
 export function PatientCardComponent({
   patient,
   studies,
+  registerBy,
   onStudyAdded,
 }: ModalProps) {
   const { isPatient, isSecretary, isDoctor } = useRoles();
@@ -71,7 +74,7 @@ export function PatientCardComponent({
           <div className="grid gap-6 md:gap-8">
             <div className="user-card-container">
               <div className="user-card">
-                <UserCardComponent patient={patient} />
+                <UserCardComponent patient={patient} registerBy={registerBy} />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

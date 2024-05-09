@@ -15,15 +15,18 @@ export interface User {
   address: Address;
   userName: string;
   userId: number;
+  registrationDate: Date | string | undefined;
   roles: string[];
   priority: string;
   module: string;
   description: string;
   currentPassword: string;
   password: string;
+  registerBy: string;
   newPassword: string;
   code: string;
   confirmPassword: string;
+  registeredById: number;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

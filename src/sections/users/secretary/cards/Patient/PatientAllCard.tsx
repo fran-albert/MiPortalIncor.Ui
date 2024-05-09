@@ -23,7 +23,7 @@ export const PatientCount = () => {
   }, []);
   return (
     <>
-      <div className="rounded-lg sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+      <div className="rounded-lg w-96 sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
         <Link href={`/usuarios/pacientes`}>
           <Card>
             <CardHeader className="flex justify-between items-center">

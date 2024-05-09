@@ -218,7 +218,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
               </h3>
               <p className="text-gray-600">
                 {isDoctor
-                  ? "Doctor"
+                  ? "Médico"
                   : isPatient
                   ? "Paciente"
                   : isSecretary

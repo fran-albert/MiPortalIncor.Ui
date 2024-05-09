@@ -1,17 +1,16 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Speciality } from "@/modules/speciality/domain/Speciality";
-import DeleteSpecialityDialog from "../delete/DeleteSpecialityDialog";
-import EditSpecialityDialog from "../edit/EditSpecialityDialog";
-import { ViewButton } from "@/components/Button/View/button";
 import { Button } from "@/components/ui/button";
+import DeleteHealthInsuranceDialog from "../delete/DeleteHealthCareDialog";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
 
 export const getColumns = (
-  removeSpecialityFromList: (idSpeciality: number) => void,
+  removeHealthInsuranceFromList: (idHealthCare: number) => void,
   isDoctor: boolean,
-  onEditSpeciality: (speciality: Speciality) => void
-): ColumnDef<Speciality>[] => {
-  const columns: ColumnDef<Speciality>[] = [
+  onEditHealthCare: (healthCare: HealthInsurance) => void
+): ColumnDef<HealthInsurance>[] => {
+  const columns: ColumnDef<HealthInsurance>[] = [
     {
       accessorKey: "#",
       header: "#",
@@ -22,7 +21,7 @@ export const getColumns = (
     },
     {
       accessorKey: "name",
-      header: "Especialidad",
+      header: "Obra Social",
       cell: ({ row }) => <div>{row.original.name}</div>,
     },
     {
@@ -32,14 +31,14 @@ export const getColumns = (
           {!isDoctor && (
             <>
               <Button
-                onClick={() => onEditSpeciality(row.original)}
+                onClick={() => onEditHealthCare(row.original)}
                 className="bg-teal-700 hover:bg-teal-500"
               >
                 Editar
               </Button>
-              <DeleteSpecialityDialog
-                speciality={row.original}
-                removeSpecialityFromList={removeSpecialityFromList}
+              <DeleteHealthInsuranceDialog
+                healthInsurance={row.original}
+                removeHealthInsuranceFromList={removeHealthInsuranceFromList}
               />
             </>
           )}

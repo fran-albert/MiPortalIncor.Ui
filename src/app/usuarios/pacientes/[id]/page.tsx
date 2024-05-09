@@ -8,36 +8,38 @@ import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientR
 import { getAllStudyByPatient } from "@/modules/study/application/get-all-by-patient/getAllStudyByPatient";
 import { Study } from "@/modules/study/domain/Study";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
-import AppointmentCardComponent from "@/sections/users/patients/View/Appointment/card";
-import UserCardComponent from "@/sections/users/patients/View/Card/card";
-import DataProfileCard from "@/sections/users/patients/View/Data/card";
-import HistoryCardComponent from "@/sections/users/patients/View/History/card";
-import LabCard from "@/sections/users/patients/View/Lab/card";
-import StudiesCardComponent from "@/sections/users/patients/View/Studies/card";
-import VaccineComponent from "@/sections/users/patients/View/Vaccine/card";
-import VitalSignCard from "@/sections/users/patients/View/VitalSigns/card";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
+import { getUser } from "@/modules/users/application/get/getUser";
+import { User } from "@/modules/users/domain/User";
+import { formatDateWithTime } from "@/common/helpers/helpers";
+const userRepository = createApiUserRepository();
+const patientRepository = createApiPatientRepository();
+const studyRepository = createApiStudyRepository();
 function PatientPage() {
   const [patient, setPatient] = useState<Patient | undefined>(undefined);
   const params = useParams();
   const id = params.id;
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const patientRepository = createApiPatientRepository();
-  const studyRepository = createApiStudyRepository();
+  const [registerBy, setRegisterBy] = useState<User | undefined>(undefined);
   const [studies, setStudies] = useState<Study[]>([]);
   const [urls, setUrls] = useState<{ [key: number]: string }>({});
   const { isPatient, isSecretary, isDoctor } = useRoles();
   const [refreshKey, setRefreshKey] = useState(0);
+  const registeredById = patient?.registeredById;
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+        if (typeof registeredById !== "undefined") {
+          const loadUser = getUser(userRepository);
+          const loadRegisterBy = await loadUser(Number(registeredById));
+          setRegisterBy(loadRegisterBy);
+        }
         const loadPatient = getPatient(patientRepository);
         const patientResult = await loadPatient(Number(id));
         setPatient(patientResult);
-
         if (patientResult) {
           const loadStudies = getAllStudyByPatient(studyRepository);
           const studiesResult = await loadStudies(Number(id));
@@ -51,7 +53,15 @@ function PatientPage() {
     };
 
     fetchData();
-  }, [Number(id), refreshKey]);
+  }, [Number(id), refreshKey, patient?.registeredById]);
+
+  const registerByText =
+    registerBy?.firstName +
+    " " +
+    registerBy?.lastName +
+    " " +
+    "- " +
+    formatDateWithTime(String(patient?.registrationDate));
 
   const handleAddStudy = (newStudy: Study) => {
     setStudies((prevStudies) => [...prevStudies, newStudy]);
@@ -66,48 +76,13 @@ function PatientPage() {
       <div className="flex flex-col md:flex-row md:ml-20 bg-slate-50 min-h-screen lg:ml-16">
         <div className="md:w-64 w-full"></div>
         {/* <div className="flex-grow mt-24 p-3 md:p-0 ">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:flex-1 md:mr-3">
-              <div className="m-4">
-                <UserCardComponent patient={patient} />
-              </div>
-              <div className="m-4">
-                <DataProfileCard patient={patient} />
-              </div>
-              <div className="m-4">
-                <VitalSignCard />
-              </div>
-              {isSecretary && (
-                <div className="m-4">
-                  <LabCard />
-                </div>
-              )}
-            </div>
-            <div className="flex-1 ">
-              <div className="m-4">
-                <StudiesCardComponent
-                  studies={studies}
-                  idPatient={Number(patient?.userId)}
-                  onStudyAdded={handleAddStudy}
-                />
-              </div>
-              {isDoctor && (
-                <div className="m-4">
-                  <HistoryCardComponent />
-                </div>
-              )}
-            </div>{" "}
-            <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">
                 <AppointmentCardComponent />
-              </div>
-            </div>
-          </div>
         </div> */}
         <PatientCardComponent
           patient={patient}
           studies={studies}
           onStudyAdded={handleAddStudy}
+          registerBy={registerByText}
         />
       </div>
     </>

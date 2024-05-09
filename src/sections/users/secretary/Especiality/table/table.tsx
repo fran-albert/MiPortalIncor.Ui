@@ -7,12 +7,14 @@ import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpe
 import { getAllSpecialities } from "@/modules/speciality/application/get-all/getAllSpecialities";
 import AddSpecialityDialog from "@/components/Button/Add/Speciality/button";
 import EditSpecialityDialog from "../edit/EditSpecialityDialog";
+import useRoles from "@/hooks/useRoles";
 
 export const SpecialityTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingSpeciality, setEditingSpeciality] = useState<Speciality | null>(
     null
   );
+  const { isSecretary, isDoctor } = useRoles();
   const [isLoading, setIsLoading] = useState(true);
   const [specialities, setSpecialities] = useState<Speciality[]>([]);
   const specialityRepository = createApiSpecialityRepository();
@@ -66,15 +68,19 @@ export const SpecialityTable = () => {
 
   const specialityColumns = getColumns(
     removeSpecialityFromList,
+    isDoctor,
     handleEditSpeciality
   );
+
+  const customFilterFunction = (speciality: Speciality, query: string) =>
+    speciality.name.toLowerCase().includes(query.toLowerCase());
 
   if (isLoading) {
     return <Loading isLoading />;
   }
 
   return (
-    <div className="md:ml-[40px] w-11/12">
+    <div className="w-full">
       <h1 className="text-2xl text-start font-medium mb-4">
         Lista de Especialidades
       </h1>
@@ -84,9 +90,10 @@ export const SpecialityTable = () => {
         searchPlaceholder="Buscar especialidad..."
         showSearch={true}
         onAddClick={openAddSpecialityDialog}
-        searchColumn="name"
+        customFilter={customFilterFunction}
         addLinkPath=""
         addLinkText="Agregar Especialidad"
+        canAddUser={isSecretary}
       />
       <AddSpecialityDialog
         isOpen={isAddSpecialityDialogOpen}

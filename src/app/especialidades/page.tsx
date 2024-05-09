@@ -13,7 +13,7 @@ function SpecialityPage() {
   const { isPatient, isSecretary, isDoctor } = useRoles();
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || isPatient || isDoctor) {
+    if (!session || isPatient) {
       router.replace("/inicio");
     } else {
       setIsLoading(false);
@@ -26,7 +26,7 @@ function SpecialityPage() {
   return (
     <div className="flex flex-col md:flex-row ">
       <div className="md:w-64 w-full"></div>
-      <div className="flex-grow mt-24 p-10 bg-slate-50">
+      <div className="flex-grow mt-24 p-10">
         <SpecialityTable />
       </div>
     </div>

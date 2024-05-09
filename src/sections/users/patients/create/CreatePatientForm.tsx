@@ -23,6 +23,8 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { toast } from "sonner";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from "date-fns/locale/es";
+import { useCustomSession } from "@/context/SessionAuthProviders";
+import { capitalizeWords } from "@/common/helpers/helpers";
 registerLocale("es", es);
 
 interface Inputs extends Patient {}
@@ -38,6 +40,7 @@ function CreatePatientForm() {
   const [selectedState, setSelectedState] = useState<State | undefined>(
     undefined
   );
+  const { session } = useCustomSession();
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
   const [selectedPlan, setSelectedPlan] = useState<HealthPlans | null>(null);
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
@@ -93,6 +96,7 @@ function CreatePatientForm() {
           ]
         : [],
       photo: "",
+      registeredById: Number(session?.user.id),
     };
 
     try {
@@ -172,7 +176,15 @@ function CreatePatientForm() {
                     Nombre *
                   </Label>
                   <Input
-                    {...register("firstName", { required: true })}
+                    {...register("firstName", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("firstName", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
@@ -184,7 +196,15 @@ function CreatePatientForm() {
                     Apellido *
                   </Label>
                   <Input
-                    {...register("lastName", { required: true })}
+                    {...register("lastName", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("lastName", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
                     className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
@@ -256,30 +276,63 @@ function CreatePatientForm() {
                 <div>
                   <Label htmlFor="street">Calle</Label>
                   <Input
-                    {...register("address.street")}
-                    className="bg-gray-200"
+                    {...register("address.street", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.street", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
 
                 <div>
                   <Label htmlFor="number">Número</Label>
                   <Input
-                    {...register("address.number")}
-                    className="bg-gray-200"
+                    {...register("address.number", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.number", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
                 <div>
                   <Label htmlFor="street">Piso</Label>
+
                   <Input
-                    {...register("address.description")}
-                    className="bg-gray-200"
+                    {...register("address.description", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.description", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
                 <div>
                   <Label htmlFor="street">Departamento</Label>
                   <Input
-                    {...register("address.phoneNumber")}
-                    className="bg-gray-200"
+                    {...register("address.phoneNumber", {
+                      required: true,
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.phoneNumber", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
                 </div>
               </div>

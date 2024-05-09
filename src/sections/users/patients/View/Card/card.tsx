@@ -22,45 +22,51 @@ import { EditButton } from "@/components/Button/Edit/button";
 import Image from "next/image";
 import { calculateAge } from "@/common/helpers/helpers";
 import useRoles from "@/hooks/useRoles";
-const UserCardComponent = ({ patient }: { patient: Patient | undefined }) => {
+const userRepository = createApiUserRepository();
+const UserCardComponent = ({
+  patient,
+  registerBy,
+}: {
+  patient: Patient | undefined;
+  registerBy: undefined | string;
+}) => {
   const { isPatient, isSecretary, isDoctor } = useRoles();
+  const patientImageUrl = patient?.photo
+    ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${patient.photo}`
+    : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png";
   return (
     <>
       <Card>
         <CardHeader className="flex justify-between items-center">
-          <div className="flex-shrink-0 pb-4 sm:pb-0">
-            <Image
-              src={
-                patient?.photo
-                  ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${patient.photo}`
-                  : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-              }
-              className="rounded-full"
-              width={64}
-              height={64}
-              alt="Incor Logo"
-            />
+          <Image
+            src={patientImageUrl}
+            className="rounded-full"
+            width={64}
+            height={64}
+            alt={`${patient?.firstName} ${patient?.lastName}`}
+          />
+          <div>
+            <CardTitle className="text-teal-700 text-center">
+              {patient?.firstName} {patient?.lastName}
+            </CardTitle>
+            <div className="text-xs italic mt-2 text-gray-500">
+              Creado por {registerBy || "Desconocido"}
+            </div>
           </div>
-          <CardTitle className="text-teal-700">
-            {patient?.firstName} {patient?.lastName}
-          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center">
             <div className="text-xl font-semibold text-gray-700">
-              {" "}
-              {calculateAge(String(patient?.birthDate))} años
+              {patient && `${calculateAge(String(patient.birthDate))} años`}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {isSecretary && (
-                <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
-                  <EditButton
-                    id={Number(patient?.userId)}
-                    path="usuarios/pacientes"
-                  />
-                </div>
-              )}
-            </div>
+            {isSecretary && (
+              <div className="text-blue-600 hover:text-blue-800 cursor-pointer">
+                <EditButton
+                  id={Number(patient?.userId)}
+                  path="usuarios/pacientes"
+                />
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

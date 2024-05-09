@@ -15,14 +15,15 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { toast } from "sonner";
 import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpecialityRepository";
 import { deleteSpeciality } from "@/modules/speciality/application/delete/deleteSpeciality";
+import { Speciality } from "@/modules/speciality/domain/Speciality";
 
 interface DeleteSpecialityDialogProps {
-  idSpeciality: number;
+  speciality: Speciality;
   removeSpecialityFromList?: (idSpeciality: number) => void;
 }
 
 export default function DeleteSpecialityDialog({
-  idSpeciality,
+  speciality,
   removeSpecialityFromList,
 }: DeleteSpecialityDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -32,7 +33,9 @@ export default function DeleteSpecialityDialog({
     try {
       const specialityRepository = createApiSpecialityRepository();
       const deleteSpecialityFn = deleteSpeciality(specialityRepository);
-      const specialityDeletionPromise = deleteSpecialityFn(idSpeciality);
+      const specialityDeletionPromise = deleteSpecialityFn(
+        Number(speciality.id)
+      );
       toast.promise(specialityDeletionPromise, {
         loading: "Eliminando especialidad...",
         success: "Especialidad eliminada con éxito!",
@@ -43,7 +46,7 @@ export default function DeleteSpecialityDialog({
         .then(() => {
           setIsOpen(false);
           if (removeSpecialityFromList) {
-            removeSpecialityFromList(idSpeciality);
+            removeSpecialityFromList(Number(speciality.id));
           }
         })
         .catch((error) => {
@@ -66,10 +69,11 @@ export default function DeleteSpecialityDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Eliminar Especialidad</DialogTitle>
+          <DialogTitle>Eliminar {speciality.name}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          ¿Estás seguro de que quieres eliminar la especialidad?
+          ¿Estás seguro de que quieres eliminar la especialidad{" "}
+          {speciality.name}?
         </DialogDescription>
         <DialogFooter>
           <Button variant="outline" onClick={toggleDialog}>

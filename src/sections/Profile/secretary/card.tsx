@@ -91,7 +91,7 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
       photo: profile?.photo || "default2.png",
     };
 
-    console.log(dataToSend)
+    console.log(dataToSend);
 
     try {
       const updateFn = updateUser(userRepository);
