@@ -55,13 +55,11 @@ function PatientPage() {
     fetchData();
   }, [Number(id), refreshKey, patient?.registeredById]);
 
-  const registerByText =
-    registerBy?.firstName +
-    " " +
-    registerBy?.lastName +
-    " " +
-    "- " +
-    formatDateWithTime(String(patient?.registrationDate));
+  const registerByText = registerBy
+    ? `${registerBy.firstName} ${registerBy.lastName} - ${formatDateWithTime(
+        String(patient?.registrationDate)
+      )}`
+    : " ";
 
   const handleAddStudy = (newStudy: Study) => {
     setStudies((prevStudies) => [...prevStudies, newStudy]);
