@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import SessionAuthProvider from "@/context/SessionAuthProviders";
 import MainContainer from "@/components/mainContainer";
 import { SideBarV2 } from "@/components/component/side-bar-v2";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionAuthProvider>
           <Toaster richColors position="top-center" />
-          <SideBarV2 children={children} />
+          <MainContainer children={children} />
         </SessionAuthProvider>
       </body>
     </html>

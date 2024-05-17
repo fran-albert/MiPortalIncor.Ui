@@ -33,14 +33,7 @@ function EditPatientPage() {
   if (isLoading) {
     return <Loading isLoading />;
   }
-  return (
-    <div className="flex flex-col md:flex-row">
-      <div className="md:w-64 w-full"></div>
-      <div className="flex-grow flex justify-center items-center">
-        <EditPatientForm patient={patient} />
-      </div>
-    </div>
-  );
+  return <EditPatientForm patient={patient} />;
 }
 
 export default EditPatientPage;

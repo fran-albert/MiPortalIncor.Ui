@@ -8,6 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
+import { capitalizeWords } from "@/common/helpers/helpers";
+import "@/styles/custom.datepicker.css";
+import { FaCalendar } from "react-icons/fa6";
+import { BloodSelect } from "@/components/Select/Blood/select";
+import { RHFactorSelect } from "@/components/Select/RHFactor/select";
+import { GenderSelect } from "@/components/Select/Gender/select";
+import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
 import { goBack } from "@/lib/utils";
 import { City } from "@/modules/city/domain/City";
 import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
@@ -25,18 +40,12 @@ import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from "date-fns/locale/es";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
+import { Patient } from "@/modules/patients/domain/Patient";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 
-interface Inputs {
-  [key: string]: any;
-}
-
-interface Patient {
-  [key: string]: any;
-}
-
 function EditPatientForm({ patient }: { patient: Patient | null }) {
+  console.log(patient);
   const [selectedState, setSelectedState] = useState<State | undefined>(
     patient?.address?.city?.state
   );
@@ -46,7 +55,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthInsurance | undefined
   >(patient?.healthPlans?.[0]?.healthInsurance);
-  const [selectedPlan, setSelectedPlan] = useState<HealthPlans | null>(
+  const [selectedPlan, setSelectedPlan] = useState<any | null>(
     patient?.healthPlans?.[0]
   );
 
@@ -58,8 +67,8 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     setValue,
   } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-  const [startDate, setStartDate] = useState(
-    patient ? new Date(patient.birthDate) : new Date()
+  const [startDate, setStartDate] = useState<Date>(
+    new Date(patient?.birthDate ?? new Date())
   );
 
   const handleStateChange = (state: State) => {
@@ -75,7 +84,9 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   };
   useEffect(() => {
     if (patient) {
-      setValue("address.city", selectedCity);
+      if (selectedCity) {
+        setValue("address.city", selectedCity, { shouldValidate: true });
+      }
       setValue("healthPlans", selectedPlan ? [selectedPlan] : []);
     }
   }, [patient, selectedCity, selectedPlan, setValue]);
@@ -97,7 +108,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
 
   useEffect(() => {
     if (patient) {
-      const patientBirthDate = new Date(patient.birthDate);
+      const patientBirthDate = new Date(patient?.birthDate ?? new Date());
       setStartDate(patientBirthDate);
       const dateInArgentina = moment(patientBirthDate).tz(
         "America/Argentina/Buenos_Aires"
@@ -165,203 +176,364 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
 
   return (
     <>
-      <div className="w-1/2 p-6 mt-28 items-center justify-center border shadow-xl rounded-lg max-w-4xl mx-auto bg-white">
-        <div className="my-4">
-          <div className="flex items-center justify-center text-black font-bold text-xl">
-            <button
-              className="flex items-center justify-start py-2 px-4 w-full"
-              onClick={() => window.history.back()}
-            >
-              <IoMdArrowRoundBack className="text-black mr-2" size={24} />
-              Editar Paciente
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col items-center text-center">
-          <div className="relative mb-3">
-            <div className="group rounded-2xl overflow-hidden">
-              <img
-                src={
-                  patient?.photo
-                    ? `https://incor-healthcare.s3.us-east-1.amazonaws.com/photos/${patient.photo}`
-                    : "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-                }
-                alt="Imagen del Paciente"
-                width={100}
-                height={100}
-                className="rounded-2xl"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-center rounded-lg">
-          <div className="w-full p-4">
-            <h1 className="text-xl font-semibold mb-4">Datos Personales</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre *
-                  </Label>
-                  <Input
-                    {...register("firstName", { required: true })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.firstName}
-                  />
-                </div>
-                <div>
-                  <Label
-                    htmlFor="lastname"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Apellido *
-                  </Label>
-                  <Input
-                    {...register("lastName", { required: true })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.lastName}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="dni">D.N.I. *</Label>
-                  <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.dni ? formatDni(patient?.dni) : ""}
-                    {...register("userName", { required: true })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="healthCare">Fecha de Nacimiento *</Label>
-                  <DatePicker
-                    showIcon
-                    selected={startDate}
-                    className="max-w-full"
-                    onChange={handleDateChange}
-                    locale="es"
-                    customInput={
-                      <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
-                    }
-                    dateFormat="d MMMM yyyy"
-                  />
-                </div>
-              </div>
-
-              <h1 className="text-xl font-semibold mb-4">Contacto</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="email">Correo Electrónico *</Label>
-                  <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    {...register("email")}
-                    defaultValue={patient?.email}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="phone">Teléfono *</Label>
-                  <Input
-                    {...register("phoneNumber", { required: true })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    defaultValue={patient?.phoneNumber}
-                  />
-                </div>
-              </div>
-
-              <h1 className="text-xl font-semibold mb-4">Ubicación</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="state">Provincia *</Label>
-                  <StateSelect
-                    selected={selectedState}
-                    onStateChange={handleStateChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="city">Ciudad *</Label>
-                  <CitySelect
-                    idState={selectedState?.id}
-                    selected={selectedCity}
-                    onCityChange={handleCityChange}
-                  />
-                </div>
-              </div>
-
-              <h1 className="text-xl font-semibold mb-4">Dirección</h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="street">Calle</Label>
-                  <Input
-                    {...register("address.street")}
-                    className="bg-gray-200"
-                    defaultValue={patient?.address.street}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="number">Número</Label>
-                  <Input
-                    {...register("address.number")}
-                    className="bg-gray-200"
-                    defaultValue={patient?.address.number}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="street">Piso</Label>
-                  <Input
-                    {...register("address.description")}
-                    className="bg-gray-200"
-                    defaultValue={patient?.address.description}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="street">Departamento</Label>
-                  <Input
-                    {...register("address.phoneNumber")}
-                    className="bg-gray-200"
-                    defaultValue={patient?.address.phoneNumber}
-                  />
-                </div>
-              </div>
-
-              <h1 className="text-xl font-semibold mb-4">Seguro Médico</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="email">Obra Social *</Label>
-                  <HealthInsuranceSelect
-                    onHealthInsuranceChange={handleHealthInsuranceChange}
-                    selected={selectedHealthInsurance}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Plan *</Label>
-                  <HealthPlanSelect
-                    idHealthInsurance={Number(selectedHealthInsurance?.id)}
-                    selected={selectedHealthInsurance}
-                    onPlanChange={handlePlanChange}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center mt-10">
-                <Button
-                  className="mt-10 m-2"
-                  variant="destructive"
+      <div key="1" className="w-full">
+        <Card>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardHeader>
+              <CardTitle>
+                <button
+                  className="flex items-center justify-start w-full"
                   onClick={goBack}
                   type="button"
                 >
-                  Cancelar
-                </Button>
-                <Button className=" m-2" variant="teal">
-                  Confirmar
-                </Button>
+                  <IoMdArrowRoundBack className="text-black mr-2" size={25} />
+                  Editar Paciente
+                </button>
+              </CardTitle>
+              <CardDescription>
+                Completa los campos para editar el paciente.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <div className="grid grid-cols-2 gap-6">
+                {/* <div className="col-span-2 flex flex-col items-center gap-4">
+              <Avatar className="h-24 w-24">
+                <AvatarImage
+                  alt="Patient Avatar"
+                  src="/placeholder-avatar.jpg"
+                />
+                <AvatarFallback>JP</AvatarFallback>
+              </Avatar>
+              <Button variant="outline">Upload Photo</Button>
+            </div> */}
+                {/* <div className="space-y-2">
+                <Label htmlFor="firstName">Nombre</Label>
+                
+              </div> */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">Nombre</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="Ingresar nombre"
+                      defaultValue={patient?.firstName}
+                      {...register("firstName", {
+                        required: "Este campo es obligatorio",
+                        minLength: {
+                          value: 2,
+                          message: "El nombre debe tener al menos 2 caracteres",
+                        },
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("firstName", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Apellido</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Ingresar apellido"
+                      defaultValue={patient?.lastName}
+                      {...register("lastName", {
+                        required: "Este campo es obligatorio",
+                        minLength: {
+                          value: 2,
+                          message:
+                            "El apellido debe tener al menos 2 caracteres",
+                        },
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("lastName", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="healthInsurancePlan">
+                      Correo Electrónico
+                    </Label>
+                    <Input
+                      id="email"
+                      placeholder="Ingresar correo electrónico"
+                      defaultValue={patient?.email}
+                      {...register("email", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                          message: "Introduce un correo electrónico válido",
+                        },
+                      })}
+                      type="email"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">D.N.I.</Label>
+                    <Input
+                      id="username"
+                      placeholder="Ingresar D.N.I."
+                      defaultValue={patient?.dni}
+                      {...register("userName", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El D.N.I. debe contener solo números",
+                        },
+                      })}
+                    />
+                    {errors.userName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.userName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Fecha de Nacimiento</Label>
+                    <DatePicker
+                      showIcon
+                      selected={startDate}
+                      onChange={handleDateChange}
+                      locale="es"
+                      className="max-w-full"
+                      icon={<FaCalendar color="#0f766e" />}
+                      customInput={<Input className="input-custom-style" />}
+                      dateFormat="d MMMM yyyy"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Teléfono</Label>
+                    <Input
+                      id="phoneNumber"
+                      defaultValue={patient?.phoneNumber}
+                      placeholder="Ingresar teléfono"
+                      {...register("phoneNumber", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El Teléfono debe contener solo números",
+                        },
+                      })}
+                    />
+                    {errors.phoneNumber && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.phoneNumber.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Teléfono 2</Label>
+                    <Input
+                      id="phone"
+                      placeholder="Ingresar teléfono 2"
+                      defaultValue={patient?.phoneNumber2}
+                      type="tel"
+                      {...register("phoneNumber2", {
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El teléfono debe contener solo números",
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Sangre </Label>
+                    <BloodSelect onBlood={() => {}} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Factor R.H.</Label>
+                    <RHFactorSelect onRHFactor={() => {}} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Sexo</Label>
+                    <GenderSelect onGender={() => {}} />
+                    {errors.phoneNumber && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.phoneNumber.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Estado Civil</Label>
+                    <MaritalStatusSelect onMaritalStatus={() => {}} />
+                  </div>
+                </div>
               </div>
-            </form>
-          </div>
-        </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="healthCareProvider">Obra Social</Label>
+                    <HealthInsuranceSelect
+                      onHealthInsuranceChange={handleHealthInsuranceChange}
+                      selected={selectedHealthInsurance}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="healthInsurancePlan">Plan</Label>
+                    <HealthPlanSelect
+                      idHealthInsurance={Number(selectedHealthInsurance?.id)}
+                      selected={selectedHealthInsurance}
+                      onPlanChange={handlePlanChange}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Número de Obra Social</Label>
+                    <Input
+                      id="username"
+                      placeholder="Ingresar N° de Obra Social"
+                      {...register("userName", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "Este campo debe contener solo números",
+                        },
+                      })}
+                    />
+                    {errors.userName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.userName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Observaciones</Label>
+                    <Input
+                      id="username"
+                      placeholder="Ingresar D.N.I."
+                      {...register("userName")}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Provincia</Label>
+                    <StateSelect
+                      selected={selectedState}
+                      onStateChange={handleStateChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Ciudad</Label>
+                    <CitySelect
+                      idState={selectedState?.id}
+                      onCityChange={handleCityChange}
+                      selected={selectedCity}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="street">Calle</Label>
+                    <Input
+                      id="street"
+                      placeholder="Ingresar calle"
+                      defaultValue={patient?.address.street}
+                      {...register("address.street", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.street", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="number">N°</Label>
+                    <Input
+                      id="number"
+                      type="number"
+                      defaultValue={patient?.address.number}
+                      placeholder="Ingresar número"
+                      {...register("address.number", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.number", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="floor">Piso</Label>
+                    <Input
+                      id="floor"
+                      defaultValue={patient?.address.description}
+                      type="number"
+                      placeholder="Ingresar piso"
+                      {...register("address.description", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.description", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Departamento</Label>
+                    <Input
+                      id="department"
+                      placeholder="Ingresar departamento"
+                      defaultValue={patient?.address.phoneNumber}
+                      {...register("address.phoneNumber", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.phoneNumber", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end gap-2">
+              <Button variant="outline" type="button" onClick={goBack}>
+                Cancelar
+              </Button>
+              <Button variant="teal" type="submit">
+                Confirmar
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
       </div>
     </>
   );

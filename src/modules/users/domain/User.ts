@@ -10,6 +10,7 @@ export interface User {
   email: string;
   birthDate: Date | string | undefined;
   phoneNumber: string;
+  phoneNumber2: string;
   photo: string;
   token?: string;
   address: Address;

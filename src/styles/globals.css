@@ -78,8 +78,26 @@
 @media (max-width: 768px) {
   .sidebar {
     display: none;
+    width: 100%;
   }
   .main-content {
     margin: 0;
   }
 }
+.logo-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%; /* Hace que la barra lateral ocupe toda la pantalla en móviles */
+  }
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
