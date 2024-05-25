@@ -72,23 +72,27 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
         </div>
       ),
     },
-    {
-      accessorKey: "phoneNumber",
-      header: "Teléfono",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <p className="text-sm font-medium">{row.original.phoneNumber}</p>
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "phoneNumber",
+    //   header: "Teléfono",
+    //   cell: ({ row }) => (
+    //     <div className="flex items-center">
+    //       <p className="text-sm font-medium">{row.original.phoneNumber}</p>
+    //     </div>
+    //   ),
+    // },
     {
       header: "Especialidades",
       cell: ({ row }) => (
         <div className="flex items-center">
           <p className="text-sm font-medium">
-            {row.original.specialities
-              .map((speciality) => speciality.name)
-              .join(", ")}
+            {row.original.specialities.slice(0, 1).map((speciality, index) => (
+              <span key={index}>
+                {speciality.name}
+                {index < 1 && row.original.specialities.length > 1 ? "" : ""}
+              </span>
+            ))}
+            {row.original.specialities.length > 1 && "..."}
           </p>
         </div>
       ),

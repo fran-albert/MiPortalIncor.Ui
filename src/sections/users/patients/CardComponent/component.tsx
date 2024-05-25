@@ -58,6 +58,7 @@ interface ModalProps {
   patient: Patient | undefined;
   studies: Study[];
   onStudyAdded: (study: Study) => void;
+  onStudyDeleted: (idStudy: number) => void;
   registerBy: undefined | string;
 }
 export function PatientCardComponent({
@@ -65,6 +66,7 @@ export function PatientCardComponent({
   studies,
   registerBy,
   onStudyAdded,
+  onStudyDeleted,
 }: ModalProps) {
   const { isPatient, isSecretary, isDoctor } = useRoles();
   return (
@@ -83,6 +85,7 @@ export function PatientCardComponent({
                 studies={studies}
                 idPatient={Number(patient?.userId)}
                 onStudyAdded={onStudyAdded}
+                onStudyDeleted={onStudyDeleted}
               />
               {isDoctor && (
                 <>

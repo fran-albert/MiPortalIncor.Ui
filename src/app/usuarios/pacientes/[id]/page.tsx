@@ -55,6 +55,10 @@ function PatientPage() {
     fetchData();
   }, [Number(id), refreshKey, patient?.registeredById]);
 
+  const handleStudyDeleted = (deletedStudyId: number) => {
+    setStudies(studies.filter((study) => study.id !== deletedStudyId));
+  };
+
   const registerByText =
     registerBy?.firstName +
     " " +
@@ -78,6 +82,7 @@ function PatientPage() {
           patient={patient}
           studies={studies}
           onStudyAdded={handleAddStudy}
+          onStudyDeleted={handleStudyDeleted}
           registerBy={registerByText}
         />
       </div>

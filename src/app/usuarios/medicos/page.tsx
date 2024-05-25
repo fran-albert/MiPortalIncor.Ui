@@ -10,15 +10,17 @@ const DoctorsPage = () => {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { isPatient, isSecretary, isDoctor } = useRoles();
+  const { isPatient, isAdmin, isDoctor } = useRoles();
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || isPatient || isDoctor) {
+    if (!session) {
+      router.replace("/");
+    } else if (isPatient && !isAdmin) {
       router.replace("/");
     } else {
       setIsLoading(false);
     }
-  }, [session, status, router]);
+  }, [session, status, router, isPatient, isAdmin]);
 
   if (isLoading || status === "loading") {
     return <Loading isLoading={true} />;

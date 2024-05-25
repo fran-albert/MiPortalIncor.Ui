@@ -8,32 +8,42 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
-
+import { Controller } from "react-hook-form";
 interface BloodSelectProps {
-  onBlood?: (value: string) => void;
+  control: any;
+  errors: any;
 }
-export const BloodSelect = ({ onBlood }: BloodSelectProps) => {
-  const [selected, setSelected] = useState<string>("");
-  const handleValueChange = (selected: string) => {
-    setSelected(selected);
-    if (onBlood) {
-      onBlood(selected);
-    }
-  };
+export const BloodSelect = ({ control, errors }: BloodSelectProps) => {
+
 
   return (
-    <Select value={selected} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder="Seleccione el tipo de sangre..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="A+">A+</SelectItem>
-        <SelectItem value="A-">A-</SelectItem>
-        <SelectItem value="B+">B+</SelectItem>
-        <SelectItem value="B-">B-</SelectItem>
-        <SelectItem value="O+">O+</SelectItem>
-        <SelectItem value="O-">O-</SelectItem>
-      </SelectContent>
-    </Select>
+
+    <Controller
+      name="bloodType"
+      control={control}
+      // rules={{ required: "Este campo es obligatorio" }}
+      render={({ field }) => (
+        <div>
+          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione el tipo de sangre..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="A">A</SelectItem>
+              <SelectItem value="A">A</SelectItem>
+              <SelectItem value="B">B</SelectItem>
+              <SelectItem value="B">B</SelectItem>
+              <SelectItem value="O">O</SelectItem>
+              <SelectItem value="O">O</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.bloodType && (
+            <p className="text-red-500 text-xs italic">
+              {errors.bloodType.message}
+            </p>
+          )}
+        </div>
+      )}
+    />
   );
 };

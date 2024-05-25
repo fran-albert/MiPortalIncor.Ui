@@ -1,5 +1,6 @@
 "use client";
 import Loading from "@/components/Loading/loading";
+import { DoctorComponent } from "@/components/component/doctor-component";
 import useRoles from "@/hooks/useRoles";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
@@ -41,14 +42,14 @@ function DoctorPage() {
     fetchDoctor();
   }, [Number(id)]);
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session || isPatient || isDoctor) {
-      router.replace("/inicio");
-    } else {
-      setIsLoading(false);
-    }
-  }, [session, status, router]);
+  // useEffect(() => {
+  //   if (status === "loading") return;
+  //   if (!session || isPatient || isDoctor) {
+  //     router.replace("/inicio");
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  // }, [session, status, router]);
 
   if (isLoading || status === "loading") {
     return <Loading isLoading={true} />;
@@ -56,7 +57,7 @@ function DoctorPage() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:ml-8 bg-slate-50 min-h-screen">
+      {/* <div className="flex flex-col md:flex-row md:ml-8 bg-slate-50 min-h-screen">
         <div className="md:w-64 w-full"></div>
         <div className="flex-grow mt-24 p-3 md:p-0 ">
           <div className="flex flex-col md:flex-row">
@@ -65,8 +66,8 @@ function DoctorPage() {
                 <UserCardComponent doctor={doctor} />
               </div>
               <div className="mt-24">
-                {/* <StudiesCardComponent /> */}
-                {/* <table className="min-w-full">
+                <StudiesCardComponent />
+                <table className="min-w-full">
                   <thead>
                     <tr>
                       <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -95,7 +96,7 @@ function DoctorPage() {
                       </td>
                     </tr>
                   </tbody>
-                </table> */}
+                </table>
               </div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
@@ -105,11 +106,13 @@ function DoctorPage() {
               <div className="m-4"></div>
             </div>
             <div className="flex-1 md:mt-0 mt-3">
-              <div className="m-4">{/* <AppointmentCardComponent /> */}</div>
+              <div className="m-4"><AppointmentCardComponent /></div>
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
+      <DoctorComponent doctor={doctor}/>
+
     </>
   );
 }

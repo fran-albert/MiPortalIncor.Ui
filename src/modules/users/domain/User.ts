@@ -27,7 +27,9 @@ export interface User {
   newPassword: string;
   code: string;
   confirmPassword: string;
+  gender: string;
   registeredById: number;
+  observations: string;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

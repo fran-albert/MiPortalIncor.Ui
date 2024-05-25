@@ -58,14 +58,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   const [selectedPlan, setSelectedPlan] = useState<any | null>(
     patient?.healthPlans?.[0]
   );
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    setValue,
-  } = useForm<Inputs>();
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
   const [startDate, setStartDate] = useState<Date>(
     new Date(patient?.birthDate ?? new Date())
@@ -376,12 +369,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Sexo</Label>
-                    <GenderSelect onGender={() => {}} />
-                    {errors.phoneNumber && (
-                      <p className="text-red-500 text-xs italic">
-                        {errors.phoneNumber.message}
-                      </p>
-                    )}
+                    <GenderSelect control={control} errors={errors} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dob">Estado Civil</Label>

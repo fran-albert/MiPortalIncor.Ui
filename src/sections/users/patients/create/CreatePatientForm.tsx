@@ -6,7 +6,6 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -39,16 +38,11 @@ import { BloodSelect } from "@/components/Select/Blood/select";
 import { RHFactorSelect } from "@/components/Select/RHFactor/select";
 import { GenderSelect } from "@/components/Select/Gender/select";
 import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 registerLocale("es", es);
-interface Inputs extends Patient {}
+interface Inputs extends Patient { }
 export function CreatePatientForm() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    setValue,
-  } = useForm<Inputs>();
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState<State | undefined>(
     undefined
   );
@@ -97,15 +91,15 @@ export function CreatePatientForm() {
       },
       healthPlans: selectedPlan
         ? [
-            {
-              id: selectedPlan.id,
-              name: selectedPlan.name,
-              healthInsurance: {
-                id: selectedHealthInsurance?.id || 0,
-                name: selectedHealthInsurance?.name || "",
-              },
+          {
+            id: selectedPlan.id,
+            name: selectedPlan.name,
+            healthInsurance: {
+              id: selectedHealthInsurance?.id || 0,
+              name: selectedHealthInsurance?.name || "",
             },
-          ]
+          },
+        ]
         : [],
       photo: "",
       registeredById: Number(session?.user.id),
@@ -166,18 +160,14 @@ export function CreatePatientForm() {
           <CardContent className="grid gap-6">
             <div className="grid grid-cols-2 gap-6">
               {/* <div className="col-span-2 flex flex-col items-center gap-4">
-              <Avatar className="h-24 w-24">
-                <AvatarImage
-                  alt="Patient Avatar"
-                  src="/placeholder-avatar.jpg"
-                />
-                <AvatarFallback>JP</AvatarFallback>
-              </Avatar>
-              <Button variant="outline">Upload Photo</Button>
-            </div> */}
-              {/* <div className="space-y-2">
-                <Label htmlFor="firstName">Nombre</Label>
-                
+                <Avatar className="h-24 w-24">
+                  <AvatarImage
+                    alt="Patient Avatar"
+                    src="/placeholder-avatar.jpg"
+                  />
+                  <AvatarFallback>JP</AvatarFallback>
+                </Avatar>
+                <Button variant="outline">Upload Photo</Button>
               </div> */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -258,9 +248,9 @@ export function CreatePatientForm() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">D.N.I.</Label>
+                  <Label htmlFor="userName">D.N.I.</Label>
                   <Input
-                    id="username"
+                    id="userName"
                     placeholder="Ingresar D.N.I."
                     {...register("userName", {
                       required: "Este campo es obligatorio",
@@ -311,12 +301,12 @@ export function CreatePatientForm() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Teléfono 2</Label>
+                  <Label htmlFor="phoneNumber2">Teléfono 2</Label>
                   <Input
-                    id="phone"
+                    id="phoneNumber2"
                     placeholder="Ingresar teléfono 2"
                     type="tel"
-                    {...register("phoneNumber", {
+                    {...register("phoneNumber2", {
                       pattern: {
                         value: /^[0-9]+$/,
                         message: "El teléfono debe contener solo números",
@@ -327,27 +317,22 @@ export function CreatePatientForm() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Sangre </Label>
-                  <BloodSelect onBlood={() => {}} />
+                  <Label htmlFor="bloodType">Sangre </Label>
+                  <BloodSelect control={control} errors={errors} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dob">Factor R.H.</Label>
-                  <RHFactorSelect onRHFactor={() => {}} />
+                  <Label htmlFor="rhFactor">Factor R.H.</Label>
+                  <RHFactorSelect control={control} errors={errors} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Sexo</Label>
-                  <GenderSelect onGender={() => {}} />
-                  {errors.phoneNumber && (
-                    <p className="text-red-500 text-xs italic">
-                      {errors.phoneNumber.message}
-                    </p>
-                  )}
+                  <Label htmlFor="gender">Sexo</Label>
+                  <GenderSelect control={control} errors={errors} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dob">Estado Civil</Label>
-                  <MaritalStatusSelect onMaritalStatus={() => {}} />
+                  <Label htmlFor="maritalStatus">Estado Civil</Label>
+                  <MaritalStatusSelect control={control} errors={errors} />
                 </div>
               </div>
             </div>
@@ -372,30 +357,30 @@ export function CreatePatientForm() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="state">Número de Obra Social</Label>
+                  <Label htmlFor="affiliationNumber">Número de Obra Social</Label>
                   <Input
-                    id="username"
-                    placeholder="Ingresar D.N.I."
-                    {...register("userName", {
+                    id="affiliationNumber"
+                    placeholder="Ingresar Número de Afiliado"
+                    {...register("affiliationNumber", {
                       required: "Este campo es obligatorio",
                       pattern: {
                         value: /^[0-9]+$/,
-                        message: "El D.N.I. debe contener solo números",
+                        message: "El número de afiliado debe contener solo números",
                       },
                     })}
                   />
-                  {errors.userName && (
+                  {errors.affiliationNumber && (
                     <p className="text-red-500 text-xs italic">
-                      {errors.userName.message}
+                      {errors.affiliationNumber.message}
                     </p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="state">Observaciones</Label>
                   <Input
-                    id="username"
-                    placeholder="Ingresar D.N.I."
-                    {...register("userName")}
+                    id="observations"
+                    placeholder="Ingresar observaciones"
+                    {...register("observations")}
                   />
                 </div>
               </div>

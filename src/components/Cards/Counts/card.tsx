@@ -5,25 +5,34 @@ import { HealthInsuranceCount } from "@/sections/users/secretary/cards/HealthIns
 import useRoles from "@/hooks/useRoles";
 
 export function CountsCards() {
-  const { isSecretary, isDoctor } = useRoles();
+  const { isSecretary, isDoctor, isAdmin } = useRoles();
+
   return (
     <>
-      {isSecretary && (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <PatientCount />
-            <DoctorsCount />
-            <SpectialityCount />
-            <HealthInsuranceCount />
-          </div>
+      {isAdmin && (
+        <main className="grid gap-4 p-4 md:gap-8 md:p-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <PatientCount />
+          <DoctorsCount />
+          <SpectialityCount />
+          <HealthInsuranceCount />
         </main>
       )}
-      {isDoctor && (
-        <>
+
+      {isSecretary && !isAdmin && (
+        <main className="grid gap-4 p-4 md:gap-8 md:p-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <PatientCount />
+          <DoctorsCount />
+          <SpectialityCount />
+          <HealthInsuranceCount />
+        </main>
+      )}
+
+      {isDoctor && !isAdmin && (
+        <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-6">
           <PatientCount />
           <SpectialityCount />
           <HealthInsuranceCount />
-        </>
+        </div>
       )}
     </>
   );

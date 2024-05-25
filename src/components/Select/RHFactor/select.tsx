@@ -8,30 +8,38 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { useForm, Controller } from "react-hook-form";
 
 interface RHFactorSelectProps {
-  onRHFactor?: (value: string) => void;
+  control: any;
+  errors: any;
 }
 export const RHFactorSelect = ({
-  onRHFactor,
+  control, errors
 }: RHFactorSelectProps) => {
-  const [selected, setSelected] = useState<string>("");
-  const handleValueChange = (selected: string) => {
-    setSelected(selected);
-    if (onRHFactor) {
-      onRHFactor(selected);
-    }
-  };
-
   return (
-    <Select value={selected} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder="Seleccione el factor RH..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="Positivo">Positivo +</SelectItem>
-        <SelectItem value="Negativo">Negativo -</SelectItem>
-      </SelectContent>
-    </Select>
+    <Controller
+      name="RHFactor"
+      control={control}
+      // rules={{ required: "Este campo es obligatorio" }}
+      render={({ field }) => (
+        <div>
+          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione el factor RH.." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Positivo">RH Positivo</SelectItem>
+              <SelectItem value="Negativo">RH Negativo</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.RHFactor && (
+            <p className="text-red-500 text-xs italic">
+              {errors.RHFactor.message}
+            </p>
+          )}
+        </div>
+      )}
+    />
   );
 };

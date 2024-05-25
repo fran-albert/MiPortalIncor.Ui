@@ -8,31 +8,40 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { useForm, Controller } from "react-hook-form";
 
 interface MaritalStatusSelectProps {
-  onMaritalStatus?: (value: string) => void;
+  control: any;
+  errors: any;
 }
 export const MaritalStatusSelect = ({
-  onMaritalStatus,
+  control, errors
 }: MaritalStatusSelectProps) => {
-  const [selected, setSelected] = useState<string>("");
-  const handleValueChange = (selected: string) => {
-    setSelected(selected);
-    if (onMaritalStatus) {
-      onMaritalStatus(selected);
-    }
-  };
-
   return (
-    <Select value={selected} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder="Seleccione el estado civil..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="Soltero">Soltero</SelectItem>
-        <SelectItem value="Casado">Casado</SelectItem>
-        <SelectItem value="Divorciado">Divorciado</SelectItem>
-      </SelectContent>
-    </Select>
+    <Controller
+      name="maritalStatus"
+      control={control}
+      // rules={{ required: "Este campo es obligatorio" }}
+      render={({ field }) => (
+        <div>
+          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione el estado civil.." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Soltero">Soltero</SelectItem>
+              <SelectItem value="Casado">Casado</SelectItem>
+              <SelectItem value="Divorciado">Divorciado</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.maritalStatus && (
+            <p className="text-red-500 text-xs italic">
+              {errors.maritalStatus.message}
+            </p>
+          )}
+        </div>
+      )}
+    />
+
   );
 };
