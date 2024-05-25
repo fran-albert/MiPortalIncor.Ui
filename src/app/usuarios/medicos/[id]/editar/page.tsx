@@ -34,14 +34,14 @@ function EditDoctorPage() {
     fetchDoctor();
   }, []);
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session || isPatient || isDoctor) {
-      router.replace("/inicio");
-    } else {
-      setIsLoading(false);
-    }
-  }, [session, status, router]);
+  // useEffect(() => {
+  //   if (status === "loading") return;
+  //   if (!session || isPatient || isDoctor) {
+  //     router.replace("/inicio");
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  // }, [session, status, router]);
 
   if (isLoading || status === "loading") {
     return <Loading isLoading={true} />;
@@ -52,12 +52,12 @@ function EditDoctorPage() {
     return <Loading isLoading />;
   }
   return (
-    <div className="flex flex-col md:flex-row ">
-      <div className="md:w-64 w-full"></div>
-      <div className="flex-grow flex justify-center items-center">
-        <EditDoctorForm doctor={doctor} />
-      </div>
-    </div>
+    // <div className="flex flex-col md:flex-row ">
+    //   <div className="md:w-64 w-full"></div>
+    //   <div className="flex-grow flex justify-center items-center">
+    //   </div>
+    // </div>
+    <EditDoctorForm doctor={doctor} />
   );
 }
 

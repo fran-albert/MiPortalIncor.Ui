@@ -11,7 +11,6 @@ import { BloodSelect } from "@/components/Select/Blood/select";
 import { RHFactorSelect } from "@/components/Select/RHFactor/select";
 import { GenderSelect } from "@/components/Select/Gender/select";
 import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
-
 import { capitalizeWords } from "@/common/helpers/helpers";
 import { CustomDatePicker } from "@/components/DatePicker";
 import { CitySelect } from "@/components/Select/City/select";
