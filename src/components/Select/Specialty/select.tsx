@@ -61,7 +61,7 @@ export const SpecialitySelect = ({
         {({ open }) => (
           <>
             <div className="mt-1 relative">
-              <Listbox.Button className="relative w-full h-10 text-start text-popover-foreground cursor-default bg-gray-200 rounded-md border border-input bg-background px-3 py-2 text-sm  focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <Listbox.Button className="relative w-full h-10 text-start text-popover-foreground cursor-default rounded-md border border-input bg-background px-3 py-2 text-sm  focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 <span className="block truncate">
                   {selected.length > 0
                     ? selected.map((s) => s.name).join(", ")

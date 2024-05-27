@@ -59,7 +59,7 @@ export const HealthInsuranceSelect = ({
         }
       }}
     >
-      <SelectTrigger className="w-full bg-gray-200 text-gray-700">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Seleccionar la obra..." />
       </SelectTrigger>
       <SelectContent>

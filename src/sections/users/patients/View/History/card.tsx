@@ -8,6 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { User } from "@/modules/users/domain/User";
+import {
+  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@/components/ui/table";
 import { useSession } from "next-auth/react";
 import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
@@ -47,7 +55,7 @@ const HistoryCardComponent = () => {
 
   return (
     <>
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Antecedentes</CardTitle>
         </CardHeader>
@@ -86,6 +94,58 @@ const HistoryCardComponent = () => {
             // idPatient={idPatient}
             // onStudyAdded={onStudyAdded}
             />
+          </div>
+        </CardContent>
+      </Card> */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Antecedentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Título</TableHead>
+                <TableHead>Diagnostico</TableHead>
+                <TableHead>Médico</TableHead>
+                <TableHead>Fecha</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>Juan Pérez</TableCell>
+                <TableCell>Diabetes tipo 2</TableCell>
+                <TableCell>Dr. María Gómez</TableCell>
+                <TableCell>2022-05-15</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>María Rodríguez</TableCell>
+                <TableCell>Hipertensión arterial</TableCell>
+                <TableCell>Dr. José Hernández</TableCell>
+                <TableCell>2021-08-20</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Carlos Sánchez</TableCell>
+                <TableCell>Asma</TableCell>
+                <TableCell>Dra. Lucía Fernández</TableCell>
+                <TableCell>2020-11-30</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Ana Torres</TableCell>
+                <TableCell>Artritis reumatoide</TableCell>
+                <TableCell>Dr. Miguel Ángel Díaz</TableCell>
+                <TableCell>2019-03-01</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Pedro Gómez</TableCell>
+                <TableCell>Depresión</TableCell>
+                <TableCell>Dra. Sofía Ramírez</TableCell>
+                <TableCell>2018-09-10</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <div className="mt-auto">
+            <HistoryDialog />
           </div>
         </CardContent>
       </Card>

@@ -1,36 +1,23 @@
 import { DataTable } from "@/components/Table/dateTable";
 import { getColumns } from "./columns";
-import { useEffect, useState } from "react";
-import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
-import { getAllPatients } from "@/modules/patients/application/get-all/getAllPatients";
+import { useEffect } from "react";
 import { Patient } from "@/modules/patients/domain/Patient";
 import Loading from "@/components/Loading/loading";
 import useRoles from "@/hooks/useRoles";
+import { usePatient } from "@/hooks/usePatients";
 
 export const PatientTable = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const patientRepository = createApiPatientRepository();
-  const loadAllPatients = getAllPatients(patientRepository);
-  const { isSecretary, isDoctor } = useRoles();
-
-  const fetchPatients = async () => {
-    try {
-      setIsLoading(true);
-      const patientData = await loadAllPatients();
-      setPatients(patientData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const patientColumns = getColumns(fetchPatients, { isSecretary, isDoctor });
-
+  const { isSecretary, isDoctor, isAdmin } = useRoles();
+  const { patients, isLoading, fetchPatients } = usePatient();
   useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [fetchPatients]);
 
+  const patientColumns = getColumns(fetchPatients, {
+    isSecretary,
+    isDoctor,
+    isAdmin,
+  });
   const customFilterFunction = (patient: Patient, query: string) =>
     patient.firstName.toLowerCase().includes(query.toLowerCase()) ||
     patient.lastName.toLowerCase().includes(query.toLowerCase()) ||
@@ -42,13 +29,13 @@ export const PatientTable = () => {
 
   return (
     <>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <h1 className="text-2xl text-start font-medium mb-4">
+              <h2 className="text-2xl font-semibold text-center mb-2">
                 Lista de Pacientes
-              </h1>
+              </h2>
               <div className="overflow-hidden sm:rounded-lg">
                 <DataTable
                   columns={patientColumns}

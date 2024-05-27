@@ -13,7 +13,7 @@ import { Patient } from "@/modules/patients/domain/Patient";
 
 export const getColumns = (
   fetchPatients: () => void,
-  roles: { isSecretary: boolean; isDoctor: boolean }
+  roles: { isSecretary: boolean; isDoctor: boolean; isAdmin: boolean }
 ): ColumnDef<Patient>[] => {
   const columns: ColumnDef<Patient>[] = [
     {
@@ -100,29 +100,20 @@ export const getColumns = (
       header: " ",
       cell: ({ row }) => (
         <div className="flex items-center justify-end">
-          {roles.isSecretary && (
-            <>
-              <ViewButton
-                id={row.original.userId}
-                text="Ver Paciente"
-                path="pacientes"
-              />
-              <DeletePatientDialog
-                idPatient={row.original.userId}
-                onPatientDeleted={fetchPatients}
-              />
-            </>
-          )}
-          {roles.isDoctor && (
-            <>
-              <ViewButton
-                id={row.original.userId}
-                text="Ver Paciente"
-                path="pacientes"
-              />
-            </>
-          )}
-        </div>
+        {(roles.isSecretary || roles.isDoctor) && (
+          <ViewButton
+            id={row.original.userId}
+            text="Ver Paciente"
+            path="pacientes"
+          />
+        )}
+        {roles.isSecretary && (
+          <DeletePatientDialog
+            idPatient={row.original.userId}
+            onPatientDeleted={fetchPatients}
+          />
+        )}
+      </div>      
       ),
     },
   ];

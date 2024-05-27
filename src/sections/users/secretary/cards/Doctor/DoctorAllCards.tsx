@@ -24,7 +24,7 @@ export const DoctorsCount = () => {
 
   return (
     <>
-      <div className="rounded-lg w-96 sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
+      <div className="rounded-lg w-84 sm:transition sm:duration-300 sm:ease-in-out sm:transform sm:hover:-translate-y-2 hover:shadow-2xl cursor-pointer">
         <Link href={`/usuarios/medicos`}>
           <Card>
             <CardHeader className="flex justify-between items-center">

@@ -28,6 +28,13 @@ export function createApiStudyRepository(): StudyRepository {
     const studies = response.data as Study[];
     return studies;
   }
+
+  async function deleteStudy(idStudy: number): Promise<string> {
+    const response = await axiosInstance.delete(`Study/${idStudy}`);
+    const studies = response.data;
+    return studies;
+  }
+
   async function getUrlByPatient(idPatient: number, locationS3: string | undefined): Promise<string> {
     const response = await axiosInstance.get(`Study/getUrl/${idPatient}?fileName=${locationS3}`);
     const studies = response.data;
@@ -36,7 +43,7 @@ export function createApiStudyRepository(): StudyRepository {
 
 
   return {
-    getAllStudyType, getUrlByPatient,
+    getAllStudyType, getUrlByPatient,deleteStudy,
     getAllStudyByPatient,
     uploadStudy,
   };

@@ -43,49 +43,49 @@ export default function SideBar() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
-        <div className="px-3 py-2 lg:px-5 lg:pl-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center justify-start">
-              <button
-                onClick={toggleSidebar}
-                data-drawer-target="logo-sidebar"
-                data-drawer-toggle="logo-sidebar"
-                aria-controls="logo-sidebar"
-                type="button"
-                className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+      {/* <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200"> */}
+      <div className="px-3 py-2 lg:px-5 lg:pl-3 fixed top-0 z-50 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-start">
+            <button
+              onClick={toggleSidebar}
+              data-drawer-target="logo-sidebar"
+              data-drawer-toggle="logo-sidebar"
+              aria-controls="logo-sidebar"
+              type="button"
+              className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+            >
+              <span className="sr-only">Abrir sidebar</span>
+              <svg
+                className="w-6 h-6"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <span className="sr-only">Abrir sidebar</span>
-                <svg
-                  className="w-6 h-6"
-                  aria-hidden="true"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-                  ></path>
-                </svg>
-              </button>
-              <Link
-                href="https://incorcentromedico.com.ar/"
-                className="flex ml-2 md:mr-24"
-              >
-                <Image
-                  src="https://incorcentromedico.com.ar/wp-content/uploads/2018/07/incor-logo.png"
-                  className="h-20 w-auto mr-3"
-                  width={200}
-                  height={100}
-                  alt="Incor Logo"
-                />
-              </Link>
-            </div>
+                <path
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                  d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+                ></path>
+              </svg>
+            </button>
+            <Link
+              href="https://incorcentromedico.com.ar/"
+              className="flex ml-2 md:mr-24 logo-container"
+            >
+              <Image
+                src="https://incorcentromedico.com.ar/wp-content/uploads/2018/07/incor-logo-768x277%20(2)%20(1).png"
+                width={180}
+                height={100}
+                className="logo-img" 
+                alt="Incor Logo"
+              />
+            </Link>
           </div>
         </div>
-      </nav>
+      </div>
+      {/* </nav> */}
       {session && (
         <aside
           id="logo-sidebar"
@@ -98,7 +98,7 @@ export default function SideBar() {
             <ul className="space-y-2 font-medium">
               <li>
                 <Link
-                  className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100  group cursor-pointer"
+                  className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
                   href="/inicio"
                 >
                   <FaHome size={25} color="#0d9488" />

@@ -1,11 +1,18 @@
-"use client";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { CitySelect } from "@/components/Select/City/select";
 import { HealthInsuranceSelect } from "@/components/Select/Health Insurance/select";
 import { HealthPlanSelect } from "@/components/Select/HealthPlan/select";
 import { StateSelect } from "@/components/Select/State/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { goBack } from "@/lib/utils";
 import moment from "moment-timezone";
 import { City } from "@/modules/city/domain/City";
@@ -24,19 +31,18 @@ import { toast } from "sonner";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { es } from "date-fns/locale/es";
 import { useCustomSession } from "@/context/SessionAuthProviders";
+import "@/styles/custom.datepicker.css";
 import { capitalizeWords } from "@/common/helpers/helpers";
+import { FaCalendar } from "react-icons/fa6";
+import { BloodSelect } from "@/components/Select/Blood/select";
+import { RHFactorSelect } from "@/components/Select/RHFactor/select";
+import { GenderSelect } from "@/components/Select/Gender/select";
+import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 registerLocale("es", es);
-
-interface Inputs extends Patient {}
-
-function CreatePatientForm() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    setValue,
-  } = useForm<Inputs>();
+interface Inputs extends Patient { }
+export function CreatePatientForm() {
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState<State | undefined>(
     undefined
   );
@@ -85,18 +91,18 @@ function CreatePatientForm() {
       },
       healthPlans: selectedPlan
         ? [
-            {
-              id: selectedPlan.id,
-              name: selectedPlan.name,
-              healthInsurance: {
-                id: selectedHealthInsurance?.id || 0,
-                name: selectedHealthInsurance?.name || "",
-              },
+          {
+            id: selectedPlan.id,
+            name: selectedPlan.name,
+            healthInsurance: {
+              id: selectedHealthInsurance?.id || 0,
+              name: selectedHealthInsurance?.name || "",
             },
-          ]
+          },
+        ]
         : [],
       photo: "",
-      registeredById: Number(session?.user.id),
+      registeredById: Number(session?.user.id), 
     };
 
     try {
@@ -132,52 +138,49 @@ function CreatePatientForm() {
     setStartDate(date);
     setValue("birthDate", formattedDateISO);
   };
-
   return (
-    <>
-      <div className="w-1/2 p-6 mt-28 items-center justify-center border shadow-xl rounded-lg max-w-4xl mx-auto bg-white">
-        <div className="my-4">
-          <div className="flex items-center justify-center text-black font-bold text-xl">
-            <button
-              className="flex items-center justify-start py-2 px-4 w-full"
-              onClick={() => window.history.back()}
-            >
-              <IoMdArrowRoundBack className="text-black mr-2" size={24} />
-              Agregar Paciente
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col items-center text-center">
-          <div className="relative mb-3">
-            <div className="group rounded-2xl overflow-hidden">
-              <img
-                src={
-                  imagePreviewUrl ||
-                  "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-                }
-                alt="Imagen del Paciente"
-                width={100}
-                height={100}
-                className="rounded-2xl"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-center rounded-lg">
-          <div className="w-full p-4">
-            <h1 className="text-xl font-semibold mb-4">Datos Personales</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre *
-                  </Label>
+    <div key="1" className="w-full">
+      <Card>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CardHeader>
+            <CardTitle>
+              <button
+                className="flex items-center justify-start w-full"
+                onClick={goBack}
+                type="button"
+              >
+                <IoMdArrowRoundBack className="text-black mr-2" size={25} />
+                Agregar Paciente
+              </button>
+            </CardTitle>
+            <CardDescription>
+              Completa los campos para agregar un nuevo paciente.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6">
+            <div className="grid grid-cols-2 gap-6">
+              {/* <div className="col-span-2 flex flex-col items-center gap-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage
+                    alt="Patient Avatar"
+                    src="/placeholder-avatar.jpg"
+                  />
+                  <AvatarFallback>JP</AvatarFallback>
+                </Avatar>
+                <Button variant="outline">Upload Photo</Button>
+              </div> */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">Nombre</Label>
                   <Input
+                    id="firstName"
+                    placeholder="Ingresar nombre"
                     {...register("firstName", {
-                      required: true,
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message: "El nombre debe tener al menos 2 caracteres",
+                      },
                       onChange: (e) => {
                         const capitalized = capitalizeWords(e.target.value);
                         setValue("firstName", capitalized, {
@@ -185,19 +188,24 @@ function CreatePatientForm() {
                         });
                       },
                     })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
+                  {errors.firstName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <Label
-                    htmlFor="lastname"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Apellido *
-                  </Label>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Apellido</Label>
                   <Input
+                    id="lastName"
+                    placeholder="Ingresar apellido"
                     {...register("lastName", {
-                      required: true,
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 2,
+                        message: "El apellido debe tener al menos 2 caracteres",
+                      },
                       onChange: (e) => {
                         const capitalized = capitalizeWords(e.target.value);
                         setValue("lastName", capitalized, {
@@ -205,149 +213,141 @@ function CreatePatientForm() {
                         });
                       },
                     })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
                   />
+                  {errors.lastName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.lastName.message}
+                    </p>
+                  )}
                 </div>
-
-                <div>
-                  <Label htmlFor="dni">D.N.I. *</Label>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="healthInsurancePlan">
+                    Correo Electrónico
+                  </Label>
                   <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    {...register("userName", { required: true })}
+                    id="email"
+                    placeholder="Ingresar correo electrónico"
+                    {...register("email", {
+                      // required: "Este campo es obligatorio",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                        message: "Introduce un correo electrónico válido",
+                      },
+                    })}
+                    type="email"
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
-
-                <div>
-                  <Label htmlFor="healthCare">Fecha de Nacimiento *</Label>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="userName">D.N.I.</Label>
+                  <Input
+                    id="userName"
+                    placeholder="Ingresar D.N.I."
+                    {...register("userName", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El D.N.I. debe contener solo números",
+                      },
+                    })}
+                  />
+                  {errors.userName && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.userName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Fecha de Nacimiento</Label>
                   <DatePicker
                     showIcon
                     selected={startDate}
                     onChange={handleDateChange}
                     locale="es"
                     className="max-w-full"
-                    customInput={
-                      <Input className="max-w-full bg-gray-200 border-gray-300 text-gray-800" />
-                    }
+                    icon={<FaCalendar color="#0f766e" />}
+                    customInput={<Input className="input-custom-style" />}
                     dateFormat="d MMMM yyyy"
                   />
                 </div>
               </div>
-
-              <h1 className="text-xl font-semibold mb-4">Contacto</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="email">Correo Electrónico *</Label>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Teléfono</Label>
                   <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                    {...register("email")}
+                    id="phoneNumber"
+                    placeholder="Ingresar teléfono"
+                    {...register("phoneNumber", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El Teléfono debe contener solo números",
+                      },
+                    })}
                   />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
                 </div>
-
-                <div>
-                  <Label htmlFor="phone">Teléfono *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber2">Teléfono 2</Label>
                   <Input
-                    {...register("phoneNumber", { required: true })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
+                    id="phoneNumber2"
+                    placeholder="Ingresar teléfono 2"
+                    type="tel"
+                    {...register("phoneNumber2", {
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El teléfono debe contener solo números",
+                      },
+                    })}
                   />
                 </div>
               </div>
-
-              <h1 className="text-xl font-semibold mb-4">Ubicación</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="state">Provincia *</Label>
-                  <StateSelect
-                    selected={selectedState}
-                    onStateChange={handleStateChange}
-                  />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="bloodType">Sangre </Label>
+                  <BloodSelect control={control} errors={errors} />
                 </div>
-                <div>
-                  <Label htmlFor="city">Ciudad *</Label>
-                  <CitySelect
-                    idState={selectedState?.id}
-                    onCityChange={handleCityChange}
-                    selected={selectedCity}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="rhFactor">Factor R.H.</Label>
+                  <RHFactorSelect control={control} errors={errors} />
                 </div>
               </div>
-
-              <h1 className="text-xl font-semibold mb-4">Dirección</h1>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                <div>
-                  <Label htmlFor="street">Calle</Label>
-                  <Input
-                    {...register("address.street", {
-                      required: true,
-                      onChange: (e) => {
-                        const capitalized = capitalizeWords(e.target.value);
-                        setValue("address.street", capitalized, {
-                          shouldValidate: true,
-                        });
-                      },
-                    })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                  />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Sexo</Label>
+                  <GenderSelect control={control} errors={errors} />
                 </div>
-
-                <div>
-                  <Label htmlFor="number">Número</Label>
-                  <Input
-                    {...register("address.number", {
-                      required: true,
-                      onChange: (e) => {
-                        const capitalized = capitalizeWords(e.target.value);
-                        setValue("address.number", capitalized, {
-                          shouldValidate: true,
-                        });
-                      },
-                    })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="street">Piso</Label>
-
-                  <Input
-                    {...register("address.description", {
-                      required: true,
-                      onChange: (e) => {
-                        const capitalized = capitalizeWords(e.target.value);
-                        setValue("address.description", capitalized, {
-                          shouldValidate: true,
-                        });
-                      },
-                    })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="street">Departamento</Label>
-                  <Input
-                    {...register("address.phoneNumber", {
-                      required: true,
-                      onChange: (e) => {
-                        const capitalized = capitalizeWords(e.target.value);
-                        setValue("address.phoneNumber", capitalized, {
-                          shouldValidate: true,
-                        });
-                      },
-                    })}
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="maritalStatus">Estado Civil</Label>
+                  <MaritalStatusSelect control={control} errors={errors} />
                 </div>
               </div>
+            </div>
 
-              <h1 className="text-xl font-semibold mb-4">Seguro Médico</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="email">Obra Social *</Label>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="healthCareProvider">Obra Social</Label>
                   <HealthInsuranceSelect
                     onHealthInsuranceChange={handleHealthInsuranceChange}
                     selected={selectedHealthInsurance}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="phone">Plan *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="healthInsurancePlan">Plan</Label>
                   <HealthPlanSelect
                     idHealthInsurance={Number(selectedHealthInsurance?.id)}
                     selected={selectedHealthInsurance}
@@ -355,24 +355,128 @@ function CreatePatientForm() {
                   />
                 </div>
               </div>
-              <div className="flex justify-center mt-10">
-                <Button
-                  className="mt-10 m-2"
-                  variant="destructive"
-                  onClick={goBack}
-                >
-                  Cancelar
-                </Button>
-                <Button className=" m-2" variant="teal">
-                  Confirmar
-                </Button>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="affiliationNumber">Número de Obra Social</Label>
+                  <Input
+                    id="affiliationNumber"
+                    placeholder="Ingresar Número de Afiliado"
+                    {...register("affiliationNumber", {
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: "El número de afiliado debe contener solo números",
+                      },
+                    })}
+                  />
+                  {errors.affiliationNumber && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.affiliationNumber.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">Observaciones</Label>
+                  <Input
+                    id="observations"
+                    placeholder="Ingresar observaciones"
+                    {...register("observations")}
+                  />
+                </div>
               </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="state">Provincia</Label>
+                  <StateSelect
+                    selected={selectedState}
+                    onStateChange={handleStateChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">Ciudad</Label>
+                  <CitySelect
+                    idState={selectedState?.id}
+                    onCityChange={handleCityChange}
+                    selected={selectedCity}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="street">Calle</Label>
+                  <Input
+                    id="street"
+                    placeholder="Ingresar calle"
+                    {...register("address.street", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.street", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="number">N°</Label>
+                  <Input
+                    id="number"
+                    type="number"
+                    placeholder="Ingresar número"
+                    {...register("address.number", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.number", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="floor">Piso</Label>
+                  <Input
+                    id="floor"
+                    type="number"
+                    placeholder="Ingresar piso"
+                    {...register("address.description", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.description", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="department">Departamento</Label>
+                  <Input
+                    id="department"
+                    placeholder="Ingresar departamento"
+                    {...register("address.phoneNumber", {
+                      onChange: (e) => {
+                        const capitalized = capitalizeWords(e.target.value);
+                        setValue("address.phoneNumber", capitalized, {
+                          shouldValidate: true,
+                        });
+                      },
+                    })}
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2">
+            <Button variant="outline" type="button" onClick={goBack}>
+              Cancelar
+            </Button>
+            <Button variant="teal" type="submit">
+              Confirmar
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
   );
 }
-
-export default CreatePatientForm;

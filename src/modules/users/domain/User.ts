@@ -10,6 +10,7 @@ export interface User {
   email: string;
   birthDate: Date | string | undefined;
   phoneNumber: string;
+  phoneNumber2: string;
   photo: string;
   token?: string;
   address: Address;
@@ -26,7 +27,12 @@ export interface User {
   newPassword: string;
   code: string;
   confirmPassword: string;
+  gender: string;
   registeredById: number;
+  maritalStatus: string;
+  rhFactor: string;
+  observations: string;
+  bloodType: string;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

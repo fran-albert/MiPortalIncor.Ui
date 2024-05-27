@@ -42,7 +42,7 @@ export const StateSelect = ({ selected, onStateChange }: StateSelectProps) => {
 
   return (
     <Select value={selected?.id.toString()} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full bg-gray-200 text-gray-700">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Seleccione la provincia..." />
       </SelectTrigger>
       <SelectContent>

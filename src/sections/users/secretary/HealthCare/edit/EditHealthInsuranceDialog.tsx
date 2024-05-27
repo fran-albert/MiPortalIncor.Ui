@@ -12,27 +12,30 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Speciality } from "@/modules/speciality/domain/Speciality";
-import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpecialityRepository";
-import { updateSpeciality } from "@/modules/speciality/application/update/updateSpeciality";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import ActionIcon from "@/components/ui/actionIcon";
 import { FaPencil } from "react-icons/fa6";
+import { HealthInsurance } from "@/modules/healthInsurance/domain/HealthInsurance";
+import { createApiHealthInsuranceRepository } from "@/modules/healthInsurance/infra/ApiHealthInsuranceRepository";
+import { createHealthInsurance } from "@/modules/healthInsurance/application/create/createHealthInsurance";
+import { updateHealthInsurance } from "@/modules/healthInsurance/application/update/updateHealthInsurance";
 
 interface EditHealthCareDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  speciality: Speciality;
-  updateSpecialityInList: (updatedSpeciality: Speciality) => void | undefined;
+  healthInsurance: HealthInsurance;
+  updateHealthInsuranceInList: (
+    updatedSpeciality: HealthInsurance
+  ) => void | undefined;
 }
+const healthInsuranceRepository = createApiHealthInsuranceRepository();
+interface Inputs extends HealthInsurance {}
 
-interface Inputs extends Speciality {}
-
-export default function EditSpecialityDialog({
+export default function EditHealthInsuranceDialog({
   isOpen,
   setIsOpen,
-  speciality,
-  updateSpecialityInList,
+  healthInsurance,
+  updateHealthInsuranceInList,
 }: EditHealthCareDialogProps) {
   const toggleDialog = () => setIsOpen(!isOpen);
   const {
@@ -43,50 +46,43 @@ export default function EditSpecialityDialog({
   } = useForm<Inputs>();
 
   useEffect(() => {
-    if (isOpen && speciality) {
-      reset(speciality);
+    if (isOpen && healthInsurance) {
+      reset(healthInsurance);
     }
-  }, [isOpen, speciality, reset]);
+  }, [isOpen, healthInsurance, reset]);
 
-  const onSubmit: SubmitHandler<Inputs> = async (data: Speciality) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data: HealthInsurance) => {
     try {
-      const specialityRepository = createApiSpecialityRepository();
-      const updateSpecialityFn = updateSpeciality(specialityRepository);
-      const specialityCreationPromise = updateSpecialityFn(Number(speciality.id), data);
+      const updateHCFn = updateHealthInsurance(healthInsuranceRepository);
+      const specialityCreationPromise = updateHCFn(
+        Number(healthInsurance.id),
+        data
+      );
 
       toast.promise(specialityCreationPromise, {
-        loading: "Editando especialidad...",
-        success: "Especialidad editada con éxito!",
-        error: "Error al editar la Especialidad",
+        loading: "Editando obra social...",
+        success: "Obra Social editada con éxito!",
+        error: "Error al editar la Obra Social",
       });
 
       specialityCreationPromise
         .then(() => {
           setIsOpen(false);
-          if (updateSpecialityInList) updateSpecialityInList(data);
+          if (updateHealthInsuranceInList) updateHealthInsuranceInList(data);
         })
         .catch((error) => {
-          console.error("Error al editar la Especialidad", error);
+          console.error("Error al editar la Obra Social", error);
         });
     } catch (error) {
-      console.error("Error al editar la Especialidad", error);
+      console.error("Error al editar la Obra Social", error);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleDialog}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" onClick={toggleDialog}>
-          <ActionIcon
-            icon={<FaPencil size={20} />}
-            tooltip="Editar"
-            color="text-gray-600"
-          />
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Especialidad</DialogTitle>
+          <DialogTitle>Editar Obra Social</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogDescription>
