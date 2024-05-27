@@ -76,20 +76,15 @@ function SideBarV3() {
                   </Link>
                 </li>
 
-                <>
-                  {isPatient && (
-                    <li>
-                      <Link
-                        href="/mis-estudios"
-                        className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
-                      >
-                        <FaFileMedicalAlt size={25} color="#0d9488" />
-                        <span className="ml-3">Mis Estudios</span>
-                      </Link>
-                    </li>
-                  )}
-                </>
-                {/* Conditional Section for Doctors */}
+                <li>
+                  <Link
+                    href="/mis-estudios"
+                    className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group cursor-pointer"
+                  >
+                    <FaFileMedicalAlt size={25} color="#0d9488" />
+                    <span className="ml-3">Mis Estudios</span>
+                  </Link>
+                </li>
                 {isSecretary && (
                   <>
                     <li className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">

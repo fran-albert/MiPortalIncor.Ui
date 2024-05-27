@@ -35,7 +35,7 @@ const PatientCardComponent = ({
   patient,
   registerBy,
 }: {
-  patient: Patient | undefined;
+  patient: Patient | null;
   registerBy: undefined | string;
 }) => {
   const { isPatient, isSecretary } = useRoles();

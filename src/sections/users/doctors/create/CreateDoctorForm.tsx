@@ -40,8 +40,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { toast } from "sonner";
+import { useDoctorStore } from "@/hooks/useDoctors";
+import { useCustomSession } from "@/context/SessionAuthProviders";
 
-interface Inputs extends Doctor { }
+interface Inputs extends Doctor {}
 
 function CreateDoctorForm() {
   const {
@@ -62,7 +64,9 @@ function CreateDoctorForm() {
   >([]);
   const [startDate, setStartDate] = useState(new Date());
   const [selectedCity, setSelectedCity] = useState<City | undefined>(undefined);
-
+  const { createDoctor } = useDoctorStore();
+  const { session } = useCustomSession();
+  const idSession = session?.user?.id;
   const handleCityChange = (city: City) => {
     if (selectedState) {
       const cityWithState = { ...city, state: selectedState };
@@ -70,22 +74,6 @@ function CreateDoctorForm() {
       setValue("address.city", cityWithState);
     }
   };
-  const [bloodType, setBloodType] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
-  const [maritalStatus, setMaritalStatus] = useState<string>("");
-  const [rhFactor, setRHFactor] = useState<string>("");
-
-  const handleBloodChange = (blood: string) => {
-    setBloodType(blood);
-  };
-
-  const handleMaritalStatusChange = (maritalStatus: string) => {
-    setMaritalStatus(maritalStatus);
-  };
-  const handleRHFactorChange = (rhFactor: string) => {
-    setRHFactor(rhFactor);
-  };
-
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -109,14 +97,13 @@ function CreateDoctorForm() {
         city: selectedCity,
       },
       photo: "",
+      registeredById: Number(idSession),
     };
 
     console.log("Payload", payload);
 
     try {
-      const doctorRepository = createApiDoctorRepository();
-      const createDoctorFn = createDoctor(doctorRepository);
-      const doctorCreationPromise = createDoctorFn(payload);
+      const doctorCreationPromise = createDoctor(payload);
       toast.promise(doctorCreationPromise, {
         loading: "Creando médico...",
         success: "Médico creado con éxito!",
@@ -213,7 +200,8 @@ function CreateDoctorForm() {
                         required: "Este campo es obligatorio",
                         minLength: {
                           value: 2,
-                          message: "El apellido debe tener al menos 2 caracteres",
+                          message:
+                            "El apellido debe tener al menos 2 caracteres",
                         },
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);

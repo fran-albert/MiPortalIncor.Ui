@@ -102,7 +102,7 @@ export function CreatePatientForm() {
         ]
         : [],
       photo: "",
-      registeredById: Number(session?.user.id),
+      registeredById: Number(session?.user.id), 
     };
 
     try {

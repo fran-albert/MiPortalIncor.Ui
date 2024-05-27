@@ -1,34 +1,17 @@
 import { DataTable } from "@/components/Table/dateTable";
 import { getColumns } from "./columns";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
-import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
-import { getAllDoctors } from "@/modules/doctors/application/get-all/getAllDoctors";
 import Loading from "@/components/Loading/loading";
+import { useDoctorStore } from "@/hooks/useDoctors";
 
 export const DoctorsTable = () => {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const doctorRepository = createApiDoctorRepository();
-  const loadAllDoctors = getAllDoctors(doctorRepository);
-
-  const fetchDoctors = async () => {
-    try {
-      setIsLoading(true);
-      const doctorData = await loadAllDoctors();
-      setDoctors(doctorData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const doctorColumns = getColumns(fetchDoctors);
+  const { doctors, isLoading, fetchDoctors } = useDoctorStore();
 
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [fetchDoctors]);
+  const doctorColumns = getColumns(fetchDoctors);
 
   const customFilterFunction = (doctor: Doctor, query: string) =>
     doctor.firstName.toLowerCase().includes(query.toLowerCase()) ||

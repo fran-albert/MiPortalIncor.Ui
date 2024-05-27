@@ -1,40 +1,23 @@
 import { DataTable } from "@/components/Table/dateTable";
 import { getColumns } from "./columns";
-import { useEffect, useState } from "react";
-import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
-import { getAllPatients } from "@/modules/patients/application/get-all/getAllPatients";
+import { useEffect } from "react";
 import { Patient } from "@/modules/patients/domain/Patient";
 import Loading from "@/components/Loading/loading";
 import useRoles from "@/hooks/useRoles";
+import { usePatient } from "@/hooks/usePatients";
 
 export const PatientTable = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const patientRepository = createApiPatientRepository();
-  const loadAllPatients = getAllPatients(patientRepository);
   const { isSecretary, isDoctor, isAdmin } = useRoles();
+  const { patients, isLoading, fetchPatients } = usePatient();
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
 
-  const fetchPatients = async () => {
-    try {
-      setIsLoading(true);
-      const patientData = await loadAllPatients();
-      setPatients(patientData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   const patientColumns = getColumns(fetchPatients, {
     isSecretary,
     isDoctor,
     isAdmin,
   });
-
-  useEffect(() => {
-    fetchPatients();
-  }, []);
-
   const customFilterFunction = (patient: Patient, query: string) =>
     patient.firstName.toLowerCase().includes(query.toLowerCase()) ||
     patient.lastName.toLowerCase().includes(query.toLowerCase()) ||

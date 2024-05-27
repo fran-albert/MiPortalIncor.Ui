@@ -6,11 +6,10 @@ import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientR
 import { Patient } from "@/modules/patients/domain/Patient";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import useRoles from "@/hooks/useRoles";
 import { MyStudiesComponent } from "@/sections/users/patients/MyStudies/component";
 import Loading from "@/components/Loading/loading";
 import { Study } from "@/modules/study/domain/Study";
+import { useAuthSessionLoading } from "@/hooks/useSessionAuthLoading";
 
 interface UrlMap {
   [key: number]: string;
@@ -21,20 +20,19 @@ const patientRepository = createApiPatientRepository();
 
 function StudiesPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
-  const { isPatient, isSecretary, isDoctor } = useRoles();
   const userId = session?.user.id;
   const [labs, setLabs] = useState<Study[]>([]);
   const [ecography, setEcography] = useState<Study[]>([]);
-  const [patient, setPatient] = useState<Patient | undefined>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [patient, setPatient] = useState<Patient | null>();
+  const [isLoading2, setIsLoading2] = useState<boolean>(true);
   const [urls, setUrls] = useState<UrlMap>({});
   const [areUrlsLoaded, setAreUrlsLoaded] = useState<boolean>(false);
+  const { isLoading } = useAuthSessionLoading();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading2(true);
         const loadPatient = getPatient(patientRepository);
         const patientResult = await loadPatient(userId);
         setPatient(patientResult);
@@ -72,23 +70,14 @@ function StudiesPage() {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false);
+        setIsLoading2(false);
       }
     };
 
     fetchData();
   }, [userId]);
 
-  // useEffect(() => {
-  //   if (status === "loading") return;
-  //   if (!session || isSecretary || isDoctor) {
-  //     router.replace("/inicio");
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  // }, [session, status, router]);
-
-  if (isLoading || status === "loading" || !areUrlsLoaded) {
+  if (isLoading) {
     return <Loading isLoading={true} />;
   }
 

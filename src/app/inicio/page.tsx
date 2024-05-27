@@ -31,7 +31,7 @@ function HomePage() {
           {isDoctor && (
             <div>
               <h2 className="text-2xl font-semibold text-center">
-                Panel de Control - Secretaria
+                Panel de Control - Médico
               </h2>
               <CountsCards />
             </div>

@@ -10,14 +10,25 @@ import ProfileSecretaryCardComponent from "@/sections/Profile/secretary/card";
 const Profile = () => {
   const { data: session } = useSession();
   const id = session?.user.id;
-  const token = session?.accessToken;
   const { isPatient, isDoctor, isSecretary } = useRoles();
-  return (
-    <>
-      {isPatient && <ProfileCardComponent id={id} />}
-      {isDoctor && <ProfileDoctorCardComponent id={id} />}
-      {isSecretary && <ProfileSecretaryCardComponent id={id} />}
-    </>
-  );
+
+  if (!id) {
+    return <Loading isLoading={true} />;
+  }
+
+  if (isDoctor) {
+    return <ProfileDoctorCardComponent id={id} />;
+  }
+
+  if (isSecretary) {
+    return <ProfileSecretaryCardComponent id={id} />;
+  }
+
+  if (isPatient) {
+    return <ProfileCardComponent id={id} />;
+  }
+
+  return null;
 };
+
 export default withSessionTimeout(Profile);

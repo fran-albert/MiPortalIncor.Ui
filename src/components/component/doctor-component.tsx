@@ -1,31 +1,38 @@
-import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  Card,
-} from "@/components/ui/card";
-import Link from "next/link";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+"use client";
+import React, { useEffect } from "react";
+import { formatDateWithTime } from "@/common/helpers/helpers";
+import Loading from "@/components/Loading/loading";
 import DoctorCardComponent from "@/sections/users/doctors/View/Card/card";
-import { Doctor } from "@/modules/doctors/domain/Doctor";
 import DoctorSpecialitiesComponent from "@/sections/users/doctors/View/Specialities/card";
-import DoctorHealthInsuranceComponent from "@/sections/users/doctors/View/HealthInsurances/card";
+import { useDoctorStore } from "@/hooks/useDoctors";
+export function DoctorComponent({ id }: { id: number }) {
+  const { selectedDoctor, getDoctorById, isLoading, registerBy } =
+    useDoctorStore();
+  useEffect(() => {
+    getDoctorById(id);
+  }, [id, getDoctorById]);
 
-export function DoctorComponent({
-  doctor,
-  registerBy,
-}: {
-  doctor: Doctor | null;
-  registerBy: undefined | string;
-}) {
+  if (isLoading) {
+    return <Loading isLoading={true} />;
+  }
+
+  const registerByText =
+    registerBy?.firstName +
+    " " +
+    registerBy?.lastName +
+    " " +
+    "- " +
+    formatDateWithTime(String(selectedDoctor?.registrationDate));
+
   return (
     <>
       <div className="grid md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
-        <DoctorCardComponent doctor={doctor} registerBy={registerBy} />
+        <DoctorCardComponent
+          doctor={selectedDoctor}
+          registerBy={registerByText}
+        />
         <div className="grid gap-6">
-          <DoctorSpecialitiesComponent doctor={doctor} />
+          <DoctorSpecialitiesComponent doctor={selectedDoctor} />
           {/* <DoctorHealthInsuranceComponent doctor={doctor} /> */}
           {/* <Card>
             <CardHeader>

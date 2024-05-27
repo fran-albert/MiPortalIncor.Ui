@@ -30,12 +30,14 @@ interface UrlMap {
 
 const StudiesCardComponent = ({
   studies,
+  fetchStudyUrl,
   idPatient,
   onStudyAdded,
   onStudyDeleted,
 }: {
   studies: Study[];
   idPatient: number;
+  fetchStudyUrl?: (idPatient: number, locationS3: string) => void;
   onStudyAdded?: (newStudy: Study) => void;
   onStudyDeleted?: (idStudy: number) => void;
 }) => {

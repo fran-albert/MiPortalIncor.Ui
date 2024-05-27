@@ -60,7 +60,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     setValue,
     formState: { errors },
   } = useForm<Inputs>();
-  const [profile, setProfile] = useState<Patient | undefined>();
+  const [profile, setProfile] = useState<Patient | null>();
   const [selectedState, setSelectedState] = useState<State>();
 
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
@@ -97,8 +97,6 @@ export default function ProfileCardComponent({ id }: { id: number }) {
 
     fetchUsers();
   }, []);
-
-  console.log(profile, "profile");
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -176,30 +174,9 @@ export default function ProfileCardComponent({ id }: { id: number }) {
 
   return (
     <>
-      <div className="flex justify-center w-full px-4 mt-5 md:ml-24 lg:px-0 lg:ml-20">
-        <div className="w-full max-w-7xl">
-          <div className=" p-6">
-            <div className="flex flex-wrap items-center justify-center rounded-lg p-4 ">
-              <div className="w-full p-4">
-                <div className="flex justify-center items-center gap-4 mt-10">
-                  <Button
-                    className="w-full sm:w-auto"
-                    variant="outline"
-                    form="profileForm"
-                    type="submit"
-                  >
-                    Modificar Datos
-                  </Button>
-                  <ChangePasswordDialog id={id} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div key="1" className="w-full">
         <Card>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} id="profileForm">
             <CardHeader>
               <CardTitle>
                 <h1 className="flex items-center justify-start w-full">
@@ -307,21 +284,12 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Label htmlFor="userName">D.N.I.</Label>
                     <Input
                       id="userName"
+                      className="w-full cursor-not-allowed"
+                      readOnly
                       defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
                       placeholder="Ingresar D.N.I."
-                      {...register("userName", {
-                        required: "Este campo es obligatorio",
-                        pattern: {
-                          value: /^[0-9]+$/,
-                          message: "El D.N.I. debe contener solo números",
-                        },
-                      })}
+                      {...register("userName")}
                     />
-                    {errors.userName && (
-                      <p className="text-red-500 text-xs italic">
-                        {errors.userName.message}
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dob">Fecha de Nacimiento</Label>
@@ -417,6 +385,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                       className="w-full text-gray-800 cursor-not-allowed"
                       defaultValue={profile?.affiliationNumber}
                       placeholder="Ingresar Número de Afiliado"
+                      readOnly
                       // {...register("affiliationNumber", {
                       //   required: "Este campo es obligatorio",
                       //   pattern: {
@@ -526,10 +495,13 @@ export default function ProfileCardComponent({ id }: { id: number }) {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" type="button" onClick={goBack}>
-                Cambiar Contraseña
-              </Button>
-              <Button variant="teal" type="submit">
+              <ChangePasswordDialog id={id} />
+              <Button
+                className="w-full sm:w-auto"
+                variant="teal"
+                form="profileForm"
+                type="submit"
+              >
                 Modificar Datos
               </Button>
             </CardFooter>

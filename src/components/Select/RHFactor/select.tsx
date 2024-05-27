@@ -19,7 +19,7 @@ export const RHFactorSelect = ({
 }: RHFactorSelectProps) => {
   return (
     <Controller
-      name="RHFactor"
+      name="rhFactor"
       control={control}
       // rules={{ required: "Este campo es obligatorio" }}
       render={({ field }) => (
@@ -29,8 +29,8 @@ export const RHFactorSelect = ({
               <SelectValue placeholder="Seleccione el factor RH.." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Positivo">RH Positivo</SelectItem>
-              <SelectItem value="Negativo">RH Negativo</SelectItem>
+              <SelectItem value="Positivo">Positivo</SelectItem>
+              <SelectItem value="Negativo">Negativo</SelectItem>
             </SelectContent>
           </Select>
           {errors.RHFactor && (
