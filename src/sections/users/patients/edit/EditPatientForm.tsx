@@ -359,11 +359,11 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Sangre </Label>
-                    <BloodSelect onBlood={() => {}} />
+                    <BloodSelect control={control} errors={errors} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dob">Factor R.H.</Label>
-                    <RHFactorSelect onRHFactor={() => {}} />
+                    <RHFactorSelect control={control} errors={errors} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
@@ -373,11 +373,10 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dob">Estado Civil</Label>
-                    <MaritalStatusSelect onMaritalStatus={() => {}} />
+                    <MaritalStatusSelect control={control} errors={errors} />
                   </div>
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">

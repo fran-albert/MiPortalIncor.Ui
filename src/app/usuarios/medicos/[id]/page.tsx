@@ -1,9 +1,13 @@
 "use client";
+import { formatDateWithTime } from "@/common/helpers/helpers";
 import Loading from "@/components/Loading/loading";
 import { DoctorComponent } from "@/components/component/doctor-component";
 import useRoles from "@/hooks/useRoles";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
+import { getUser } from "@/modules/users/application/get/getUser";
+import { User } from "@/modules/users/domain/User";
+import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import AppointmentCardComponent from "@/sections/users/doctors/View/Appointment/card";
 import UserCardComponent from "@/sections/users/doctors/View/Card/card";
 import DataProfileCard from "@/sections/users/doctors/View/Data/card";
@@ -16,6 +20,8 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
+const userRepository = createApiUserRepository();
+
 function DoctorPage() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const params = useParams();
@@ -24,13 +30,18 @@ function DoctorPage() {
   const doctorRepository = createApiDoctorRepository();
   const loadDoctor = doctorRepository.getDoctor(Number(id));
   const { data: session, status } = useSession();
+  const [registerBy, setRegisterBy] = useState<User | undefined>(undefined);
   const router = useRouter();
   const { isPatient, isSecretary, isDoctor } = useRoles();
+  const registeredById = doctor?.registeredById;
+  const loadUser = getUser(userRepository);
   const fetchDoctor = async () => {
     try {
       setIsLoading(true);
       const doctorData = await loadDoctor;
       setDoctor(doctorData ?? null);
+      const loadRegisterBy = await loadUser(Number(registeredById));
+      setRegisterBy(loadRegisterBy);
     } catch (error) {
       console.log(error);
     } finally {
@@ -54,6 +65,14 @@ function DoctorPage() {
   if (isLoading || status === "loading") {
     return <Loading isLoading={true} />;
   }
+
+  const registerByText =
+    registerBy?.firstName +
+    " " +
+    registerBy?.lastName +
+    " " +
+    "- " +
+    formatDateWithTime(String(doctor?.registrationDate));
 
   return (
     <>
@@ -111,8 +130,7 @@ function DoctorPage() {
           </div>
         </div>
       </div> */}
-      <DoctorComponent doctor={doctor}/>
-
+      <DoctorComponent doctor={doctor} registerBy={registerByText} />
     </>
   );
 }

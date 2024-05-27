@@ -29,13 +29,11 @@ function HomePage() {
           )}
 
           {isDoctor && (
-            <div className="w-full px-4">
-              <h2 className="text-2xl font-semibold text-center mb-6 mt-28">
-                Panel de Control - Médico
+            <div>
+              <h2 className="text-2xl font-semibold text-center">
+                Panel de Control - Secretaria
               </h2>
-              <div className="flex justify-center items-center">
-                <CountsCards />
-              </div>
+              <CountsCards />
             </div>
           )}
 

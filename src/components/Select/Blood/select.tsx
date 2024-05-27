@@ -30,10 +30,7 @@ export const BloodSelect = ({ control, errors }: BloodSelectProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="A">A</SelectItem>
-              <SelectItem value="A">A</SelectItem>
               <SelectItem value="B">B</SelectItem>
-              <SelectItem value="B">B</SelectItem>
-              <SelectItem value="O">O</SelectItem>
               <SelectItem value="O">O</SelectItem>
             </SelectContent>
           </Select>

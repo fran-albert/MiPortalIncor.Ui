@@ -12,7 +12,7 @@ export const PatientTable = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const patientRepository = createApiPatientRepository();
   const loadAllPatients = getAllPatients(patientRepository);
-  const { isSecretary, isDoctor } = useRoles();
+  const { isSecretary, isDoctor, isAdmin } = useRoles();
 
   const fetchPatients = async () => {
     try {
@@ -25,7 +25,11 @@ export const PatientTable = () => {
       setIsLoading(false);
     }
   };
-  const patientColumns = getColumns(fetchPatients, { isSecretary, isDoctor });
+  const patientColumns = getColumns(fetchPatients, {
+    isSecretary,
+    isDoctor,
+    isAdmin,
+  });
 
   useEffect(() => {
     fetchPatients();

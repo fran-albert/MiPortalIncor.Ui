@@ -29,7 +29,10 @@ export interface User {
   confirmPassword: string;
   gender: string;
   registeredById: number;
+  maritalStatus: string;
+  rhFactor: string;
   observations: string;
+  bloodType: string;
   // healthPlans: HealthPlans[]
   // healtInsurace: HealthInsurance[];
 }

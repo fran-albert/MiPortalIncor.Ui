@@ -25,9 +25,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <SessionAuthProvider>
           <Toaster richColors position="top-center" />
-          <MainContainer children={children} />
+          <MainContainer>{children}</MainContainer>
         </SessionAuthProvider>
       </body>
     </html>
   );
 }
+

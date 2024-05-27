@@ -18,14 +18,17 @@ import { deletePatient } from "@/modules/patients/application/delete/deletePatie
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import { deleteStudy } from "@/modules/study/application/delete/delete";
 import { AiOutlineDelete } from "react-icons/ai";
+import { Study } from "@/modules/study/domain/Study";
 
 interface DeleteStudyDialogProps {
   idStudy: number;
+  studies: Study[];
   onStudyDeleted?: (idStudy: number) => void;
 }
 
 export default function DeleteStudyDialog({
   idStudy,
+  studies,
   onStudyDeleted,
 }: DeleteStudyDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,7 +61,10 @@ export default function DeleteStudyDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Eliminar Estudio</DialogTitle>
+          <DialogTitle>
+            Eliminar{" "}
+            {studies.map((study) => study.id === idStudy && study.note)}
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription>
           ¿Estás seguro de que quieres eliminar el estudio?

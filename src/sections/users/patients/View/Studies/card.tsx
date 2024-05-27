@@ -62,15 +62,12 @@ const StudiesCardComponent = ({
     fetchUrls();
   }, [studies]);
 
-
-
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>Estudios</CardTitle>
         </CardHeader>
-
         <CardContent>
           <div className="flex flex-col justify-between h-full">
             <div>
@@ -94,7 +91,11 @@ const StudiesCardComponent = ({
                         </div>
                       </div>
                       {isSecretary && (
-                        <DeleteStudyDialog idStudy={study.id} onStudyDeleted={onStudyDeleted} />
+                        <DeleteStudyDialog
+                          studies={studies}
+                          idStudy={study.id}
+                          onStudyDeleted={onStudyDeleted}
+                        />
                       )}
                     </div>
                   ))}

@@ -5,6 +5,7 @@ import SideBar from "./sideBar";
 import { Login } from "@/components/component/login";
 import { usePathname } from "next/navigation";
 import { NavBar } from "./component/nav-bar";
+
 interface MainContainerProps {
   children: React.ReactNode;
 }
@@ -12,11 +13,6 @@ interface MainContainerProps {
 const MainContainer = ({ children }: MainContainerProps) => {
   const pathname = usePathname();
   return (
-    // <div className="flex">
-    //   <SideBar />
-    //   <div className="flex-grow ">{children}</div>
-    // </div>
-    // <SideBarV2 children={children} />
     <>
       {
         pathname === "/iniciar-sesion" ? (
@@ -25,11 +21,10 @@ const MainContainer = ({ children }: MainContainerProps) => {
             <div className="flex items-center justify-center h-full">
               <Login />
             </div>
-          </> // Muestra el componente Login solo en la ruta '/iniciar-sesion'
+          </> 
         ) : (
-          // <LoginForm /> // Muestra el componente Login solo en la ruta '/iniciar-sesion'
-          <SideBarV2 children={children} />
-        ) // De lo contrario, muestra el layout normal con SideBarV2
+          <SideBarV2>{children}</SideBarV2>
+        )
       }
     </>
   );

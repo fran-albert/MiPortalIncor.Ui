@@ -22,23 +22,22 @@ import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { calculateAge, formatDate, formatDni } from "@/common/helpers/helpers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MdDateRange } from "react-icons/md";
-const DoctorSpecialitiesComponent = ({ doctor }: { doctor: Doctor | null }) => {
+const DoctorHealthInsuranceComponent = ({
+  doctor,
+}: {
+  doctor: Doctor | null;
+}) => {
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Especialidades</CardTitle>
+          <CardTitle>Obras Sociales</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="grid gap-2">
-            {doctor?.specialities.map((speciality) => (
-              <li
-                className="flex items-center justify-between"
-                key={speciality.id}
-              >
-                <span>{speciality.name}</span>
-              </li>
-            ))}
+            <li className="flex items-center justify-between">
+              <span>Todas</span>
+            </li>
           </ul>
         </CardContent>
       </Card>
@@ -46,4 +45,4 @@ const DoctorSpecialitiesComponent = ({ doctor }: { doctor: Doctor | null }) => {
   );
 };
 
-export default DoctorSpecialitiesComponent;
+export default DoctorHealthInsuranceComponent;

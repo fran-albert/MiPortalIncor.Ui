@@ -97,63 +97,53 @@ HistoryDialogProps) {
           <span className="text-teal-600">Nuevo Antecedente</span>
         </button>
       </DialogTrigger>
-      <DialogContent className="rounded-lg dialog-content w-full max-w-md mx-auto px-4 py-2 sm:px-6 md:max-w-lg">
+      <DialogContent className="rounded-lg dialog-content w-full max-w-md mx-auto px-4 py-2 sm:px-6 md:max-w-lg text-black">
         <DialogHeader>
           <DialogTitle>Nuevo Antecedente</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogDescription>
-            <div className="w-full max-w-md mx-auto px-4 py-2">
-              <div className="mb-6">
-                <Label
-                  htmlFor="title"
-                  className="block text-black font-medium mb-2"
-                >
-                  Título
-                </Label>
-                <Input
-                  className="w-full bg-gray-200 border-gray-300 text-gray-800 h-10 rounded-md"
-                  {...register("title", {
-                    required: true,
-                    maxLength: 20,
-                  })}
-                />
-                {errors?.title?.type === "required" && (
-                  <p className="text-red-700">Este campo es requerido.</p>
-                )}
-                {errors?.title?.type === "maxLength" && (
-                  <p>El título no puede tener más de 20 carácteres.</p>
-                )}
+            <div className="space-y-4 mt-4 text-black">
+              <div>
+                <Label htmlFor="diagnostico1">Diagnostico</Label>
+                <Input id="diagnostico1" />
               </div>
-              <div className="mb-6">
-                <Label
-                  htmlFor="studyType"
-                  className="block text-black font-medium mb-2"
-                >
-                  Escribe su antecedente
-                </Label>
+              <div>
+                <Label htmlFor="description">Descripción</Label>
                 <Textarea
-                  className="w-full bg-gray-200 border-gray-300 text-gray-800 h-10 rounded-md"
-                  {...register("text", {
-                    required: true,
-                    maxLength: 20,
-                    pattern: /^[A-Za-z]+$/i,
-                  })}
+                  className="min-h-[100px]"
+                  id="description"
+                  placeholder="Ingrese una descripción..."
                 />
-                {errors?.text?.type === "required" && (
-                  <p className="text-red-700">Este campo es requerido.</p>
-                )}
-                {errors?.text?.type === "maxLength" && (
-                  <p>First name cannot exceed 20 characters</p>
-                )}
-                {errors?.text?.type === "pattern" && (
-                  <p>Alphabetical characters only</p>
-                )}
+              </div>
+              {/* <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="fecha-inicio">Fecha Inicio</Label>
+                  <Input id="fecha-inicio" placeholder="Fecha Inicio" />
+                </div>
+                <div>
+                  <Label htmlFor="fecha-fin">Fecha Fin</Label>
+                  <Input id="fecha-fin" placeholder="Fecha Fin" />
+                </div>
+              </div> */}
+              {/* <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="gravedad">Gravedad</Label>
+                  <Input id="gravedad" placeholder="Gravedad" />
+                </div>
+                <div>
+                  <Label htmlFor="estado">Estado</Label>
+                  <Input id="estado" placeholder="Estado" />
+                </div>
+              </div> */}
+              <div>
+                <Label htmlFor="observacion">Observacion</Label>
+                <Input id="observacion" placeholder="Observacion" />
               </div>
             </div>
           </DialogDescription>
           <DialogFooter>
-            <div className="mx-auto items-center">
+            <div className="mx-auto items-center mt-4">
               <Button variant="teal" type="submit">
                 Confirmar
               </Button>

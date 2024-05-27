@@ -1,6 +1,6 @@
 "use client";
 import Loading from "@/components/Loading/loading";
-import { PatientCardComponent } from "@/sections/users/patients/CardComponent/component";
+import { PatientComponent } from "@/sections/users/patients/CardComponent/component";
 import useRoles from "@/hooks/useRoles";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { Patient } from "@/modules/patients/domain/Patient";
@@ -78,7 +78,7 @@ function PatientPage() {
   return (
     <>
       <div>
-        <PatientCardComponent
+        <PatientComponent
           patient={patient}
           studies={studies}
           onStudyAdded={handleAddStudy}

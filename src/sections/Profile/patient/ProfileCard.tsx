@@ -4,6 +4,21 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
+import { goBack } from "@/lib/utils";
+import { capitalizeWords } from "@/common/helpers/helpers";
+import { FaCalendar } from "react-icons/fa6";
+import { BloodSelect } from "@/components/Select/Blood/select";
+import { RHFactorSelect } from "@/components/Select/RHFactor/select";
+import { GenderSelect } from "@/components/Select/Gender/select";
+import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CitySelect } from "@/components/Select/City/select";
@@ -31,6 +46,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { toast } from "sonner";
 import { updatePatient } from "@/modules/patients/application/update/updatePatient";
+import { IoMdArrowRoundBack } from "react-icons/io";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 const userRepository = createApiPatientRepository();
@@ -40,6 +56,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     register,
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<Inputs>();
@@ -65,6 +82,12 @@ export default function ProfileCardComponent({ id }: { id: number }) {
         setSelectedState(userData?.address.city.state);
         setSelectedCity(userData?.address.city);
         setStartDate(new Date(userData?.birthDate ?? new Date()));
+        if (userData) {
+          setValue("maritalStatus", userData.maritalStatus);
+          setValue("gender", userData.gender);
+          setValue("rhFactor", userData.rhFactor);
+          setValue("bloodType", userData.bloodType);
+        }
       } catch (error) {
         console.error("Error al cargar los datos del perfil:", error);
       } finally {
@@ -74,6 +97,8 @@ export default function ProfileCardComponent({ id }: { id: number }) {
 
     fetchUsers();
   }, []);
+
+  console.log(profile, "profile");
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -154,200 +179,8 @@ export default function ProfileCardComponent({ id }: { id: number }) {
       <div className="flex justify-center w-full px-4 mt-5 md:ml-24 lg:px-0 lg:ml-20">
         <div className="w-full max-w-7xl">
           <div className=" p-6">
-            {/* Header */}
-            <div className="border-b pb-6">
-              <h2 className="text-2xl font-semibold leading-tight">
-                Mi Perfil
-              </h2>
-            </div>
-
-            <div className="flex flex-col items-center text-center py-6">
-              <div className="relative mb-3">
-                {/* Image Container */}
-                <div className="group rounded-2xl overflow-hidden">
-                  {/* {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Profile Picture"
-                    className="rounded-2xl"
-                    style={{ width: "100px", height: "100px" }}
-                  />
-                ) : (
-                  <img
-                    src={
-                      session?.user?.photo
-                        ? `https://mirankingtenis.s3.us-east-1.amazonaws.com/storage/avatar/${session.user.photo}.jpeg`
-                        : "https://mirankingtenis.s3.us-east-1.amazonaws.com/storage/avatar/default2.png"
-                    }
-                    alt="Profile Picture"
-                    width={100}
-                    height={100}
-                    className="rounded-2xl"
-                  />
-                )} */}
-
-                  <img
-                    src={
-                      "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-                    }
-                    alt="Profile Picture"
-                    width={100}
-                    height={100}
-                    className="rounded-2xl"
-                  />
-                  {/* Edit Icon Container */}
-                  {/* <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                    <div
-                      className="bg-gray-500 p-2 rounded-full cursor-pointer"
-                      onClick={handleEditPictureClick}
-                    >
-                      <FaPencilAlt className="text-white" />
-                    </div>
-                  </div> */}
-                  {/* Hidden File Input */}
-                  {/* <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                // / */}
-                </div>
-              </div>
-              <h3 className="text-xl font-medium">
-                {profile?.firstName} {profile?.lastName}
-              </h3>
-              <p className="text-gray-600">
-                {isDoctor
-                  ? "Médico"
-                  : isPatient
-                  ? "Paciente"
-                  : isSecretary
-                  ? "Secretaria"
-                  : ""}
-              </p>
-            </div>
-
             <div className="flex flex-wrap items-center justify-center rounded-lg p-4 ">
               <div className="w-full p-4">
-                <form onSubmit={handleSubmit(onSubmit)} id="profileForm">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">Nombre</Label>
-                      <Input
-                        {...register("firstName", { required: true })}
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                        defaultValue={profile?.firstName}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Apellido</Label>
-                      <Input
-                        {...register("lastName", { required: true })}
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                        defaultValue={profile?.lastName}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="dni">D.N.I.</Label>
-                      <Input
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                        defaultValue={
-                          profile?.dni ? formatDni(profile?.dni) : ""
-                        }
-                        {...register("userName")}
-                        readOnly
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Correo Electrónico</Label>
-                      <Input
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                        {...register("email")}
-                        defaultValue={profile?.email}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phoneNumber">Teléfono</Label>
-                      <Input
-                        {...register("phoneNumber", { required: true })}
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800"
-                        defaultValue={profile?.phoneNumber}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="healthCare">Obra Social</Label>
-                      <Input
-                        className="w-full bg-gray-200 border-gray-300 text-gray-800 cursor-not-allowed"
-                        value={profile?.healthPlans?.map((plan) => plan.name)}
-                        readOnly
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="healthCare">Fecha de Nacimiento</Label>
-                      <DatePicker
-                        showIcon
-                        selected={startDate}
-                        className="max-w-full"
-                        onChange={handleDateChange}
-                        locale="es"
-                        customInput={
-                          <Input className="w-full bg-gray-200 border-gray-300 text-gray-800" />
-                        }
-                        dateFormat="d MMMM yyyy"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="state">Provincia</Label>
-                      <StateSelect
-                        selected={selectedState}
-                        onStateChange={handleStateChange}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="city">Ciudad</Label>
-                      <CitySelect
-                        idState={selectedState?.id}
-                        selected={selectedCity}
-                        onCityChange={handleCityChange}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-                      <div>
-                        <Label htmlFor="street">Calle</Label>
-                        <Input
-                          {...register("address.street")}
-                          className="bg-gray-200"
-                          defaultValue={profile?.address.street}
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="number">N°</Label>
-                        <Input
-                          {...register("address.number")}
-                          className="bg-gray-200"
-                          defaultValue={profile?.address.number}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="street">Piso</Label>
-                        <Input
-                          {...register("address.description")}
-                          className="bg-gray-200"
-                          defaultValue={profile?.address.description}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="number">Depto </Label>
-                        <Input
-                          {...register("address.phoneNumber")}
-                          className="bg-gray-200"
-                          defaultValue={profile?.address.phoneNumber}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </form>
                 <div className="flex justify-center items-center gap-4 mt-10">
                   <Button
                     className="w-full sm:w-auto"
@@ -363,6 +196,345 @@ export default function ProfileCardComponent({ id }: { id: number }) {
             </div>
           </div>
         </div>
+      </div>
+      <div key="1" className="w-full">
+        <Card>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardHeader>
+              <CardTitle>
+                <h1 className="flex items-center justify-start w-full">
+                  Mi Perfil
+                </h1>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <div className="grid grid-cols-2 gap-6">
+                {/* <div className="col-span-2 flex flex-col items-center gap-4">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage
+                      alt="Patient Avatar"
+                      src="/placeholder-avatar.jpg"
+                    />
+                    <AvatarFallback>JP</AvatarFallback>
+                  </Avatar>
+                  <Button variant="outline" type="button">
+                    Upload Photo
+                  </Button>
+                </div> */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">Nombre</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="Ingresar nombre"
+                      defaultValue={profile?.firstName}
+                      {...register("firstName", {
+                        required: "Este campo es obligatorio",
+                        minLength: {
+                          value: 2,
+                          message: "El nombre debe tener al menos 2 caracteres",
+                        },
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("firstName", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Apellido</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Ingresar apellido"
+                      defaultValue={profile?.lastName}
+                      {...register("lastName", {
+                        required: "Este campo es obligatorio",
+                        minLength: {
+                          value: 2,
+                          message:
+                            "El apellido debe tener al menos 2 caracteres",
+                        },
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("lastName", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="healthInsurancePlan">
+                      Correo Electrónico
+                    </Label>
+                    <Input
+                      id="email"
+                      placeholder="Ingresar correo electrónico"
+                      defaultValue={profile?.email}
+                      {...register("email", {
+                        // required: "Este campo es obligatorio",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                          message: "Introduce un correo electrónico válido",
+                        },
+                      })}
+                      type="email"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="userName">D.N.I.</Label>
+                    <Input
+                      id="userName"
+                      defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
+                      placeholder="Ingresar D.N.I."
+                      {...register("userName", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El D.N.I. debe contener solo números",
+                        },
+                      })}
+                    />
+                    {errors.userName && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.userName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dob">Fecha de Nacimiento</Label>
+                    <DatePicker
+                      showIcon
+                      selected={startDate}
+                      onChange={handleDateChange}
+                      locale="es"
+                      className="max-w-full"
+                      icon={<FaCalendar color="#0f766e" />}
+                      customInput={<Input className="input-custom-style" />}
+                      dateFormat="d MMMM yyyy"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Teléfono</Label>
+                    <Input
+                      id="phoneNumber"
+                      defaultValue={profile?.phoneNumber}
+                      placeholder="Ingresar teléfono"
+                      {...register("phoneNumber", {
+                        required: "Este campo es obligatorio",
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El Teléfono debe contener solo números",
+                        },
+                      })}
+                    />
+                    {errors.phoneNumber && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.phoneNumber.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber2">Teléfono 2</Label>
+                    <Input
+                      id="phoneNumber2"
+                      placeholder="Ingresar teléfono 2"
+                      defaultValue={profile?.phoneNumber2}
+                      type="tel"
+                      {...register("phoneNumber2", {
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "El teléfono debe contener solo números",
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="bloodType">Sangre </Label>
+                    <BloodSelect control={control} errors={errors} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rhFactor">Factor R.H.</Label>
+                    <RHFactorSelect control={control} errors={errors} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Sexo</Label>
+                    <GenderSelect control={control} errors={errors} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="maritalStatus">Estado Civil</Label>
+                    <MaritalStatusSelect control={control} errors={errors} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="">
+                  <div className="space-y-2">
+                    <Label htmlFor="healthCareProvider">Obra Social</Label>
+                    <Input
+                      className="w-full text-gray-800 cursor-not-allowed"
+                      value={profile?.healthPlans?.map((plan) => plan.name)}
+                      readOnly
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="affiliationNumber">
+                      Número de Obra Social
+                    </Label>
+                    <Input
+                      id="affiliationNumber"
+                      className="w-full text-gray-800 cursor-not-allowed"
+                      defaultValue={profile?.affiliationNumber}
+                      placeholder="Ingresar Número de Afiliado"
+                      // {...register("affiliationNumber", {
+                      //   required: "Este campo es obligatorio",
+                      //   pattern: {
+                      //     value: /^[0-9]+$/,
+                      //     message:
+                      //       "El número de afiliado debe contener solo números",
+                      //   },
+                      // })}
+                    />
+                    {/* {errors.affiliationNumber && (
+                      <p className="text-red-500 text-xs italic">
+                        {errors.affiliationNumber.message}
+                      </p>
+                    )} */}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Observaciones</Label>
+                    <Input
+                      id="observations"
+                      defaultValue={profile?.observations}
+                      placeholder="Ingresar observaciones"
+                      {...register("observations")}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="state">Provincia</Label>
+                    <StateSelect
+                      selected={selectedState}
+                      onStateChange={handleStateChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Ciudad</Label>
+                    <CitySelect
+                      idState={selectedState?.id}
+                      onCityChange={handleCityChange}
+                      selected={selectedCity}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="street">Calle</Label>
+                    <Input
+                      id="street"
+                      placeholder="Ingresar calle"
+                      {...register("address.street", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.street", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="number">N°</Label>
+                    <Input
+                      id="number"
+                      type="number"
+                      placeholder="Ingresar número"
+                      {...register("address.number", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.number", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="floor">Piso</Label>
+                    <Input
+                      id="floor"
+                      type="number"
+                      placeholder="Ingresar piso"
+                      {...register("address.description", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.description", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Departamento</Label>
+                    <Input
+                      id="department"
+                      placeholder="Ingresar departamento"
+                      {...register("address.phoneNumber", {
+                        onChange: (e) => {
+                          const capitalized = capitalizeWords(e.target.value);
+                          setValue("address.phoneNumber", capitalized, {
+                            shouldValidate: true,
+                          });
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end gap-2">
+              <Button variant="outline" type="button" onClick={goBack}>
+                Cambiar Contraseña
+              </Button>
+              <Button variant="teal" type="submit">
+                Modificar Datos
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
       </div>
     </>
   );
