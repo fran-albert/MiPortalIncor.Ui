@@ -40,9 +40,15 @@ import { GenderSelect } from "@/components/Select/Gender/select";
 import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 registerLocale("es", es);
-interface Inputs extends Patient { }
+interface Inputs extends Patient {}
 export function CreatePatientForm() {
-  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<Inputs>();
   const [selectedState, setSelectedState] = useState<State | undefined>(
     undefined
   );
@@ -91,18 +97,18 @@ export function CreatePatientForm() {
       },
       healthPlans: selectedPlan
         ? [
-          {
-            id: selectedPlan.id,
-            name: selectedPlan.name,
-            healthInsurance: {
-              id: selectedHealthInsurance?.id || 0,
-              name: selectedHealthInsurance?.name || "",
+            {
+              id: selectedPlan.id,
+              name: selectedPlan.name,
+              healthInsurance: {
+                id: selectedHealthInsurance?.id || 0,
+                name: selectedHealthInsurance?.name || "",
+              },
             },
-          },
-        ]
+          ]
         : [],
       photo: "",
-      registeredById: Number(session?.user.id), 
+      registeredById: Number(session?.user.id),
     };
 
     try {
@@ -357,15 +363,18 @@ export function CreatePatientForm() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="affiliationNumber">Número de Obra Social</Label>
+                  <Label htmlFor="affiliationNumber">
+                    Número de Obra Social
+                  </Label>
                   <Input
                     id="affiliationNumber"
                     placeholder="Ingresar Número de Afiliado"
                     {...register("affiliationNumber", {
-                      required: "Este campo es obligatorio",
+                      // required: "Este campo es obligatorio",
                       pattern: {
                         value: /^[0-9]+$/,
-                        message: "El número de afiliado debe contener solo números",
+                        message:
+                          "El número de afiliado debe contener solo números",
                       },
                     })}
                   />
