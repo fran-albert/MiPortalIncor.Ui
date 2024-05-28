@@ -10,7 +10,7 @@ export function createApiStudyRepository(): StudyRepository {
     return studies;
   }
 
-  async function uploadStudy(formData: FormData) {
+  async function uploadStudy(formData: FormData): Promise<Study> {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_API}Study/upload-study`,
       formData,
@@ -43,7 +43,7 @@ export function createApiStudyRepository(): StudyRepository {
 
 
   return {
-    getAllStudyType, getUrlByPatient,deleteStudy,
+    getAllStudyType, getUrlByPatient, deleteStudy,
     getAllStudyByPatient,
     uploadStudy,
   };

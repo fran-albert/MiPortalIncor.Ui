@@ -12,9 +12,9 @@ interface StudyState {
     setIsLoading: (isLoading: boolean) => void;
     fetchAllStudies: () => Promise<void>;
     fetchStudiesByPatient: (idPatient: number) => Promise<void>;
-    uploadStudy: (formData: FormData) => Promise<void>;
+    uploadStudy: (formData: FormData) => Promise<Study>;
     deleteStudy: (idStudy: number) => Promise<void>;
-    fetchStudyUrl: (idPatient: number, locationS3: string | undefined) => Promise<void>;
+    fetchStudyUrl: (idPatient: number, locationS3: string | undefined) => Promise<string>;
     addStudy: (newStudy: Study) => void;
     removeStudy: (deletedStudyId: number) => void;
 }
@@ -51,11 +51,16 @@ const useStudyStore = create<StudyState>((set) => ({
     uploadStudy: async (formData) => {
         set({ isLoading: true, error: null });
         try {
-            await studyRepository.uploadStudy(formData);
-            set({ isLoading: false });
+            const newStudy = await studyRepository.uploadStudy(formData);
+            set((state) => ({
+                studies: [...state.studies, newStudy],
+                isLoading: false
+            }));
+            return newStudy;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unexpected error';
             set({ error: errorMessage, isLoading: false });
+            throw error;
         }
     },
 
@@ -63,7 +68,10 @@ const useStudyStore = create<StudyState>((set) => ({
         set({ isLoading: true, error: null });
         try {
             await studyRepository.deleteStudy(idStudy);
-            set({ isLoading: false });
+            set((state) => ({
+                studies: state.studies.filter((study) => study.id !== idStudy),
+                isLoading: false
+            }));
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unexpected error';
             set({ error: errorMessage, isLoading: false });
@@ -71,13 +79,13 @@ const useStudyStore = create<StudyState>((set) => ({
     },
 
     fetchStudyUrl: async (idPatient, locationS3) => {
-        set({ isLoading: true, error: null });
         try {
             const url = await studyRepository.getUrlByPatient(idPatient, locationS3);
-            set({ selectedStudy: url, isLoading: false });
+            return url;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unexpected error';
-            set({ error: errorMessage, isLoading: false });
+            set({ error: errorMessage });
+            return '';
         }
     },
 
