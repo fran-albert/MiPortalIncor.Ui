@@ -436,11 +436,11 @@ function EditPatientForm({ id }: { id: number }) {
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="state">Número de Obra Social</Label>
+                    <Label htmlFor="affiliationNumber">Número de Obra Social</Label>
                     <Input
-                      id="username"
+                      id="affiliationNumber"
                       placeholder="Ingresar N° de Obra Social"
-                      {...register("userName", {
+                      {...register("affiliationNumber", {
                         required: "Este campo es obligatorio",
                         pattern: {
                           value: /^[0-9]+$/,
@@ -448,18 +448,18 @@ function EditPatientForm({ id }: { id: number }) {
                         },
                       })}
                     />
-                    {errors.userName && (
+                    {errors.affiliationNumber && (
                       <p className="text-red-500 text-xs italic">
-                        {errors.userName.message}
+                        {errors.affiliationNumber.message}
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="state">Observaciones</Label>
+                    <Label htmlFor="observations">Observaciones</Label>
                     <Input
-                      id="username"
-                      placeholder="Ingresar D.N.I."
-                      {...register("userName")}
+                      id="observations"
+                      placeholder="Ingresar observaciones"
+                      {...register("observations")}
                     />
                   </div>
                 </div>

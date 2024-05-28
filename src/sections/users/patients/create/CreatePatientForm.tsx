@@ -376,7 +376,7 @@ export function CreatePatientForm() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="state">Observaciones</Label>
+                  <Label htmlFor="observations">Observaciones</Label>
                   <Input
                     id="observations"
                     placeholder="Ingresar observaciones"
