@@ -10,9 +10,8 @@ import {
 import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
 import { getUser } from "@/modules/users/application/get/getUser";
 import Loading from "@/components/Loading/loading";
-import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { MdFamilyRestroom } from "react-icons/md";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 import EditPatientDialog from "../Dialog/dialog";
 import { MdBloodtype } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
@@ -80,8 +79,9 @@ const PatientCardComponent = ({
             <div className="flex items-center gap-2">
               <FaLocationDot className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               <span>
-                {" "}
-                {patient?.address?.street}, {patient?.address?.number} -{" "}
+                {patient?.address?.street && patient?.address?.number
+                  ? `${patient.address.street}, ${patient.address.number} -`
+                  : ""}
                 {patient?.address?.city?.name},{" "}
                 {patient?.address?.city?.state.name}
               </span>
@@ -122,12 +122,14 @@ const PatientCardComponent = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <MdBloodtype className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span>{patient?.maritalStatus}</span>
+              <MdFamilyRestroom className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <span>
+                {patient?.maritalStatus ?? "Estado Civil no asignado"}
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <MdBloodtype className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span>{patient?.observations}</span>
+              <IoIosInformationCircleOutline className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <span>{patient?.observations ?? "Sin observaciones"}</span>
             </div>
           </div>
         </CardContent>

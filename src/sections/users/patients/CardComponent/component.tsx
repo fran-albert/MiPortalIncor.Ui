@@ -10,6 +10,7 @@ import useStudyStore from "@/hooks/useStudy";
 export function PatientComponent({ id }: { id: number }) {
   const { selectedPatient, getPatientById, isLoading, registerBy } =
     usePatient();
+
   const {
     isLoading: isLoadingStudies,
     studies,
@@ -18,6 +19,7 @@ export function PatientComponent({ id }: { id: number }) {
     fetchStudiesByPatient,
     fetchStudyUrl,
   } = useStudyStore();
+
   useEffect(() => {
     getPatientById(id);
     fetchStudiesByPatient(id);

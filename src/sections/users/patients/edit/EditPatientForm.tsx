@@ -41,27 +41,40 @@ import { es } from "date-fns/locale/es";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment-timezone";
 import { Patient } from "@/modules/patients/domain/Patient";
+import { usePatient } from "@/hooks/usePatients";
+import Loading from "@/components/Loading/loading";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 
-function EditPatientForm({ patient }: { patient: Patient | null }) {
-  console.log(patient);
+function EditPatientForm({ id }: { id: number }) {
+  const { selectedPatient, getPatientById, isLoading, registerBy } =
+    usePatient();
+  useEffect(() => {
+    getPatientById(id);
+  }, [id, getPatientById]);
+
   const [selectedState, setSelectedState] = useState<State | undefined>(
-    patient?.address?.city?.state
+    selectedPatient?.address?.city?.state
   );
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
-    patient?.address?.city
+    selectedPatient?.address?.city
   );
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthInsurance | undefined
-  >(patient?.healthPlans?.[0]?.healthInsurance);
+  >(selectedPatient?.healthPlans?.[0]?.healthInsurance);
   const [selectedPlan, setSelectedPlan] = useState<any | null>(
-    patient?.healthPlans?.[0]
+    selectedPatient?.healthPlans?.[0]
   );
-  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
   const [startDate, setStartDate] = useState<Date>(
-    new Date(patient?.birthDate ?? new Date())
+    new Date(selectedPatient?.birthDate ?? new Date())
   );
 
   const handleStateChange = (state: State) => {
@@ -76,13 +89,13 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
     }
   };
   useEffect(() => {
-    if (patient) {
+    if (selectedPatient) {
       if (selectedCity) {
         setValue("address.city", selectedCity, { shouldValidate: true });
       }
       setValue("healthPlans", selectedPlan ? [selectedPlan] : []);
     }
-  }, [patient, selectedCity, selectedPlan, setValue]);
+  }, [selectedPatient, selectedCity, selectedPlan, setValue]);
 
   const handleHealthInsuranceChange = (healthInsurance: HealthInsurance) => {
     setSelectedHealthInsurance(healthInsurance);
@@ -100,23 +113,26 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
   };
 
   useEffect(() => {
-    if (patient) {
-      const patientBirthDate = new Date(patient?.birthDate ?? new Date());
+    if (selectedPatient) {
+      const patientBirthDate = new Date(
+        selectedPatient?.birthDate ?? new Date()
+      );
       setStartDate(patientBirthDate);
+
       const dateInArgentina = moment(patientBirthDate).tz(
         "America/Argentina/Buenos_Aires"
       );
       const formattedDateISO = dateInArgentina.format();
       setValue("birthDate", formattedDateISO);
     }
-  }, [patient, setValue]);
+  }, [selectedPatient, setValue]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { address, ...rest } = data;
     const formattedUserName = removeDotsFromDni(data.userName);
     const addressToSend = {
       ...address,
-      id: patient?.address.id,
+      id: selectedPatient?.address.id,
       city: {
         ...selectedCity,
         state: selectedState,
@@ -138,14 +154,17 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
             },
           ]
         : [],
-      photo: patient?.photo,
+      photo: selectedPatient?.photo,
+      registeredById: selectedPatient?.registeredById,
     };
+
+    console.log("Data to send", dataToSend);
 
     try {
       const patientRepository = createApiPatientRepository();
       const updatePatientFn = updatePatient(patientRepository);
       const patientCreationPromise = updatePatientFn(
-        Number(patient?.userId),
+        Number(selectedPatient?.userId),
         dataToSend
       );
 
@@ -166,6 +185,10 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
       console.error("Error al actualizar el paciente", error);
     }
   };
+
+  if (isLoading) {
+    return <Loading isLoading={true} />;
+  }
 
   return (
     <>
@@ -209,7 +232,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="firstName"
                       placeholder="Ingresar nombre"
-                      defaultValue={patient?.firstName}
+                      defaultValue={selectedPatient?.firstName}
                       {...register("firstName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -235,7 +258,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="lastName"
                       placeholder="Ingresar apellido"
-                      defaultValue={patient?.lastName}
+                      defaultValue={selectedPatient?.lastName}
                       {...register("lastName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -266,7 +289,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="email"
                       placeholder="Ingresar correo electrónico"
-                      defaultValue={patient?.email}
+                      defaultValue={selectedPatient?.email}
                       {...register("email", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -290,7 +313,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="username"
                       placeholder="Ingresar D.N.I."
-                      defaultValue={patient?.dni}
+                      defaultValue={selectedPatient?.dni}
                       {...register("userName", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -324,7 +347,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Label htmlFor="phoneNumber">Teléfono</Label>
                     <Input
                       id="phoneNumber"
-                      defaultValue={patient?.phoneNumber}
+                      defaultValue={selectedPatient?.phoneNumber}
                       placeholder="Ingresar teléfono"
                       {...register("phoneNumber", {
                         required: "Este campo es obligatorio",
@@ -345,7 +368,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="phone"
                       placeholder="Ingresar teléfono 2"
-                      defaultValue={patient?.phoneNumber2}
+                      defaultValue={selectedPatient?.phoneNumber2}
                       type="tel"
                       {...register("phoneNumber2", {
                         pattern: {
@@ -358,22 +381,38 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Sangre </Label>
-                    <BloodSelect control={control} errors={errors} />
+                    <Label htmlFor="bloodType">Sangre </Label>
+                    <BloodSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedPatient?.bloodType)}
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="dob">Factor R.H.</Label>
-                    <RHFactorSelect control={control} errors={errors} />
+                    <Label htmlFor="rhFactor">Factor R.H.</Label>
+                    <RHFactorSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedPatient?.rhFactor)}
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Sexo</Label>
-                    <GenderSelect control={control} errors={errors} />
+                    <Label htmlFor="gender">Sexo</Label>
+                    <GenderSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedPatient?.gender)}
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="dob">Estado Civil</Label>
-                    <MaritalStatusSelect control={control} errors={errors} />
+                    <Label htmlFor="maritalStatus">Estado Civil</Label>
+                    <MaritalStatusSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedPatient?.maritalStatus)}
+                    />
                   </div>
                 </div>
               </div>
@@ -447,7 +486,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="street"
                       placeholder="Ingresar calle"
-                      defaultValue={patient?.address.street}
+                      defaultValue={selectedPatient?.address.street}
                       {...register("address.street", {
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);
@@ -463,7 +502,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="number"
                       type="number"
-                      defaultValue={patient?.address.number}
+                      defaultValue={selectedPatient?.address.number}
                       placeholder="Ingresar número"
                       {...register("address.number", {
                         onChange: (e) => {
@@ -479,7 +518,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Label htmlFor="floor">Piso</Label>
                     <Input
                       id="floor"
-                      defaultValue={patient?.address.description}
+                      defaultValue={selectedPatient?.address.description}
                       type="number"
                       placeholder="Ingresar piso"
                       {...register("address.description", {
@@ -497,7 +536,7 @@ function EditPatientForm({ patient }: { patient: Patient | null }) {
                     <Input
                       id="department"
                       placeholder="Ingresar departamento"
-                      defaultValue={patient?.address.phoneNumber}
+                      defaultValue={selectedPatient?.address.phoneNumber}
                       {...register("address.phoneNumber", {
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);

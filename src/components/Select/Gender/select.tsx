@@ -11,24 +11,21 @@ import {
 import { useForm, Controller } from "react-hook-form";
 
 interface GenderSelectProps {
-  onGender?: (value: string) => void;
   control: any;
   errors: any;
+  defaultValue: string;
 }
-export const GenderSelect = ({ onGender, control, errors }: GenderSelectProps) => {
-  const [selected, setSelected] = useState<string>("");
-  const handleValueChange = (selected: string) => {
-    setSelected(selected);
-    if (onGender) {
-      onGender(selected);
-    }
-  };
-
+export const GenderSelect = ({
+  control,
+  errors,
+  defaultValue,
+}: GenderSelectProps) => {
   return (
     <Controller
       name="gender"
       control={control}
       rules={{ required: "Este campo es obligatorio" }}
+      defaultValue={defaultValue}
       render={({ field }) => (
         <div>
           <Select {...field} onValueChange={(value) => field.onChange(value)}>
@@ -48,5 +45,5 @@ export const GenderSelect = ({ onGender, control, errors }: GenderSelectProps) =
         </div>
       )}
     />
-  )
+  );
 };
