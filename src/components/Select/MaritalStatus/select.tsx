@@ -11,7 +11,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 
 interface MaritalStatusSelectProps {
-  defaultValue: string;
+  defaultValue?: string;
   control: any;
   errors: any;
 }

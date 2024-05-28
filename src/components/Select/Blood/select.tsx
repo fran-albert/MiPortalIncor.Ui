@@ -11,7 +11,7 @@ import {
 import { Controller } from "react-hook-form";
 interface BloodSelectProps {
   control: any;
-  defaultValue: string;
+  defaultValue?: string;
   errors: any;
 }
 export const BloodSelect = ({
