@@ -11,15 +11,17 @@ import {
 import { useForm, Controller } from "react-hook-form";
 
 interface MaritalStatusSelectProps {
+  defaultValue: string;
   control: any;
   errors: any;
 }
 export const MaritalStatusSelect = ({
-  control, errors
+  control, errors, defaultValue
 }: MaritalStatusSelectProps) => {
   return (
     <Controller
       name="maritalStatus"
+      defaultValue={defaultValue}
       control={control}
       // rules={{ required: "Este campo es obligatorio" }}
       render={({ field }) => (

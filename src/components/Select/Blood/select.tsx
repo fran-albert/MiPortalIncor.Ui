@@ -11,16 +11,19 @@ import {
 import { Controller } from "react-hook-form";
 interface BloodSelectProps {
   control: any;
+  defaultValue: string;
   errors: any;
 }
-export const BloodSelect = ({ control, errors }: BloodSelectProps) => {
-
-
+export const BloodSelect = ({
+  control,
+  errors,
+  defaultValue,
+}: BloodSelectProps) => {
   return (
-
     <Controller
       name="bloodType"
       control={control}
+      defaultValue={defaultValue}
       // rules={{ required: "Este campo es obligatorio" }}
       render={({ field }) => (
         <div>

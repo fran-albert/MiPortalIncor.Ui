@@ -45,17 +45,17 @@ export function Login() {
       <Loading isLoading={isLoading} />
       <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px] ">
         <div className="hidden lg:flex lg:items-center lg:justify-center lg:bg-gray-100 dark:lg:bg-gray-800">
-          {/* <img
+          <img
             alt="Image"
             className="h-full w-full object-cover"
             height="1080"
-            src="/placeholder.svg"
+            src="https://incor-ranking.s3.us-east-1.amazonaws.com/storage/images/leonellopez28_A_3540_year_old_doctor_sitting_in_the_desk_chair__b819a8cb-388b-42d0-9a41-822de2c838f5.png"
             style={{
               aspectRatio: "1920/1080",
               objectFit: "cover",
             }}
             width="1920"
-          /> */}
+          />
         </div>
         <div className="flex items-center justify-center p-6 lg:p-10">
           {/* <div className="border-solid border-4 border-teal-500 rounded-md p-10 border-spacing-56 "> */}
