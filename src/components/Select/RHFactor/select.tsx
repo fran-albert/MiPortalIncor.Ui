@@ -13,7 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 interface RHFactorSelectProps {
   control: any;
   errors: any;
-  defaultValue: string;
+  defaultValue?: string;
 }
 export const RHFactorSelect = ({
   control,

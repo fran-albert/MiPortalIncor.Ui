@@ -13,7 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 interface GenderSelectProps {
   control: any;
   errors: any;
-  defaultValue: string;
+  defaultValue?: string;
 }
 export const GenderSelect = ({
   control,
