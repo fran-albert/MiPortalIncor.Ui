@@ -7,62 +7,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { User } from "@/modules/users/domain/User";
-import { useSession } from "next-auth/react";
-import { createApiUserRepository } from "@/modules/users/infra/ApiUserRepository";
-import { getUser } from "@/modules/users/application/get/getUser";
-import Loading from "@/components/Loading/loading";
-import { FaUpload } from "react-icons/fa";
-import { useParams } from "next/navigation";
 import { FaRegFilePdf } from "react-icons/fa";
-import { AiOutlineDelete, AiOutlineFileJpg } from "react-icons/ai";
 import StudyDialog from "./Dialog/dialog";
-import { Patient } from "@/modules/patients/domain/Patient";
-import { Study } from "@/modules/study/domain/Study";
 import { formatDate } from "@/common/helpers/helpers";
-import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import useRoles from "@/hooks/useRoles";
 import DeleteStudyDialog from "./Delete/dialog";
+import useStudyStore from "@/hooks/useStudy";
 
 interface UrlMap {
   [key: number]: string;
 }
 
-const StudiesCardComponent = ({
-  studies,
-  fetchStudyUrl,
-  idPatient,
-  onStudyAdded,
-  onStudyDeleted,
-}: {
-  studies: Study[];
-  idPatient: number;
-  fetchStudyUrl?: (idPatient: number, locationS3: string) => void;
-  onStudyAdded?: (newStudy: Study) => void;
-  onStudyDeleted?: (idStudy: number) => void;
-}) => {
+const StudiesCardComponent = ({ idPatient }: { idPatient: number }) => {
   const [urls, setUrls] = useState<UrlMap>({});
-  const { isPatient, isSecretary, isDoctor } = useRoles();
+  const { isSecretary } = useRoles();
+  const { studies, fetchStudiesByPatient, fetchStudyUrl } = useStudyStore();
+  useEffect(() => {
+    fetchStudiesByPatient(idPatient);
+  }, [idPatient, fetchStudiesByPatient]);
   useEffect(() => {
     const fetchUrls = async () => {
       if (studies) {
-        const studyRepository = createApiStudyRepository();
         const newUrls: UrlMap = {};
-
         for (const study of studies) {
-          const url = await studyRepository.getUrlByPatient(
-            idPatient,
-            study.locationS3
-          );
+          const url = await fetchStudyUrl(idPatient, study.locationS3);
           newUrls[study.id] = url;
         }
-
         setUrls(newUrls);
       }
     };
-
     fetchUrls();
-  }, [studies]);
+  }, [studies, fetchStudyUrl, idPatient]);
 
   return (
     <>
@@ -96,7 +71,6 @@ const StudiesCardComponent = ({
                         <DeleteStudyDialog
                           studies={studies}
                           idStudy={study.id}
-                          onStudyDeleted={onStudyDeleted}
                         />
                       )}
                     </div>
@@ -110,10 +84,7 @@ const StudiesCardComponent = ({
             </div>
             {isSecretary && (
               <div className="mt-auto">
-                <StudyDialog
-                  idPatient={idPatient}
-                  onStudyAdded={onStudyAdded}
-                />
+                <StudyDialog idPatient={idPatient} />
               </div>
             )}
           </div>

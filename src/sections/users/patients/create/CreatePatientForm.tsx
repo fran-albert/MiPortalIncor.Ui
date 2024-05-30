@@ -34,11 +34,11 @@ import { useCustomSession } from "@/context/SessionAuthProviders";
 import "@/styles/custom.datepicker.css";
 import { capitalizeWords } from "@/common/helpers/helpers";
 import { FaCalendar } from "react-icons/fa6";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BloodSelect } from "@/components/Select/Blood/select";
 import { RHFactorSelect } from "@/components/Select/RHFactor/select";
 import { GenderSelect } from "@/components/Select/Gender/select";
 import { MaritalStatusSelect } from "@/components/Select/MaritalStatus/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 export function CreatePatientForm() {

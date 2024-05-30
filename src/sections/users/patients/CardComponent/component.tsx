@@ -11,20 +11,9 @@ export function PatientComponent({ id }: { id: number }) {
   const { selectedPatient, getPatientById, isLoading, registerBy } =
     usePatient();
 
-  const {
-    isLoading: isLoadingStudies,
-    studies,
-    addStudy,
-    deleteStudy,
-    fetchStudiesByPatient,
-    fetchStudyUrl,
-  } = useStudyStore();
-
   useEffect(() => {
     getPatientById(id);
-    fetchStudiesByPatient(id);
-    fetchStudyUrl;
-  }, [id, getPatientById, fetchStudiesByPatient, fetchStudyUrl]);
+  }, [id, getPatientById]);
 
   const registerByText =
     registerBy?.firstName +
@@ -34,7 +23,7 @@ export function PatientComponent({ id }: { id: number }) {
     "- " +
     formatDateWithTime(String(selectedPatient?.registrationDate));
 
-  if (isLoading || isLoadingStudies) {
+  if (isLoading) {
     return <Loading isLoading={true} />;
   }
 
@@ -45,13 +34,7 @@ export function PatientComponent({ id }: { id: number }) {
         registerBy={registerByText}
       />
       <div className="grid gap-6">
-        <StudiesCardComponent
-          studies={studies}
-          idPatient={Number(selectedPatient?.userId)}
-          onStudyAdded={addStudy}
-          onStudyDeleted={deleteStudy}
-          fetchStudyUrl={fetchStudyUrl}
-        />
+        <StudiesCardComponent idPatient={Number(selectedPatient?.userId)} />
         {/* <HistoryCardComponent /> */}
         {/* <DoctorHealthInsuranceComponent doctor={doctor} /> */}
         {/* <Card>

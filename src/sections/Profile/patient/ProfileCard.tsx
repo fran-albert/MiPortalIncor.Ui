@@ -138,7 +138,8 @@ export default function ProfileCardComponent({ id }: { id: number }) {
       userName: formattedUserName,
       address: addressToSend,
       healthPlans: selectedPlan ? [selectedPlan] : profile?.healthPlans,
-      photo: "photo",
+      photo: profile?.photo,
+      registeredById: profile?.registeredById,
     };
 
     console.log("Data to send", dataToSend);
@@ -345,21 +346,37 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="bloodType">Sangre </Label>
-                    <BloodSelect control={control} errors={errors} defaultValue={String(profile?.bloodType)} />
+                    <BloodSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(profile?.bloodType)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="rhFactor">Factor R.H.</Label>
-                    <RHFactorSelect control={control} errors={errors}  defaultValue={String(profile?.rhFactor)}/>
+                    <RHFactorSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(profile?.rhFactor)}
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="gender">Sexo</Label>
-                    <GenderSelect control={control} errors={errors}  defaultValue={String(profile?.gender)}/>
+                    <GenderSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(profile?.gender)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="maritalStatus">Estado Civil</Label>
-                    <MaritalStatusSelect control={control} errors={errors}  defaultValue={String(profile?.maritalStatus)}/>
+                    <MaritalStatusSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(profile?.maritalStatus)}
+                    />
                   </div>
                 </div>
               </div>

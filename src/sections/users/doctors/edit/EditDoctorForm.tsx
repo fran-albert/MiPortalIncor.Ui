@@ -43,7 +43,7 @@ import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
 import { HealthInsuranceDoctorSelect } from "@/components/Select/Health Insurance/selectDoctor";
 import { goBack } from "@/lib/utils";
 
-interface Inputs extends Doctor { }
+interface Inputs extends Doctor {}
 const doctorRepository = createApiDoctorRepository();
 
 function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
@@ -53,8 +53,12 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
     doctor?.address?.city
   );
-  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<HealthInsurance[]>(doctor?.healthInsurances || []);
-  const [selectedSpecialities, setSelectedSpecialities] = useState<Speciality[]>(doctor?.specialities || []);
+  const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
+    HealthInsurance[]
+  >(doctor?.healthInsurances || []);
+  const [selectedSpecialities, setSelectedSpecialities] = useState<
+    Speciality[]
+  >(doctor?.specialities || []);
 
   const {
     register,
@@ -69,7 +73,6 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
   const [startDate, setStartDate] = useState(
     doctor ? new Date(String(doctor.birthDate)) : new Date()
   );
-
 
   const handleStateChange = (state: State) => {
     setSelectedState(state);
@@ -118,7 +121,10 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
 
     try {
       const updateDoctorFn = updateDoctor(doctorRepository);
-      const doctorCreationPromise = updateDoctorFn(dataToSend, Number(doctor?.userId));
+      const doctorCreationPromise = updateDoctorFn(
+        dataToSend,
+        Number(doctor?.userId)
+      );
 
       toast.promise(doctorCreationPromise, {
         loading: "Actualizando médico...",
@@ -211,7 +217,8 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                         required: "Este campo es obligatorio",
                         minLength: {
                           value: 2,
-                          message: "El apellido debe tener al menos 2 caracteres",
+                          message:
+                            "El apellido debe tener al menos 2 caracteres",
                         },
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);

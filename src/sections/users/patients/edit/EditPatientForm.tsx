@@ -436,12 +436,14 @@ function EditPatientForm({ id }: { id: number }) {
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="affiliationNumber">Número de Obra Social</Label>
+                    <Label htmlFor="affiliationNumber">
+                      Número de Obra Social
+                    </Label>
                     <Input
                       id="affiliationNumber"
                       placeholder="Ingresar N° de Obra Social"
                       {...register("affiliationNumber", {
-                        required: "Este campo es obligatorio",
+                        // required: "Este campo es obligatorio",
                         pattern: {
                           value: /^[0-9]+$/,
                           message: "Este campo debe contener solo números",

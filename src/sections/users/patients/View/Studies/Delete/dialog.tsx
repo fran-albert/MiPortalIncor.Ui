@@ -18,13 +18,11 @@ import { Study } from "@/modules/study/domain/Study";
 interface DeleteStudyDialogProps {
   idStudy: number;
   studies: Study[];
-  onStudyDeleted?: (idStudy: number) => void;
 }
 
 export default function DeleteStudyDialog({
   idStudy,
   studies,
-  onStudyDeleted,
 }: DeleteStudyDialogProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleDialog = () => setIsOpen(!isOpen);
@@ -32,11 +30,11 @@ export default function DeleteStudyDialog({
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteStudy(idStudy);
-      toast.success("Estudio eliminado con éxito!");
-      if (onStudyDeleted) {
-        onStudyDeleted(idStudy);
-      }
+      toast.promise(deleteStudy(idStudy), {
+        loading: "Eliminando estudio...",
+        success: "Estudio eliminado con éxito!",
+        error: "Error al eliminar el estudio",
+      });
     } catch (error) {
       console.error("Error al eliminar el estudio", error);
       toast.error("Error al eliminar el estudio");

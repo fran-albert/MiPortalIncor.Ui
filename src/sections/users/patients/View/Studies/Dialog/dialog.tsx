@@ -29,17 +29,13 @@ import { Study } from "@/modules/study/domain/Study";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyRepository";
 import { uploadStudy } from "@/modules/study/application/upload-study/uploadStudy";
-interface AddLabDialogProps {
+import useStudyStore from "@/hooks/useStudy";
+interface AddStudyProps {
   idPatient: number | null;
-  onStudyAdded?: (newStudy: Study) => void;
 }
 
-export default function StudyDialog({
-  idPatient,
-  onStudyAdded,
-}: AddLabDialogProps) {
+export default function StudyDialog({ idPatient }: AddStudyProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
   const toggleDialog = () => setIsOpen(!isOpen);
   const [selectedStudy, setSelectedStudy] = useState<Study | null>(null);
   const {
@@ -51,6 +47,7 @@ export default function StudyDialog({
   } = useForm();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [startDate, setStartDate] = useState(new Date());
+  const uploadStudy = useStudyStore((state) => state.uploadStudy);
   const handleDateChange = (date: Date) => {
     const dateInArgentina = moment(date).tz("America/Argentina/Buenos_Aires");
     const formattedDateISO = dateInArgentina.format();
@@ -74,26 +71,17 @@ export default function StudyDialog({
     formData.append("Date", formattedDateISO);
     formData.append("Note", data.Note);
 
-    const studyRepository = createApiStudyRepository();
-    const uploadStudyFn = uploadStudy(studyRepository);
-
     try {
-      const uploadStudyPromise = uploadStudyFn(formData);
-
-      toast.promise(uploadStudyPromise, {
+      toast.promise(uploadStudy(formData), {
         loading: "Subiendo estudio...",
-        success: (responseText) => {
-          toggleDialog();
-          if (onStudyAdded) {
-            onStudyAdded(responseText);
-          }
-          return responseText;
-        },
-        error: "Error al subir el estudio",
+        success: "Estudio subido con éxito!",
+        error: "Error al agregar el estudio",
       });
     } catch (error) {
-      console.error("Error al subir el estudio", error);
-      toast.error("Error al subir el estudio");
+      console.error("Error al agregar el estudio", error);
+      toast.error("Error al agregar el estudio");
+    } finally {
+      setIsOpen(false);
     }
   };
 
