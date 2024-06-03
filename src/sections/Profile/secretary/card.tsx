@@ -29,6 +29,7 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
     register,
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
@@ -296,16 +297,20 @@ export default function ProfileSecretaryCardComponent({ id }: { id: number }) {
                     <div>
                       <Label htmlFor="state">Provincia *</Label>
                       <StateSelect
-                        selected={selectedState}
+                        control={control}
+                        defaultValue={profile?.address?.city?.state}
+                        errors={errors}
                         onStateChange={handleStateChange}
                       />
                     </div>
                     <div>
                       <Label htmlFor="city">Ciudad *</Label>
                       <CitySelect
-                        idState={selectedState?.id}
+                        control={control}
+                        errors={errors}
+                        defaultValue={profile?.address?.city}
+                        idState={selectedState ? selectedState.id : undefined}
                         onCityChange={handleCityChange}
-                        selected={selectedCity}
                       />
                     </div>
                   </div>

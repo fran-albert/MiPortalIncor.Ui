@@ -47,6 +47,7 @@ import moment from "moment-timezone";
 import { toast } from "sonner";
 import { updatePatient } from "@/modules/patients/application/update/updatePatient";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { usePatient } from "@/hooks/usePatients";
 registerLocale("es", es);
 interface Inputs extends Patient {}
 const userRepository = createApiPatientRepository();
@@ -60,44 +61,26 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     setValue,
     formState: { errors },
   } = useForm<Inputs>();
-  const [profile, setProfile] = useState<Patient | null>();
-  const [selectedState, setSelectedState] = useState<State>();
+  const { selectedPatient, getPatientById, isLoading, updatePatient } =
+    usePatient();
 
+  useEffect(() => {
+    getPatientById(id);
+  }, [id, getPatientById]);
   const [selectedHealthInsurance, setSelectedHealthInsurance] = useState<
     HealthInsurance | undefined
   >();
   const [selectedPlan, setSelectedPlan] = useState<HealthPlans | undefined>();
-  const [selectedCity, setSelectedCity] = useState<City>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [startDate, setStartDate] = useState(new Date());
-  const { isPatient, isSecretary, isDoctor } = useRoles();
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    selectedPatient?.address?.city?.state
+  );
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(
+    selectedPatient?.address?.city
+  );
+  const [startDate, setStartDate] = useState(
+    selectedPatient ? new Date(String(selectedPatient.birthDate)) : new Date()
+  );
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-  useEffect(() => {
-    const loadPatient = getPatient(userRepository);
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadPatient(id);
-        setProfile(userData);
-        setSelectedState(userData?.address.city.state);
-        setSelectedCity(userData?.address.city);
-        setStartDate(new Date(userData?.birthDate ?? new Date()));
-        if (userData) {
-          setValue("maritalStatus", userData.maritalStatus);
-          setValue("gender", userData.gender);
-          setValue("rhFactor", userData.rhFactor);
-          setValue("bloodType", userData.bloodType);
-        }
-      } catch (error) {
-        console.error("Error al cargar los datos del perfil:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
   const handleStateChange = (state: State) => {
     setSelectedState(state);
   };
@@ -127,7 +110,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     const { address, ...rest } = data;
     const addressToSend = {
       ...address,
-      id: profile?.address.id,
+      id: selectedPatient?.address.id,
       city: {
         ...selectedCity,
         state: selectedState,
@@ -137,18 +120,13 @@ export default function ProfileCardComponent({ id }: { id: number }) {
       ...rest,
       userName: formattedUserName,
       address: addressToSend,
-      healthPlans: selectedPlan ? [selectedPlan] : profile?.healthPlans,
-      photo: profile?.photo,
-      registeredById: profile?.registeredById,
+      healthPlans: selectedPlan ? [selectedPlan] : selectedPatient?.healthPlans,
+      photo: selectedPatient?.photo,
+      registeredById: selectedPatient?.registeredById,
     };
 
-    console.log("Data to send", dataToSend);
-
     try {
-      const patientRepository = createApiPatientRepository();
-      const updatePatientFn = updatePatient(patientRepository);
-      const patientCreationPromise = updatePatientFn(Number(id), dataToSend);
-
+      const patientCreationPromise = updatePatient(Number(id), dataToSend);
       toast.promise(patientCreationPromise, {
         loading: "Actualizando datos...",
         success: "Datos actualizados con éxito!",
@@ -168,6 +146,21 @@ export default function ProfileCardComponent({ id }: { id: number }) {
     setStartDate(date);
     setValue("birthDate", formattedDateISO);
   };
+
+  useEffect(() => {
+    if (selectedPatient) {
+      const patientBirthDate = new Date(
+        selectedPatient?.birthDate ?? new Date()
+      );
+      setStartDate(patientBirthDate);
+
+      const dateInArgentina = moment(patientBirthDate).tz(
+        "America/Argentina/Buenos_Aires"
+      );
+      const formattedDateISO = dateInArgentina.format();
+      setValue("birthDate", formattedDateISO);
+    }
+  }, [selectedPatient, setValue]);
 
   if (isLoading) {
     return <Loading isLoading />;
@@ -205,7 +198,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Input
                       id="firstName"
                       placeholder="Ingresar nombre"
-                      defaultValue={profile?.firstName}
+                      defaultValue={selectedPatient?.firstName}
                       {...register("firstName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -231,7 +224,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Input
                       id="lastName"
                       placeholder="Ingresar apellido"
-                      defaultValue={profile?.lastName}
+                      defaultValue={selectedPatient?.lastName}
                       {...register("lastName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -262,7 +255,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Input
                       id="email"
                       placeholder="Ingresar correo electrónico"
-                      defaultValue={profile?.email}
+                      defaultValue={selectedPatient?.email}
                       {...register("email", {
                         // required: "Este campo es obligatorio",
                         pattern: {
@@ -287,7 +280,11 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                       id="userName"
                       className="w-full cursor-not-allowed"
                       readOnly
-                      defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
+                      defaultValue={
+                        selectedPatient?.dni
+                          ? formatDni(selectedPatient?.dni)
+                          : ""
+                      }
                       placeholder="Ingresar D.N.I."
                       {...register("userName")}
                     />
@@ -311,7 +308,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Label htmlFor="phoneNumber">Teléfono</Label>
                     <Input
                       id="phoneNumber"
-                      defaultValue={profile?.phoneNumber}
+                      defaultValue={selectedPatient?.phoneNumber}
                       placeholder="Ingresar teléfono"
                       {...register("phoneNumber", {
                         required: "Este campo es obligatorio",
@@ -332,7 +329,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Input
                       id="phoneNumber2"
                       placeholder="Ingresar teléfono 2"
-                      defaultValue={profile?.phoneNumber2}
+                      defaultValue={selectedPatient?.phoneNumber2}
                       type="tel"
                       {...register("phoneNumber2", {
                         pattern: {
@@ -349,7 +346,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <BloodSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.bloodType)}
+                      defaultValue={String(selectedPatient?.bloodType) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -357,7 +354,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <RHFactorSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.rhFactor)}
+                      defaultValue={String(selectedPatient?.rhFactor) || ""}
                     />
                   </div>
                 </div>
@@ -367,7 +364,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <GenderSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.gender)}
+                      defaultValue={String(selectedPatient?.gender) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -375,7 +372,9 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <MaritalStatusSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.maritalStatus)}
+                      defaultValue={
+                        String(selectedPatient?.maritalStatus) || ""
+                      }
                     />
                   </div>
                 </div>
@@ -387,7 +386,9 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Label htmlFor="healthCareProvider">Obra Social</Label>
                     <Input
                       className="w-full text-gray-800 cursor-not-allowed"
-                      value={profile?.healthPlans?.map((plan) => plan.name)}
+                      value={selectedPatient?.healthPlans?.map(
+                        (plan) => plan.name
+                      )}
                       readOnly
                     />
                   </div>
@@ -400,7 +401,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Input
                       id="affiliationNumber"
                       className="w-full text-gray-800 cursor-not-allowed"
-                      defaultValue={profile?.affiliationNumber}
+                      defaultValue={selectedPatient?.affiliationNumber}
                       placeholder="Ingresar Número de Afiliado"
                       readOnly
                       // {...register("affiliationNumber", {
@@ -422,7 +423,7 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                     <Label htmlFor="state">Observaciones</Label>
                     <Input
                       id="observations"
-                      defaultValue={profile?.observations}
+                      defaultValue={selectedPatient?.observations}
                       placeholder="Ingresar observaciones"
                       {...register("observations")}
                     />
@@ -432,16 +433,20 @@ export default function ProfileCardComponent({ id }: { id: number }) {
                   <div className="space-y-2">
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
-                      selected={selectedState}
+                      control={control}
+                      defaultValue={selectedPatient?.address?.city?.state}
+                      errors={errors}
                       onStateChange={handleStateChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Ciudad</Label>
                     <CitySelect
-                      idState={selectedState?.id}
+                      control={control}
+                      errors={errors}
+                      defaultValue={selectedPatient?.address?.city}
+                      idState={selectedState ? selectedState.id : undefined}
                       onCityChange={handleCityChange}
-                      selected={selectedCity}
                     />
                   </div>
                 </div>

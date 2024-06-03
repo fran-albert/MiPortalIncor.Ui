@@ -29,8 +29,7 @@ import { getUser } from "@/modules/users/application/get/getUser";
 import { User } from "@/modules/users/domain/User";
 import moment from "moment-timezone";
 import { formatDate, formatDni } from "@/common/helpers/helpers";
-import useRoles from "@/hooks/useRoles";
-import { Patient } from "@/modules/patients/domain/Patient";
+import { useDoctorStore } from "@/hooks/useDoctors";
 import { createApiPatientRepository } from "@/modules/patients/infra/ApiPatientRepository";
 import { getPatient } from "@/modules/patients/application/get/getPatient";
 import { State } from "@/modules/state/domain/State";
@@ -52,12 +51,23 @@ import ChangePasswordDialog from "../changePassword/dialog";
 interface Inputs extends Doctor {}
 
 export default function ProfileDoctorCardComponent({ id }: { id: number }) {
-  const [profile, setProfile] = useState<Doctor | undefined>();
-  const { isPatient, isSecretary, isDoctor } = useRoles();
-  const [selectedState, setSelectedState] = useState<State>();
-  const [selectedCity, setSelectedCity] = useState<City>();
+  const { selectedDoctor, getDoctorById, updateDoctor, isLoading } =
+    useDoctorStore();
+  useEffect(() => {
+    getDoctorById(id);
+  }, [id, getDoctorById]);
+
+  const [selectedState, setSelectedState] = useState<State | undefined>(
+    selectedDoctor?.address?.city?.state
+  );
+  const [selectedCity, setSelectedCity] = useState<City | undefined>(
+    selectedDoctor?.address?.city
+  );
+  const [startDate, setStartDate] = useState<Date>(
+    new Date(selectedDoctor?.birthDate ?? new Date())
+  );
+
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-  const [startDate, setStartDate] = useState(new Date());
   const {
     register,
     handleSubmit,
@@ -66,41 +76,12 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
     setValue,
     formState: { errors },
   } = useForm<Inputs>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
     HealthInsurance[]
-  >(profile?.healthInsurances || []);
+  >(selectedDoctor?.healthInsurances || []);
   const [selectedSpecialities, setSelectedSpecialities] = useState<
     Speciality[]
-  >(profile?.specialities || []);
-  useEffect(() => {
-    const userRepository = createApiDoctorRepository();
-    const loadDoctor = getDoctor(userRepository);
-
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const userData = await loadDoctor(id);
-        setProfile(userData);
-        setSelectedState(userData?.address.city.state);
-        setSelectedCity(userData?.address.city);
-        setStartDate(new Date(userData?.birthDate ?? new Date()));
-        if (userData) {
-          setValue("maritalStatus", userData.maritalStatus);
-          setValue("gender", userData.gender);
-          setValue("rhFactor", userData.rhFactor);
-          setValue("bloodType", userData.bloodType);
-        }
-      } catch (error) {
-        console.error("Error al cargar los datos del perfil:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
+  >(selectedDoctor?.specialities || []);
   const handleStateChange = (state: State) => {
     setSelectedState(state);
   };
@@ -108,10 +89,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
   const handleCityChange = (city: City) => {
     setSelectedCity(city);
   };
-
   const [openModal, setOpenModal] = useState<boolean>(false);
-  // const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     // const healthPlansToSend = selectedPlan.map((plan) => ({
@@ -126,7 +104,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
     const { address, ...rest } = data;
     const addressToSend = {
       ...address,
-      id: profile?.address.id,
+      id: selectedDoctor?.address.id,
       city: {
         ...selectedCity,
         state: selectedState,
@@ -205,7 +183,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Input
                       id="firstName"
                       placeholder="Ingresar nombre"
-                      defaultValue={profile?.firstName}
+                      defaultValue={selectedDoctor?.firstName}
                       {...register("firstName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -230,7 +208,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Label htmlFor="lastName">Apellido</Label>
                     <Input
                       id="lastName"
-                      defaultValue={profile?.lastName}
+                      defaultValue={selectedDoctor?.lastName}
                       placeholder="Ingresar apellido"
                       {...register("lastName", {
                         required: "Este campo es obligatorio",
@@ -261,7 +239,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     </Label>
                     <Input
                       id="email"
-                      defaultValue={profile?.email}
+                      defaultValue={selectedDoctor?.email}
                       placeholder="Ingresar correo electrónico"
                       {...register("email", {
                         // required: "Este campo es obligatorio",
@@ -286,7 +264,9 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                       placeholder="Ingresar matrícula"
                       readOnly
                       className="cursor-not-allowed"
-                      defaultValue={formatDni(String(profile?.matricula))}
+                      defaultValue={formatDni(
+                        String(selectedDoctor?.matricula)
+                      )}
                       {...register("matricula", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -304,7 +284,11 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                       id="userName"
                       className="w-full cursor-not-allowed"
                       readOnly
-                      defaultValue={profile?.dni ? formatDni(profile?.dni) : ""}
+                      defaultValue={
+                        selectedDoctor?.dni
+                          ? formatDni(selectedDoctor?.dni)
+                          : ""
+                      }
                       placeholder="Ingresar D.N.I."
                       {...register("userName")}
                     />
@@ -329,7 +313,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Input
                       id="phoneNumber"
                       placeholder="Ingresar teléfono"
-                      defaultValue={profile?.phoneNumber}
+                      defaultValue={selectedDoctor?.phoneNumber}
                       {...register("phoneNumber", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -349,7 +333,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <Input
                       id="phoneNumber2"
                       placeholder="Ingresar teléfono 2"
-                      defaultValue={profile?.phoneNumber2}
+                      defaultValue={selectedDoctor?.phoneNumber2}
                       type="tel"
                       {...register("phoneNumber2", {
                         pattern: {
@@ -366,7 +350,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <BloodSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.bloodType)}
+                      defaultValue={String(selectedDoctor?.bloodType) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -374,7 +358,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <RHFactorSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.rhFactor)}
+                      defaultValue={String(selectedDoctor?.rhFactor) || ""}
                     />
                   </div>
                 </div>
@@ -384,7 +368,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <GenderSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.gender)}
+                      defaultValue={String(selectedDoctor?.gender) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -392,7 +376,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                     <MaritalStatusSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(profile?.maritalStatus)}
+                      defaultValue={String(selectedDoctor?.maritalStatus) || ""}
                     />
                   </div>
                 </div>
@@ -409,7 +393,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                       }
                     /> */}
                     <p className="text-sm font-medium">
-                      {profile?.healthInsurances
+                      {selectedDoctor?.healthInsurances
                         .map(
                           (item) =>
                             item.name.charAt(0).toUpperCase() +
@@ -427,7 +411,7 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                       }
                     /> */}
                     <p className="text-sm font-medium">
-                      {profile?.specialities
+                      {selectedDoctor?.specialities
                         .map((speciality) => speciality.name)
                         .join(", ")}
                     </p>
@@ -461,16 +445,20 @@ export default function ProfileDoctorCardComponent({ id }: { id: number }) {
                   <div className="space-y-2">
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
-                      selected={selectedState}
+                      control={control}
+                      defaultValue={selectedDoctor?.address?.city?.state}
+                      errors={errors}
                       onStateChange={handleStateChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Ciudad</Label>
                     <CitySelect
-                      idState={selectedState?.id}
+                      control={control}
+                      errors={errors}
+                      defaultValue={selectedDoctor?.address?.city}
+                      idState={selectedState ? selectedState.id : undefined}
                       onCityChange={handleCityChange}
-                      selected={selectedCity}
                     />
                   </div>
                 </div>

@@ -3,11 +3,10 @@ import { getColumns } from "./columns";
 import { useEffect, useState } from "react";
 import Loading from "@/components/Loading/loading";
 import { Speciality } from "@/modules/speciality/domain/Speciality";
-import { createApiSpecialityRepository } from "@/modules/speciality/infra/ApiSpecialityRepository";
-import { getAllSpecialities } from "@/modules/speciality/application/get-all/getAllSpecialities";
 import AddSpecialityDialog from "@/components/Button/Add/Speciality/button";
 import EditSpecialityDialog from "../edit/EditSpecialityDialog";
 import useRoles from "@/hooks/useRoles";
+import { useSpecialityStore } from "@/hooks/useSpeciality";
 
 export const SpecialityTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -15,55 +14,25 @@ export const SpecialityTable = () => {
     null
   );
   const { isSecretary, isDoctor } = useRoles();
-  const [isLoading, setIsLoading] = useState(true);
-  const [specialities, setSpecialities] = useState<Speciality[]>([]);
-  const specialityRepository = createApiSpecialityRepository();
-  const loadAllSpecialities = getAllSpecialities(specialityRepository);
   const [isAddSpecialityDialogOpen, setIsAddSpecialityDialogOpen] =
     useState(false);
   const openAddSpecialityDialog = () => setIsAddSpecialityDialogOpen(true);
-  const fetchSpecialities = async () => {
-    try {
-      setIsLoading(true);
-      const specialityData = await loadAllSpecialities();
-      setSpecialities(specialityData);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const handleEditSpeciality = (speciality: Speciality) => {
-    setEditingSpeciality(speciality);
-    setIsEditDialogOpen(true);
-  };
+  const {
+    specialities,
+    isLoading,
+    fetchSpecialities,
+    addSpecialityToList,
+    updateSpecialityInList,
+    removeSpecialityFromList,
+  } = useSpecialityStore();
 
   useEffect(() => {
     fetchSpecialities();
-  }, []);
-
-  const addSpecialityToList = (newSpeciality: Speciality) => {
-    setSpecialities((currentSpecialities) => [
-      ...currentSpecialities,
-      newSpeciality,
-    ]);
-  };
-
-  const updateSpecialityInList = (updatedSpeciality: Speciality) => {
-    setSpecialities((currentSpecialities) =>
-      currentSpecialities.map((speciality) =>
-        speciality.id === updatedSpeciality.id ? updatedSpeciality : speciality
-      )
-    );
-  };
-
-  const removeSpecialityFromList = (idSpeciality: number) => {
-    setSpecialities((currentSpecialities) =>
-      currentSpecialities.filter(
-        (speciality) => Number(speciality.id) !== idSpeciality
-      )
-    );
+  }, [fetchSpecialities]);
+  const handleEditSpeciality = (speciality: Speciality) => {
+    setEditingSpeciality(speciality);
+    setIsEditDialogOpen(true);
   };
 
   const specialityColumns = getColumns(

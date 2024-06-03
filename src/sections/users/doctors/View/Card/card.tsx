@@ -24,7 +24,6 @@ import {
 import { FaLocationDot } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import EditDoctorDialog from "../Dialog/dialog";
 import { EditButton } from "@/components/Button/Edit/button";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { calculateAge, formatDate, formatDni } from "@/common/helpers/helpers";

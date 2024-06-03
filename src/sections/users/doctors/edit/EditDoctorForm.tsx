@@ -34,18 +34,14 @@ registerLocale("es", es);
 import React, { useEffect, useState } from "react";
 import { FaCalendar, FaCamera } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { updateDoctor } from "@/modules/doctors/application/update/updateDoctor";
 import { toast } from "sonner";
 import { Doctor } from "@/modules/doctors/domain/Doctor";
 import { Speciality } from "@/modules/speciality/domain/Speciality";
-import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepository";
-import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
 import { HealthInsuranceDoctorSelect } from "@/components/Select/Health Insurance/selectDoctor";
 import { goBack } from "@/lib/utils";
 import { useDoctorStore } from "@/hooks/useDoctors";
 
 interface Inputs extends Doctor {}
-const doctorRepository = createApiDoctorRepository();
 
 function EditDoctorForm({ id }: { id: number }) {
   const { selectedDoctor, getDoctorById, updateDoctor } = useDoctorStore();

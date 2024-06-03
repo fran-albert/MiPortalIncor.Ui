@@ -12,7 +12,6 @@ import { getUser } from "@/modules/users/application/get/getUser";
 import Loading from "@/components/Loading/loading";
 import { MdFamilyRestroom } from "react-icons/md";
 import { IoIosInformationCircleOutline } from "react-icons/io";
-import EditPatientDialog from "../Dialog/dialog";
 import { MdBloodtype } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 import {
