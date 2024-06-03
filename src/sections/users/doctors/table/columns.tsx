@@ -22,7 +22,12 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       accessorKey: "firstName",
       header: "Médico",
       cell: ({ row }) => (
-        <div className="flex items-center">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() =>
+            (window.location.href = `/usuarios/medicos/${row.original.userId}`)
+          }
+        >
           <Avatar>
             <AvatarImage
               src={
@@ -59,7 +64,9 @@ export const getColumns = (fetchDoctors: () => void): ColumnDef<Doctor>[] => {
       cell: ({ row }) => (
         <div className="flex items-center">
           <p className="text-sm font-medium">
-            {row.original.matricula ? formatMatricula(row.original.matricula) : "Sin matrícula"}
+            {row.original.matricula
+              ? formatMatricula(row.original.matricula)
+              : "Sin matrícula"}
           </p>
         </div>
       ),

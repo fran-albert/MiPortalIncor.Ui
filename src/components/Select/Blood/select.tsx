@@ -19,22 +19,34 @@ export const BloodSelect = ({
   errors,
   defaultValue,
 }: BloodSelectProps) => {
+  const bloodTypes = [
+    { id: "A", name: "A" },
+    { id: "B", name: "B" },
+    { id: "O", name: "O" },
+  ];
+
   return (
     <Controller
       name="bloodType"
       control={control}
-      defaultValue={defaultValue}
       // rules={{ required: "Este campo es obligatorio" }}
+      defaultValue={defaultValue || ""}
       render={({ field }) => (
         <div>
-          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+          <Select
+            {...field}
+            value={field.value}
+            onValueChange={(value) => field.onChange(value)}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Seleccione el tipo de sangre..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="A">A</SelectItem>
-              <SelectItem value="B">B</SelectItem>
-              <SelectItem value="O">O</SelectItem>
+              {bloodTypes.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {errors.bloodType && (

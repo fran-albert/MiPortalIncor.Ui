@@ -47,7 +47,7 @@ registerLocale("es", es);
 interface Inputs extends Patient {}
 
 function EditPatientForm({ id }: { id: number }) {
-  const { selectedPatient, getPatientById, isLoading, registerBy } =
+  const { selectedPatient, getPatientById, isLoading, updatePatient } =
     usePatient();
   useEffect(() => {
     getPatientById(id);
@@ -161,9 +161,7 @@ function EditPatientForm({ id }: { id: number }) {
     console.log("Data to send", dataToSend);
 
     try {
-      const patientRepository = createApiPatientRepository();
-      const updatePatientFn = updatePatient(patientRepository);
-      const patientCreationPromise = updatePatientFn(
+      const patientCreationPromise = updatePatient(
         Number(selectedPatient?.userId),
         dataToSend
       );
@@ -385,7 +383,7 @@ function EditPatientForm({ id }: { id: number }) {
                     <BloodSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(selectedPatient?.bloodType)}
+                      defaultValue={String(selectedPatient?.bloodType) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -393,7 +391,7 @@ function EditPatientForm({ id }: { id: number }) {
                     <RHFactorSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(selectedPatient?.rhFactor)}
+                      defaultValue={String(selectedPatient?.rhFactor) || ""}
                     />
                   </div>
                 </div>
@@ -403,7 +401,7 @@ function EditPatientForm({ id }: { id: number }) {
                     <GenderSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(selectedPatient?.gender)}
+                      defaultValue={String(selectedPatient?.gender) || ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -411,7 +409,9 @@ function EditPatientForm({ id }: { id: number }) {
                     <MaritalStatusSelect
                       control={control}
                       errors={errors}
-                      defaultValue={String(selectedPatient?.maritalStatus)}
+                      defaultValue={
+                        String(selectedPatient?.maritalStatus) || ""
+                      }
                     />
                   </div>
                 </div>
@@ -469,16 +469,20 @@ function EditPatientForm({ id }: { id: number }) {
                   <div className="space-y-2">
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
-                      selected={selectedState}
+                      control={control}
+                      defaultValue={selectedPatient?.address?.city?.state}
+                      errors={errors}
                       onStateChange={handleStateChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Ciudad</Label>
                     <CitySelect
-                      idState={selectedState?.id}
+                      control={control}
+                      errors={errors}
+                      defaultValue={selectedPatient?.address?.city}
+                      idState={selectedState ? selectedState.id : undefined}
                       onCityChange={handleCityChange}
-                      selected={selectedCity}
                     />
                   </div>
                 </div>

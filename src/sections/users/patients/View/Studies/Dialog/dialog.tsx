@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ActionIcon from "@/components/ui/actionIcon";
-import { FaCamera, FaFilePdf, FaUpload } from "react-icons/fa";
+import { FaCalendar, FaCamera, FaFilePdf, FaUpload } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -31,10 +31,10 @@ import { createApiStudyRepository } from "@/modules/study/infra/ApiStudyReposito
 import { uploadStudy } from "@/modules/study/application/upload-study/uploadStudy";
 import useStudyStore from "@/hooks/useStudy";
 interface AddStudyProps {
-  idPatient: number | null;
+  idUser: number | null;
 }
 
-export default function StudyDialog({ idPatient }: AddStudyProps) {
+export default function StudyDialog({ idUser }: AddStudyProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleDialog = () => setIsOpen(!isOpen);
   const [selectedStudy, setSelectedStudy] = useState<Study | null>(null);
@@ -60,8 +60,8 @@ export default function StudyDialog({ idPatient }: AddStudyProps) {
 
     formData.append("StudyTypeId", data.StudyTypeId);
 
-    if (idPatient) {
-      formData.append("UserId", String(idPatient));
+    if (idUser) {
+      formData.append("UserId", String(idUser));
     }
 
     if (selectedFile) {
@@ -125,8 +125,8 @@ export default function StudyDialog({ idPatient }: AddStudyProps) {
                   Comentario
                 </Label>
                 <Input
-                  className="w-full bg-gray-200 border-gray-300 text-gray-800 h-10 rounded-md"
                   {...register("Note", { required: true })}
+                  className="text-black"
                 />
               </div>
               <div className="grid grid-cols-1 gap-6 mb-6">
@@ -138,17 +138,16 @@ export default function StudyDialog({ idPatient }: AddStudyProps) {
                     Archivo
                   </Label>
                   <Input
-                    className="w-full bg-gray-200 border-gray-300 text-gray-800 h-10 rounded-md"
                     type="file"
+                    className="text-black"
                     onChange={(e) =>
                       setSelectedFile(e.target.files && e.target.files[0])
                     }
                   />
                 </div>
-
-                <div>
+                <div className="space-y-2">
                   <Label
-                    htmlFor="date"
+                    htmlFor="dob"
                     className="block text-black font-medium mb-2"
                   >
                     Fecha
@@ -156,11 +155,12 @@ export default function StudyDialog({ idPatient }: AddStudyProps) {
                   <DatePicker
                     showIcon
                     selected={startDate}
-                    className="max-w-full"
                     onChange={handleDateChange}
                     locale="es"
+                    className="max-w-full"
+                    icon={<FaCalendar color="#0f766e" />}
                     customInput={
-                      <Input className="w-full bg-gray-200 border-gray-300 text-gray-800 h-10 rounded-md" />
+                      <Input className="input-custom-style text-black" />
                     }
                     dateFormat="d MMMM yyyy"
                   />

@@ -20,21 +20,33 @@ export const RHFactorSelect = ({
   errors,
   defaultValue,
 }: RHFactorSelectProps) => {
+  const rhTypes = [
+    { id: "Positivo", name: "Positivo" },
+    { id: "Negativo", name: "Negativo" },
+  ];
+
   return (
     <Controller
       name="rhFactor"
       control={control}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue || ""}
       // rules={{ required: "Este campo es obligatorio" }}
       render={({ field }) => (
         <div>
-          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+          <Select
+            {...field}
+            value={field.value}
+            onValueChange={(value) => field.onChange(value)}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Seleccione el factor RH.." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Positivo">Positivo</SelectItem>
-              <SelectItem value="Negativo">Negativo</SelectItem>
+              {rhTypes.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {errors.RHFactor && (

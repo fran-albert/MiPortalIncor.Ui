@@ -1,4 +1,5 @@
 "use client";
+import InfoBanner from "@/components/Banner/banner";
 import { CountsCards } from "@/components/Cards/Counts/card";
 import withSessionTimeout from "@/components/withSessionTimeout";
 import useRoles from "@/hooks/useRoles";
@@ -24,6 +25,7 @@ function HomePage() {
               <h2 className="text-2xl font-semibold text-center">
                 Panel de Control - Secretaria
               </h2>
+              <InfoBanner />
               <CountsCards />
             </div>
           )}

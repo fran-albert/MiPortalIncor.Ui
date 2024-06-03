@@ -397,16 +397,18 @@ function CreateDoctorForm() {
                   <div className="space-y-2">
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
-                      selected={selectedState}
+                      control={control}
+                      errors={errors}
                       onStateChange={handleStateChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Ciudad</Label>
                     <CitySelect
-                      idState={selectedState?.id}
+                      control={control}
+                      errors={errors}
+                      idState={selectedState ? selectedState.id : undefined}
                       onCityChange={handleCityChange}
-                      selected={selectedCity}
                     />
                   </div>
                 </div>

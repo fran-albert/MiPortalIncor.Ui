@@ -16,24 +16,38 @@ interface MaritalStatusSelectProps {
   errors: any;
 }
 export const MaritalStatusSelect = ({
-  control, errors, defaultValue
+  control,
+  errors,
+  defaultValue,
 }: MaritalStatusSelectProps) => {
+  const maritalStatus = [
+    { id: "Soltero", name: "Soltero" },
+    { id: "Casado", name: "Casado" },
+    { id: "Divorciado", name: "Divorciado" },
+  ];
+
   return (
     <Controller
       name="maritalStatus"
-      defaultValue={defaultValue}
+      defaultValue={defaultValue || ""}
       control={control}
       // rules={{ required: "Este campo es obligatorio" }}
       render={({ field }) => (
         <div>
-          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+          <Select
+            {...field}
+            value={field.value}
+            onValueChange={(value) => field.onChange(value)}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Seleccione el estado civil.." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Soltero">Soltero</SelectItem>
-              <SelectItem value="Casado">Casado</SelectItem>
-              <SelectItem value="Divorciado">Divorciado</SelectItem>
+              {maritalStatus.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {errors.maritalStatus && (
@@ -44,6 +58,5 @@ export const MaritalStatusSelect = ({
         </div>
       )}
     />
-
   );
 };

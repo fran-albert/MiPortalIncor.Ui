@@ -47,7 +47,8 @@ const DoctorCardComponent = ({
           </Avatar>
           <div className="space-y-1">
             <CardTitle>
-              Dr. {doctor?.firstName} {doctor?.lastName}
+              {doctor?.gender === "Masculino" ? "Dr. " : "Dra. "}{" "}
+              {doctor?.firstName} {doctor?.lastName}
             </CardTitle>
             <CardDescription>
               Creado por {registerBy || "Desconocido"}
@@ -70,8 +71,9 @@ const DoctorCardComponent = ({
             <div className="flex items-center gap-2">
               <FaLocationDot className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               <span>
-                {" "}
-                {doctor?.address?.street}, {doctor?.address?.number} -{" "}
+                {doctor?.address?.street && doctor?.address?.number
+                  ? `${doctor.address.street}, ${doctor.address.number} -`
+                  : ""}
                 {doctor?.address?.city?.name},{" "}
                 {doctor?.address?.city?.state.name}
               </span>

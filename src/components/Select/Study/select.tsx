@@ -46,8 +46,8 @@ export const StudyTypeSelect = ({
 
   return (
     <Select value={selected?.id.toString()} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-full bg-gray-200 text-gray-700">
-        <SelectValue placeholder="Seleccione el tipo de estudio..." />
+      <SelectTrigger className=" text-black">
+        <SelectValue placeholder="Seleccione tipo de estudio..." />
       </SelectTrigger>
       <SelectContent>
         {studies.map((studie) => (

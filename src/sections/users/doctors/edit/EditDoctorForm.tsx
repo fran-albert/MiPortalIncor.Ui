@@ -42,23 +42,29 @@ import { createApiDoctorRepository } from "@/modules/doctors/infra/ApiDoctorRepo
 import { getDoctor } from "@/modules/doctors/application/get/getDoctor";
 import { HealthInsuranceDoctorSelect } from "@/components/Select/Health Insurance/selectDoctor";
 import { goBack } from "@/lib/utils";
+import { useDoctorStore } from "@/hooks/useDoctors";
 
 interface Inputs extends Doctor {}
 const doctorRepository = createApiDoctorRepository();
 
-function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
+function EditDoctorForm({ id }: { id: number }) {
+  const { selectedDoctor, getDoctorById, updateDoctor } = useDoctorStore();
+  useEffect(() => {
+    getDoctorById(id);
+  }, [id, getDoctorById]);
+
   const [selectedState, setSelectedState] = useState<State | undefined>(
-    doctor?.address?.city?.state
+    selectedDoctor?.address?.city?.state
   );
   const [selectedCity, setSelectedCity] = useState<City | undefined>(
-    doctor?.address?.city
+    selectedDoctor?.address?.city
   );
   const [selectedHealthInsurances, setSelectedHealthInsurances] = useState<
     HealthInsurance[]
-  >(doctor?.healthInsurances || []);
+  >(selectedDoctor?.healthInsurances || []);
   const [selectedSpecialities, setSelectedSpecialities] = useState<
     Speciality[]
-  >(doctor?.specialities || []);
+  >(selectedDoctor?.specialities || []);
 
   const {
     register,
@@ -69,9 +75,8 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
     setValue,
   } = useForm<Inputs>();
   const removeDotsFromDni = (dni: any) => dni.replace(/\./g, "");
-
   const [startDate, setStartDate] = useState(
-    doctor ? new Date(String(doctor.birthDate)) : new Date()
+    selectedDoctor ? new Date(String(selectedDoctor.birthDate)) : new Date()
   );
 
   const handleStateChange = (state: State) => {
@@ -116,14 +121,14 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
       address: addressToSend,
       specialities: specialitiesToSend,
       healthInsurances: healthInsuranceToSend,
-      photo: doctor?.photo,
+      photo: selectedDoctor?.photo,
+      registeredById: selectedDoctor?.registeredById,
     };
 
     try {
-      const updateDoctorFn = updateDoctor(doctorRepository);
-      const doctorCreationPromise = updateDoctorFn(
+      const doctorCreationPromise = updateDoctor(
         dataToSend,
-        Number(doctor?.userId)
+        Number(selectedDoctor?.userId)
       );
 
       toast.promise(doctorCreationPromise, {
@@ -186,7 +191,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="firstName"
                       placeholder="Ingresar nombre"
-                      defaultValue={doctor?.firstName}
+                      defaultValue={selectedDoctor?.firstName}
                       {...register("firstName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -212,7 +217,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="lastName"
                       placeholder="Ingresar apellido"
-                      defaultValue={doctor?.lastName}
+                      defaultValue={selectedDoctor?.lastName}
                       {...register("lastName", {
                         required: "Este campo es obligatorio",
                         minLength: {
@@ -243,7 +248,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="email"
                       placeholder="Ingresar correo electrónico"
-                      defaultValue={doctor?.email}
+                      defaultValue={selectedDoctor?.email}
                       {...register("email", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -265,7 +270,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="matricula"
                       placeholder="Ingresar matrícula"
-                      defaultValue={doctor?.matricula}
+                      defaultValue={selectedDoctor?.matricula}
                       {...register("matricula", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -281,7 +286,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Label htmlFor="userName">D.N.I.</Label>
                     <Input
                       id="userName"
-                      defaultValue={doctor?.dni}
+                      defaultValue={selectedDoctor?.dni}
                       placeholder="Ingresar D.N.I."
                       {...register("userName", {
                         required: "Este campo es obligatorio",
@@ -317,7 +322,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="phoneNumber"
                       placeholder="Ingresar teléfono"
-                      defaultValue={doctor?.phoneNumber}
+                      defaultValue={selectedDoctor?.phoneNumber}
                       {...register("phoneNumber", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -337,7 +342,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="phoneNumber2"
                       placeholder="Ingresar teléfono 2"
-                      defaultValue={doctor?.phoneNumber2}
+                      defaultValue={selectedDoctor?.phoneNumber2}
                       type="tel"
                       {...register("phoneNumber2", {
                         pattern: {
@@ -351,21 +356,37 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="blood">Sangre </Label>
-                    <BloodSelect control={control} errors={errors} />
+                    <BloodSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedDoctor?.bloodType) || ""}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="rhFactor">Factor R.H.</Label>
-                    <RHFactorSelect control={control} errors={errors} />
+                    <RHFactorSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedDoctor?.rhFactor) || ""}
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="gender">Sexo</Label>
-                    <GenderSelect control={control} errors={errors} />
+                    <GenderSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedDoctor?.gender) || ""}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="maritalStatus">Estado Civil</Label>
-                    <MaritalStatusSelect control={control} errors={errors} />
+                    <MaritalStatusSelect
+                      control={control}
+                      errors={errors}
+                      defaultValue={String(selectedDoctor?.maritalStatus) || ""}
+                    />
                   </div>
                 </div>
               </div>
@@ -410,7 +431,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Label htmlFor="state">Observaciones</Label>
                     <Input
                       id="observations"
-                      defaultValue={doctor?.observations}
+                      defaultValue={selectedDoctor?.observations}
                       placeholder="Ingresar observaciones"
                       {...register("observations")}
                     />
@@ -420,16 +441,20 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                   <div className="space-y-2">
                     <Label htmlFor="state">Provincia</Label>
                     <StateSelect
-                      selected={selectedState}
+                      control={control}
+                      defaultValue={selectedDoctor?.address?.city?.state}
+                      errors={errors}
                       onStateChange={handleStateChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="city">Ciudad</Label>
                     <CitySelect
-                      idState={selectedState?.id}
+                      control={control}
+                      errors={errors}
+                      defaultValue={selectedDoctor?.address?.city}
+                      idState={selectedState ? selectedState.id : undefined}
                       onCityChange={handleCityChange}
-                      selected={selectedCity}
                     />
                   </div>
                 </div>
@@ -439,7 +464,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="street"
                       placeholder="Ingresar calle"
-                      defaultValue={doctor?.address.street}
+                      defaultValue={selectedDoctor?.address.street}
                       {...register("address.street", {
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);
@@ -455,7 +480,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="number"
                       type="number"
-                      defaultValue={doctor?.address.number}
+                      defaultValue={selectedDoctor?.address.number}
                       placeholder="Ingresar número"
                       {...register("address.number", {
                         onChange: (e) => {
@@ -473,7 +498,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                       id="floor"
                       type="number"
                       placeholder="Ingresar piso"
-                      defaultValue={doctor?.address.phoneNumber}
+                      defaultValue={selectedDoctor?.address.phoneNumber}
                       {...register("address.description", {
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);
@@ -489,7 +514,7 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
                     <Input
                       id="department"
                       placeholder="Ingresar departamento"
-                      defaultValue={doctor?.address.description}
+                      defaultValue={selectedDoctor?.address.description}
                       {...register("address.phoneNumber", {
                         onChange: (e) => {
                           const capitalized = capitalizeWords(e.target.value);
@@ -514,100 +539,6 @@ function EditDoctorForm({ doctor }: { doctor: Doctor | null }) {
           </form>
         </Card>
       </div>
-      {/* <div className="w-1/2 p-6 mt-28 items-center justify-center border shadow-xl rounded-lg max-w-4xl mx-auto bg-white">
-        <div className="flex flex-col items-center text-center">
-          <div className="relative mb-3">
-            <div className="group rounded-2xl overflow-hidden">
-              <img
-                src={
-                  imagePreviewUrl ||
-                  "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-                }
-                alt="Imagen del Paciente"
-                width={100}
-                height={100}
-                className="rounded-2xl"
-              />
-              <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                <div
-                  className="bg-black p-2 rounded-full cursor-pointer"
-                  onClick={() => inputFileRef?.current?.click()}
-                >
-                  <FaCamera className="text-white" />
-                  <input
-                    type="file"
-                    style={{ display: "none" }}
-                    ref={inputFileRef}
-                    onChange={handleImageChange}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="relative mb-3">
-                <div className="group rounded-2xl overflow-hidden">
-                  <img
-                    src={
-                      "https://incor-ranking.s3.us-east-1.amazonaws.com/storage/avatar/default.png"
-                    }
-                    alt="Imagen del Paciente"
-                    width={100}
-                    height={100}
-                    className="rounded-2xl"
-                  />
-                  <div className="absolute bottom-0 right-0 mb-2 mr-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                    <div
-                      className="bg-black p-2 rounded-full cursor-pointer"
-                    // onClick={handleEditPictureClick}
-                    >
-                      <FaCamera className="text-white" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-center rounded-lg">
-         
-              <h1 className="text-xl font-semibold mb-4">Seguro Médico</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="email">Obra Social</Label>
-                  <HealthInsuranceDoctorSelect
-                    selected={selectedHealthInsurances}
-                    onHealthInsuranceChange={(newSelection) =>
-                      setSelectedHealthInsurances(newSelection)
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="specialities">Especialidades</Label>
-                  <SpecialitySelect
-                    selected={selectedSpecialities}
-                    onSpecialityChange={(newSelection) =>
-                      setSelectedSpecialities(newSelection)
-                    }
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center mt-10">
-                <Button
-                  className="mt-10 m-2"
-                  variant="destructive"
-                  onClick={goBack}
-                  type="button"
-                >
-                  Cancelar
-                </Button>
-                <Button className=" m-2" variant="teal">
-                  Confirmar
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 }

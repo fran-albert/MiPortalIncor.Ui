@@ -20,21 +20,33 @@ export const GenderSelect = ({
   errors,
   defaultValue,
 }: GenderSelectProps) => {
+  const genderTypes = [
+    { id: "Masculino", name: "Masculino" },
+    { id: "Femenino", name: "Femenino" },
+  ];
+
   return (
     <Controller
       name="gender"
       control={control}
       rules={{ required: "Este campo es obligatorio" }}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue || ""}
       render={({ field }) => (
         <div>
-          <Select {...field} onValueChange={(value) => field.onChange(value)}>
+          <Select
+            {...field}
+            value={field.value}
+            onValueChange={(value) => field.onChange(value)}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Seleccione el género.." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Masculino">Masculino</SelectItem>
-              <SelectItem value="Femenino">Femenino</SelectItem>
+              {genderTypes.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {errors.gender && (

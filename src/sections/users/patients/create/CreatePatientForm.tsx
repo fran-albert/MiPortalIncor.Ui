@@ -111,6 +111,9 @@ export function CreatePatientForm() {
       registeredById: Number(session?.user.id),
     };
 
+
+    console.log(payload)
+
     try {
       const patientRepository = createApiPatientRepository();
       const createPatientFn = createPatient(patientRepository);
@@ -396,17 +399,28 @@ export function CreatePatientForm() {
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="state">Provincia</Label>
-                  <StateSelect
+                  {/* <StateSelect
                     selected={selectedState}
+                    onStateChange={handleStateChange}
+                  /> */}
+                  <StateSelect
+                    control={control}
+                    errors={errors}
                     onStateChange={handleStateChange}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="city">Ciudad</Label>
-                  <CitySelect
+                  {/* <CitySelect
                     idState={selectedState?.id}
                     onCityChange={handleCityChange}
                     selected={selectedCity}
+                  /> */}
+                  <CitySelect
+                    control={control}
+                    errors={errors}
+                    idState={selectedState ? selectedState.id : undefined}
+                    onCityChange={handleCityChange}
                   />
                 </div>
               </div>

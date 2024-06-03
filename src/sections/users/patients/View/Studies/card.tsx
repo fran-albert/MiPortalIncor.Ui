@@ -18,26 +18,26 @@ interface UrlMap {
   [key: number]: string;
 }
 
-const StudiesCardComponent = ({ idPatient }: { idPatient: number }) => {
+const StudiesCardComponent = ({ idUser }: { idUser: number }) => {
   const [urls, setUrls] = useState<UrlMap>({});
   const { isSecretary } = useRoles();
   const { studies, fetchStudiesByPatient, fetchStudyUrl } = useStudyStore();
   useEffect(() => {
-    fetchStudiesByPatient(idPatient);
-  }, [idPatient, fetchStudiesByPatient]);
+    fetchStudiesByPatient(idUser);
+  }, [idUser, fetchStudiesByPatient]);
   useEffect(() => {
     const fetchUrls = async () => {
       if (studies) {
         const newUrls: UrlMap = {};
         for (const study of studies) {
-          const url = await fetchStudyUrl(idPatient, study.locationS3);
+          const url = await fetchStudyUrl(idUser, study.locationS3);
           newUrls[study.id] = url;
         }
         setUrls(newUrls);
       }
     };
     fetchUrls();
-  }, [studies, fetchStudyUrl, idPatient]);
+  }, [studies, fetchStudyUrl, idUser]);
 
   return (
     <>
@@ -84,7 +84,7 @@ const StudiesCardComponent = ({ idPatient }: { idPatient: number }) => {
             </div>
             {isSecretary && (
               <div className="mt-auto">
-                <StudyDialog idPatient={idPatient} />
+                <StudyDialog idUser={idUser} />
               </div>
             )}
           </div>

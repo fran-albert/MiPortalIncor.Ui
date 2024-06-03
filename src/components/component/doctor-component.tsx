@@ -5,6 +5,7 @@ import Loading from "@/components/Loading/loading";
 import DoctorCardComponent from "@/sections/users/doctors/View/Card/card";
 import DoctorSpecialitiesComponent from "@/sections/users/doctors/View/Specialities/card";
 import { useDoctorStore } from "@/hooks/useDoctors";
+import StudiesCardComponent from "@/sections/users/patients/View/Studies/card";
 export function DoctorComponent({ id }: { id: number }) {
   const { selectedDoctor, getDoctorById, isLoading, registerBy } =
     useDoctorStore();
@@ -33,6 +34,7 @@ export function DoctorComponent({ id }: { id: number }) {
         />
         <div className="grid gap-6">
           <DoctorSpecialitiesComponent doctor={selectedDoctor} />
+          <StudiesCardComponent idUser={Number(selectedDoctor?.userId)} />
           {/* <DoctorHealthInsuranceComponent doctor={doctor} /> */}
           {/* <Card>
             <CardHeader>

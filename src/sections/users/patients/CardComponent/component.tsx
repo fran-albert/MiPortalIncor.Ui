@@ -34,7 +34,7 @@ export function PatientComponent({ id }: { id: number }) {
         registerBy={registerByText}
       />
       <div className="grid gap-6">
-        <StudiesCardComponent idPatient={Number(selectedPatient?.userId)} />
+        <StudiesCardComponent idUser={Number(selectedPatient?.userId)} />
         {/* <HistoryCardComponent /> */}
         {/* <DoctorHealthInsuranceComponent doctor={doctor} /> */}
         {/* <Card>
